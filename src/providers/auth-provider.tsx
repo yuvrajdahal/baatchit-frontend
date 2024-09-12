@@ -6,9 +6,12 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const cookie = cookies().get("token");
-  if (cookie?.value === undefined) {
-    redirect("/login");
-  }
+
+  setTimeout(() => {
+    if (!cookie?.value) {
+      redirect("/login");
+    }
+  }, 1000);
   return (
     <>
       <DataProvider>{children}</DataProvider>
