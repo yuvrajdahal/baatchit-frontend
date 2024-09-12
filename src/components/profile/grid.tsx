@@ -4,11 +4,22 @@ import usePostStore from "@/hooks/use-post";
 import CommentModal from "../posts/comments-modal";
 import { useEffect, useState } from "react";
 import NoPostsYet from "../posts/no-post";
+import { User } from "@/data-access/types";
 
-const Grid: React.FC = () => {
-  const { user, isLoading } = useAuthStore();
-  const { setCommentsModalOpen, isCommentsModalOpen, getComments } =
-    usePostStore();
+interface GridProps {
+  user: User | null;
+  isLoading: boolean;
+  setCommentsModalOpen: (open: boolean) => void;
+  isCommentsModalOpen: boolean;
+  getComments: (id: string) => void;
+}
+const Grid: React.FC<GridProps> = ({
+  user,
+  isLoading,
+  setCommentsModalOpen,
+  isCommentsModalOpen,
+  getComments,
+}) => {
   const [isMounted, setMounted] = useState(true);
   const [index, setIndex] = useState(0);
   useEffect(() => {
@@ -38,14 +49,14 @@ const Grid: React.FC = () => {
           />
         </div>
       ))}
-      {user?.posts?.length === 0 && (
+      {/* {user?.posts?.length === 0 && (
         <div className="col-span-3  w-full flex flex-col justify-center">
           <hr/>
           <span className="mt-4 text-center text-lg text-center text-muted-foreground">
             No Posts Yet
           </span>
         </div>
-      )}
+      )} */}
       <CommentModal
         open={isCommentsModalOpen}
         onChange={() => setCommentsModalOpen!(!isCommentsModalOpen)}

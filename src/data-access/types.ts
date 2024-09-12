@@ -7,6 +7,7 @@ export type User = {
   password: string;
   isVerified: boolean;
   posts?: Post[];
+  _id: string;
   createdAt: Date;
 };
 

@@ -8,14 +8,19 @@ import ProfileInfo from "@/components/profile/profile-info";
 import Loading from "@/components/loading";
 import { useEffect } from "react";
 import usePostStore from "@/hooks/use-post";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 
 export default function ProfilePage() {
-  const { refreshUser, user, isLoading } = useAuthStore();
+  const { getUserById, userById: user, isLoading } = useAuthStore();
   const { setCommentsModalOpen, isCommentsModalOpen, getComments } =
     usePostStore();
+  const params: { id: string } = useParams();
+  console.log(user)
   useEffect(() => {
-    refreshUser();
-  }, []);
+    if (params.id) {
+      getUserById(params.id);
+    }
+  }, [params]);
   return (
     <div className="bg-dark h-screen w-screen text-light ">
       <div className="h-full w-full flex justify-between">
@@ -28,7 +33,7 @@ export default function ProfilePage() {
             setCommentsModalOpen={setCommentsModalOpen}
             isCommentsModalOpen={isCommentsModalOpen}
             getComments={getComments}
-          />
+          />{" "}
         </div>
       </div>
     </div>

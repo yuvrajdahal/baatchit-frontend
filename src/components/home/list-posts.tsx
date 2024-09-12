@@ -1,13 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import InstagramPost from "../posts/IPost";
-import { getPostsUsecase } from "@/use-cases/posts-usecase";
 import { Post } from "@/data-access/types";
 import usePostStore from "@/hooks/use-post";
 import { useToast } from "@/hooks/use-toast";
 import PostSkeleton from "../posts/skeletal-iposts";
 import NoPostsYet from "../posts/no-post";
-import { Button } from "../ui/button";
 import CommentModal from "../posts/comments-modal";
 const ListPosts: React.FC = () => {
   const [isMounted, setMounted] = useState(true);
@@ -66,6 +64,7 @@ const ListPosts: React.FC = () => {
               likePost={likePost}
               username={post.user.username ?? ""}
               timeAgo="10m"
+              userId={post.user?._id}
               handleComment={handleComment}
               likes={post.likesCount}
               caption={post.description ?? ""}
@@ -105,6 +104,7 @@ const postsdata: Post[] = [
     likesCount: 0,
     links: [],
     user: {
+      _id: "60c7b8d8c9b4d1d6c0b0",
       createdAt: new Date(),
       email: "",
       emailToken: "",

@@ -2,6 +2,7 @@ import React, { useOptimistic, useState } from "react";
 import { Heart, MessageCircle, MoreHorizontal } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import CommentModal from "./comments-modal";
+import Link from "next/link";
 
 interface InstagramPostProps {
   id: string;
@@ -17,6 +18,7 @@ interface InstagramPostProps {
   isLiked: boolean;
   createComment?: (message: string, postId: string) => Promise<boolean>;
   isCreatingComment?: boolean;
+  userId?: string;
   isCommentsModalOpen?: boolean;
   setCommentsModalOpen?: (open: boolean) => void;
   handleComment?: (id: string) => void;
@@ -33,6 +35,7 @@ const InstagramPost: React.FC<InstagramPostProps> = ({
   timeAgo,
   likes,
   isLiked,
+  userId,
   setCommentsModalOpen,
   caption,
   isCommentsModalOpen,
@@ -52,7 +55,9 @@ const InstagramPost: React.FC<InstagramPostProps> = ({
             alt={`${username} avatar`}
           />
           <div className=" ml-3">
-            <p className="font-semibold text-sm">{username}</p>
+            <Link href={`/profile/${userId}`}>
+              <p className="font-semibold text-sm cursor-pointer">{username}</p>
+            </Link>
             <p className="text-muted-foreground text-xs">{timeAgo}</p>
           </div>
         </div>

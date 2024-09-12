@@ -63,3 +63,16 @@ export async function getUser(
     })
   );
 }
+export async function getUserById(
+  id: string,
+  token: string
+): Promise<{ success: boolean; data: User }> {
+  return asyncHandler(() =>
+    api.get<{
+      success: boolean;
+      data: User;
+    }>(`/auth/user/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+  );
+}

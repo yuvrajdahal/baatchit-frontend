@@ -1,4 +1,4 @@
-import { login, signup, getUser } from "@/data-access/auth";
+import { login, signup, getUser, getUserById } from "@/data-access/auth";
 import { User } from "@/data-access/types";
 import { ApiError } from "@/lib/axios";
 export async function regiserUserUsecase(
@@ -65,6 +65,34 @@ export async function getCurrentUserUsecase(token: string): Promise<{
       return { success: false, error: apiError?.data?.error ?? "" };
     } else {
       return { success: false, error: "An unexpected error occurred" };
+    }
+  }
+}
+export async function getUserByIdUsecase(id: string): Promise<{
+  success: boolean;
+  error?: string;
+  user?: any;
+}> {
+  try {
+    const { data, success } = await getUserById(
+      id,
+      localStorage.getItem("token")!
+    );
+    return { success, user: data };
+  } catch (error) {
+    if ((error as ApiError).status !== undefined) {
+      const apiError = error as ApiError;
+      return {
+        success: false,
+        error: apiError.data.error || "Failed to fetch user",
+        user: null,
+      };
+    } else {
+      return {
+        success: false,
+        error: "An unexpected error occurred",
+        user: null,
+      };
     }
   }
 }

@@ -6,6 +6,7 @@ import {
   regiserUserUsecase,
   loginUserUsecase,
   getCurrentUserUsecase,
+  getUserByIdUsecase,
 } from "@/use-cases/auth-usecase";
 
 interface AuthState {
@@ -15,6 +16,7 @@ interface AuthState {
   isLoginLoading: boolean;
   isRegisterLoading: boolean;
   isLoading: boolean;
+  userById: User | null;
   error: string | null;
   register: (
     email: string,
@@ -25,6 +27,7 @@ interface AuthState {
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   refreshUser: () => Promise<void>;
+  getUserById: (id: string) => Promise<void>;
 }
 
 const useAuthStore = create<AuthState>()(
@@ -34,6 +37,7 @@ const useAuthStore = create<AuthState>()(
       token: null,
       isAuthenticated: false,
       isLoading: false,
+      userById: null,
       isLoginLoading: false,
       isRegisterLoading: false,
       error: null,
@@ -170,6 +174,28 @@ const useAuthStore = create<AuthState>()(
               isLoading: false,
             });
           }
+        }
+      },
+      getUserById: async (id: string) => {
+        set({ isLoading: true, error: null });
+        try {
+          const result = await getUserByIdUsecase(id);
+          if (result.success && result.user) {
+            set({
+              userById: result.user,
+              isLoading: false,
+            });
+          } else {
+            set({
+              error: result.error || "Failed to get user data",
+              isLoading: false,
+            });
+          }
+        } catch (error) {
+          set({
+            error: "An unexpected error occurred while getting user data",
+            isLoading: false,
+          });
         }
       },
     }),

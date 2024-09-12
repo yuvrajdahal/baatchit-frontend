@@ -1,6 +1,7 @@
 import Loading from "@/components/loading";
 import AuthProvider from "@/providers/auth-provider";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Profile Page",
@@ -14,7 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <section className="w-full h-full">
-      <AuthProvider> {children}</AuthProvider>
+      <AuthProvider>
+        <Suspense> {children}</Suspense>
+      </AuthProvider>
     </section>
   );
 }

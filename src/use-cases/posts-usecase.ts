@@ -1,3 +1,4 @@
+import { getUserById } from "@/data-access/auth";
 import {
   createComment,
   createPost,

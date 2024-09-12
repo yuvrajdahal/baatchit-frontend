@@ -3,9 +3,13 @@ import useAuthStore from "@/hooks/use-auth";
 import { Archive, Settings } from "lucide-react";
 import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
+import { User } from "@/data-access/types";
 
-const ProfileInfo: React.FC = () => {
-  const { user, isLoading } = useAuthStore();
+interface ProfileInfoProps {
+  user: User | null;
+  isLoading: boolean;
+}
+const ProfileInfo: React.FC<ProfileInfoProps> = ({ isLoading, user }) => {
   const [isMounted, setMounted] = useState(true);
   useEffect(() => {
     setMounted(false);

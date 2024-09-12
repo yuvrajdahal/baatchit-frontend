@@ -86,7 +86,6 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
 
 const Sidebar: React.FC = () => {
   const { fetchPosts, setTogglePostModal, togglePostModal } = usePostStore();
-  const { logout ,refreshUser} = useAuthStore();
   const router = useRouter();
   const pathName = usePathname();
   return (
