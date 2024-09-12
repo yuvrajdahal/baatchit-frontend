@@ -23,17 +23,18 @@ function Login() {
 
   const router = useRouter();
   const params = useSearchParams();
+  const param=params.get("logout");
   useEffect(() => {
     setMounted(false);
     fetchPosts();
   }, []);
 
   useEffect(() => {
-    if (params.get("logout")) {
+    if (param) {
       logout();
       router.replace("/login", undefined);
     }
-  }, [params]);
+  }, [param]);
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
