@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import useAuthStore from "@/hooks/use-auth";
 
 
-export function Signup() {
+function Signup() {
   const { register, isAuthenticated, error } = useAuthStore();
   const { toast } = useToast();
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
