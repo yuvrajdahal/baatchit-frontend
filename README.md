@@ -66,7 +66,6 @@ Baatchit is a social media application frontend built with Next.js. This project
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
 ---
-```
 
 Feel free to contribute by opening issues or submitting pull requests!
 
