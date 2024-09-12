@@ -66,7 +66,7 @@ export async function getPosts(token: string): Promise<{
       data: Post[];
       total: number;
       count: number;
-    }>("/posts", {
+    }>("/posts?sort=-createdAt", {
       headers: {
         Authorization: `Bearer ${token}`,
       },

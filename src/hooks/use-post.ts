@@ -129,8 +129,8 @@ const usePostStore = create<PostState>((set, get) => ({
               ? {
                   ...post,
                   likesCount: post.isLiked
-                    ? post.likesCount + 1
-                    : post.likesCount - 1,
+                    ? post.likesCount - 1
+                    : post.likesCount + 1,
                   isLiked: !post.isLiked,
                 }
               : post

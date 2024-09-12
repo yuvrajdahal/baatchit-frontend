@@ -6,17 +6,14 @@ import React, { useEffect, useState } from "react";
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [mounted, setMounted] = useState(false);
   const { refreshUser, isAuthenticated, isLoading } = useAuthStore();
   const router = useRouter();
-  useEffect(() => setMounted(true), []);
+  // useEffect(() => setMounted(true), []);
   useEffect(() => {
-    if (mounted === false) return;
-    if (mounted && !isAuthenticated && !isLoading) {
-      refreshUser();
+    if (!isAuthenticated && !isLoading) {
       router.push("/login");
     }
-  }, [mounted, isAuthenticated, isLoading, refreshUser]);
+  }, [isAuthenticated, isLoading]);
   return children;
 };
 

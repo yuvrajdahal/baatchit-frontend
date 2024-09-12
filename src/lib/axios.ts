@@ -19,7 +19,6 @@ class Api {
       ? process.env.NEXT_PUBLIC_BACKEND_URL
       : process.env.NEXT_PUBLIC_PROD_BACKEND_URL) as string
   ) {
-    console.log(baseURL);
     this.axiosInstance = axios.create({
       baseURL: baseURL,
       headers: {

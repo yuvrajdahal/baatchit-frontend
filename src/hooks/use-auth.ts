@@ -13,6 +13,7 @@ interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
   isLoginLoading: boolean;
+  isRegisterLoading: boolean;
   isLoading: boolean;
   error: string | null;
   register: (
@@ -20,7 +21,7 @@ interface AuthState {
     fullname: string,
     username: string,
     password: string
-  ) => Promise<void>;
+  ) => Promise<boolean>;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   refreshUser: () => Promise<void>;
@@ -33,15 +34,16 @@ const useAuthStore = create<AuthState>()(
       token: null,
       isAuthenticated: false,
       isLoading: false,
-      error: null,
       isLoginLoading: false,
+      isRegisterLoading: false,
+      error: null,
       register: async (
         email: string,
         fullname: string,
         username: string,
         password: string
       ) => {
-        set({ isLoading: true, error: null });
+        set({ isAuthenticated: false, isRegisterLoading: true, error: null });
         try {
           const result = await regiserUserUsecase(
             email,
@@ -58,31 +60,38 @@ const useAuthStore = create<AuthState>()(
                   user: userResult.user,
                   token,
                   isAuthenticated: true,
-                  isLoading: false,
+                  isRegisterLoading: false,
                 });
+                return true;
               } else {
                 set({
                   error: userResult.error || "Failed to get user data",
-                  isLoading: false,
+                  isRegisterLoading: false,
+                  isAuthenticated: false,
                 });
               }
             } else {
               set({
                 error: "Token not found after registration",
-                isLoading: false,
+                isRegisterLoading: false,
+                isAuthenticated: false,
               });
             }
           } else {
             set({
               error: result.error || "Registration failed",
-              isLoading: false,
+              isRegisterLoading: false,
+              isAuthenticated: false,
             });
           }
+          return false;
         } catch (error) {
           set({
             error: "An unexpected error occurred during registration",
-            isLoading: false,
+            isRegisterLoading: false,
+            isAuthenticated: false,
           });
+          return false;
         }
       },
       login: async (email: string, password: string) => {
@@ -170,4 +179,5 @@ const useAuthStore = create<AuthState>()(
     }
   )
 );
+
 export default useAuthStore;

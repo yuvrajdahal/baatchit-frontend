@@ -10,11 +10,13 @@ import InstagramPost from "@/components/posts/IPost";
 
 import { useToast } from "@/hooks/use-toast";
 import useAuthStore from "@/hooks/use-auth";
-
+import { useRouter } from "next/navigation";
+import Loading from "@/components/loading";
 
 function Signup() {
-  const { register, isAuthenticated, error } = useAuthStore();
+  const { register, isRegisterLoading, error } = useAuthStore();
   const { toast } = useToast();
+  const router = useRouter();
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -22,12 +24,14 @@ function Signup() {
     const password = formData.get("password") as string;
     const fullname = formData.get("fullname") as string;
     const username = formData.get("username") as string;
-    await register(email, fullname, username, password);
-    if (isAuthenticated) {
+    const success = await register(email, fullname, username, password);
+    if (success && !isRegisterLoading) {
       toast({
         title: "Success",
         description: "You have successfully registered",
+        variant: "default",
       });
+      router.push("/");
     }
     if (error) {
       toast({
@@ -91,8 +95,12 @@ function Signup() {
               </div>
               <Input id="password" type="password" name="password" required />
             </div>
-            <Button type="submit" className="w-full">
-              Signup
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={isRegisterLoading}
+            >
+              {isRegisterLoading ? <Loading /> : "Sinup"}
             </Button>
           </div>
 
