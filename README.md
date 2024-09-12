@@ -1,5 +1,3 @@
-Here's a `README.md` file for your GitHub project:
-
 # Baatchit Frontend
 
 Baatchit is a social media application frontend built with Next.js. This project aims to create an interactive social platform with modern design components and responsive user experience.
