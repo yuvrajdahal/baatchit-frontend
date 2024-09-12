@@ -14,11 +14,12 @@ export interface ApiError {
 
 class Api {
   private axiosInstance: AxiosInstance;
-  private url =
-    process.env.NODE_ENV === "development"
+  constructor(
+    baseURL: string = (process.env.NODE_ENV === "development"
       ? process.env.NEXT_PUBLIC_BACKEND_URL
-      : process.env.NEXT_PUBLIC_PROD_BACKEND_URL;
-  constructor(baseURL: string = this.url!) { 
+      : process.env.NEXT_PUBLIC_PROD_BACKEND_URL) as string
+  ) {
+    console.log(baseURL);
     this.axiosInstance = axios.create({
       baseURL: baseURL,
       headers: {
