@@ -1,0 +1,118 @@
+"use client";
+import { useEffect, useState } from "react";
+import InstagramPost from "../posts/IPost";
+import { getPostsUsecase } from "@/use-cases/posts-usecase";
+import { Post } from "@/data-access/types";
+import usePostStore from "@/hooks/use-post";
+import { useToast } from "@/hooks/use-toast";
+import PostSkeleton from "../posts/skeletal-iposts";
+import NoPostsYet from "../posts/no-post";
+import { Button } from "../ui/button";
+import CommentModal from "../posts/comments-modal";
+const ListPosts: React.FC = () => {
+  const [isMounted, setMounted] = useState(true);
+  const [index, setIndex] = useState(0);
+  const { toast } = useToast();
+  const {
+    posts,
+    error,
+    fetchPosts,
+    likePost,
+    isLoading,
+    createComment,
+    isCreatingComment,
+    isCommentsModalOpen,
+    getComments,
+    setCommentsModalOpen,
+  } = usePostStore();
+  useEffect(() => {
+    setMounted(false);
+    fetchPosts();
+  }, []);
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: "Error",
+        description: error,
+        variant: "destructive",
+      });
+    }
+  }, [error]);
+  if (isMounted || isLoading)
+    return [...Array(5)].map((_, i) => {
+      return <PostSkeleton key={i} />;
+    });
+  function handleComment(id: string) {
+    getComments(id);
+  }
+  return (
+    <>
+      {posts.map((post, i) => {
+        return (
+          <div
+            className="snap-center flex-shrink-0 h-full flex flex-col justify-center items-center"
+            key={i}
+            onClick={() => {
+              setIndex(i);
+            }}
+          >
+            <InstagramPost
+              createComment={createComment}
+              isCreatingComment={isCreatingComment}
+              id={post._id}
+              isLiked={post.isLiked}
+              avatarUrl={post.user?.profilePicture ?? ""}
+              postImageUrl={post.image ?? ""}
+              likePost={likePost}
+              username={post.user.username ?? ""}
+              timeAgo="10m"
+              handleComment={handleComment}
+              likes={post.likesCount}
+              caption={post.description ?? ""}
+              commentCount={post.comments?.length ?? 0}
+              setCommentsModalOpen={setCommentsModalOpen}
+              isCommentsModalOpen={isCommentsModalOpen}
+            />
+          </div>
+        );
+      })}
+
+      {posts.length === 0 && <NoPostsYet />}
+      <CommentModal
+        open={isCommentsModalOpen}
+        onChange={() => setCommentsModalOpen!(!isCommentsModalOpen)}
+        setOpenCommentsModal={setCommentsModalOpen}
+        id={posts[index]?._id}
+        description={posts[index]?.description!}
+        image={posts[index]?.image!}
+        likesCount={posts[index]?.likesCount!}
+        avatarUrl={posts[index]?.user?.profilePicture ?? ""}
+        username={posts[index]?.user.username ?? ""}
+      />
+    </>
+  );
+};
+export default ListPosts;
+const postsdata: Post[] = [
+  {
+    _id: "60c7b8d8c9b4d1d6c0b0",
+    createdAt: new Date(),
+    comments: [],
+    description: "6ft Aesthetics ✨",
+    image: "https://placeholder.pics/svg/1080",
+    imageid: "60c7b8d8c9b4d1d6c0b0",
+    isLiked: false,
+    likesCount: 0,
+    links: [],
+    user: {
+      createdAt: new Date(),
+      email: "",
+      emailToken: "",
+      fullname: "mihirlifts",
+      isVerified: false,
+      password: "",
+      profilePicture: "https://placeholder.pics/svg/200",
+      username: "mihirlifts",
+    },
+  },
+];
