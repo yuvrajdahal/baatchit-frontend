@@ -116,7 +116,6 @@ const Sidebar: React.FC = () => {
               Icon={User}
               active={pathName === "/profile"}
               text="Profile"
-              onClick={() => refreshUser()}
             />
           </Link>
         </div>
@@ -127,8 +126,7 @@ const Sidebar: React.FC = () => {
                 `relative flex items-center cursor-pointer tranition duration-300 ease-in-out  py-2 px-5 space-x-4 `
               )}
               onClick={() => {
-                logout();
-                router.push("/login");
+                router.push("/login?logout=true");
               }}
             >
               Logout

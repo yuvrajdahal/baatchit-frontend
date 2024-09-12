@@ -3,6 +3,7 @@ import useAuthStore from "@/hooks/use-auth";
 import usePostStore from "@/hooks/use-post";
 import CommentModal from "../posts/comments-modal";
 import { useEffect, useState } from "react";
+import NoPostsYet from "../posts/no-post";
 
 const Grid: React.FC = () => {
   const { user, isLoading } = useAuthStore();
@@ -17,7 +18,7 @@ const Grid: React.FC = () => {
     return <SkeletalGrid />;
   }
   return (
-    <div className="grid grid-cols-3 gap-1 ">
+    <div className="grid grid-cols-3 gap-1 w-full">
       {user?.posts?.map((post, i) => (
         <div
           key={i}
@@ -37,6 +38,14 @@ const Grid: React.FC = () => {
           />
         </div>
       ))}
+      {user?.posts?.length === 0 && (
+        <div className="col-span-3  w-full flex flex-col justify-center">
+          <hr/>
+          <span className="mt-4 text-center text-lg text-center text-muted-foreground">
+            No Posts Yet
+          </span>
+        </div>
+      )}
       <CommentModal
         open={isCommentsModalOpen}
         onChange={() => setCommentsModalOpen!(!isCommentsModalOpen)}
