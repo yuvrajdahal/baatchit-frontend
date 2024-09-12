@@ -11,8 +11,6 @@ import InstagramPost from "@/components/posts/IPost";
 import { useToast } from "@/hooks/use-toast";
 import useAuthStore from "@/hooks/use-auth";
 
-export const description =
-  "A login page with two columns. The first column has the login form with email and password. There's a Forgot your passwork link and a link to sign up if you do not have an account. The second column has a cover image.";
 
 export function Signup() {
   const { register, isAuthenticated, error } = useAuthStore();

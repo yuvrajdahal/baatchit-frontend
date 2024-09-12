@@ -14,8 +14,6 @@ import Loading from "@/components/loading";
 import usePostStore from "@/hooks/use-post";
 import PostSkeleton from "@/components/posts/skeletal-iposts";
 
-export const description =
-  "A login page with two columns. The first column has the login form with email and password. There's a Forgot your passwork link and a link to sign up if you do not have an account. The second column has a cover image.";
 
 function Login() {
   const { toast } = useToast();
@@ -115,16 +113,16 @@ function Login() {
               key={i}
             >
               <InstagramPost
-                id={post._id}
+                id={post?._id}
                 isLiked={false}
                 disbaleLikeAndComment={true}
-                avatarUrl={post.user?.profilePicture ?? ""}
-                postImageUrl={post.image ?? ""}
-                username={post.user.username ?? ""}
+                avatarUrl={post?.user?.profilePicture ?? ""}
+                postImageUrl={post?.image ?? ""}
+                username={post?.user?.username ?? ""}
                 timeAgo="10m"
-                likes={post.likesCount}
-                caption={post.description ?? ""}
-                commentCount={post.comments?.length ?? 0}
+                likes={post?.likesCount}
+                caption={post?.description ?? ""}
+                commentCount={post?.comments?.length ?? 0}
               />
             </div>
           );
