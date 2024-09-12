@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import PostSkeleton from "../posts/skeletal-iposts";
 import NoPostsYet from "../posts/no-post";
 import CommentModal from "../posts/comments-modal";
+import useAuthStore from "@/hooks/use-auth";
 const ListPosts: React.FC = () => {
   const [isMounted, setMounted] = useState(true);
   const [index, setIndex] = useState(0);
@@ -23,6 +24,7 @@ const ListPosts: React.FC = () => {
     getComments,
     setCommentsModalOpen,
   } = usePostStore();
+  const { user } = useAuthStore();
   useEffect(() => {
     setMounted(false);
     fetchPosts();
@@ -64,12 +66,13 @@ const ListPosts: React.FC = () => {
               likePost={likePost}
               username={post.user.username ?? ""}
               timeAgo="10m"
-              userId={post.user?._id}
+              postUserId={post.user?._id}
               handleComment={handleComment}
               likes={post.likesCount}
               caption={post.description ?? ""}
               commentCount={post.comments?.length ?? 0}
               setCommentsModalOpen={setCommentsModalOpen}
+              user={user}
               isCommentsModalOpen={isCommentsModalOpen}
             />
           </div>
@@ -109,6 +112,9 @@ const postsdata: Post[] = [
       email: "",
       emailToken: "",
       fullname: "mihirlifts",
+      followers: [],
+      following: [],
+      isFollowing: false,
       isVerified: false,
       password: "",
       profilePicture: "https://placeholder.pics/svg/200",

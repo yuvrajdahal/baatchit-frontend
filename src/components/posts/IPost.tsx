@@ -3,6 +3,7 @@ import { Heart, MessageCircle, MoreHorizontal } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import CommentModal from "./comments-modal";
 import Link from "next/link";
+import { User } from "@/data-access/types";
 
 interface InstagramPostProps {
   id: string;
@@ -18,10 +19,11 @@ interface InstagramPostProps {
   isLiked: boolean;
   createComment?: (message: string, postId: string) => Promise<boolean>;
   isCreatingComment?: boolean;
-  userId?: string;
+  postUserId?: string;
   isCommentsModalOpen?: boolean;
   setCommentsModalOpen?: (open: boolean) => void;
   handleComment?: (id: string) => void;
+  user?: User | null;
 }
 
 const InstagramPost: React.FC<InstagramPostProps> = ({
@@ -35,13 +37,14 @@ const InstagramPost: React.FC<InstagramPostProps> = ({
   timeAgo,
   likes,
   isLiked,
-  userId,
+  postUserId,
   setCommentsModalOpen,
   caption,
   isCommentsModalOpen,
   isCreatingComment = false,
   createComment,
   commentCount,
+  user,
 }) => {
   const [comment, setComment] = useState("");
   return (
@@ -55,7 +58,11 @@ const InstagramPost: React.FC<InstagramPostProps> = ({
             alt={`${username} avatar`}
           />
           <div className=" ml-3">
-            <Link href={`/profile/${userId}`}>
+            <Link
+              href={
+                user?._id === postUserId ? `/profile` : `/profile/${postUserId}`
+              }
+            >
               <p className="font-semibold text-sm cursor-pointer">{username}</p>
             </Link>
             <p className="text-muted-foreground text-xs">{timeAgo}</p>

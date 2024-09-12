@@ -6,9 +6,14 @@ export type User = {
   emailToken?: string;
   password: string;
   isVerified: boolean;
+  followers: string[]; 
+  following: string[]; 
   posts?: Post[];
   _id: string;
   createdAt: Date;
+  isFollowing?: boolean; // Whether the current user is following this user
+  followersCount?: number;
+  followingCount?: number;
 };
 
 export type Post = {

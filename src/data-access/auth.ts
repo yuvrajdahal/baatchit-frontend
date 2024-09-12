@@ -76,3 +76,39 @@ export async function getUserById(
     })
   );
 }
+
+export async function followUser(
+  userId: string,
+  token: string
+): Promise<{ success: boolean; data: User }> {
+  return asyncHandler(() =>
+    api.post<{
+      success: boolean;
+      data: User;
+    }>(
+      `/auth/follow/${userId}`,
+      {},
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    )
+  );
+}
+
+export async function unfollowUser(
+  userId: string,
+  token: string
+): Promise<{ success: boolean; data: User }> {
+  return asyncHandler(() =>
+    api.post<{
+      success: boolean;
+      data: User;
+    }>(
+      `/auth/unfollow/${userId}`,
+      {},
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    )
+  );
+}

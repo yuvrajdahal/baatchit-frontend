@@ -56,7 +56,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
           <div className="w-1/2  aspect-square">
             <div className="flex space-x-3 items-center px-2 pt-2">
               <img
-                className="w-10 h-10 rounded-full object-cover border"
+                className="w-12 h-12 rounded-full object-cover border"
                 src={avatarUrl}
                 alt={`${username} avatar`}
               />
@@ -71,20 +71,23 @@ const CommentModal: React.FC<CommentModalProps> = ({
               {!isCommentsLoading &&
                 comments.map((cmt, i) => {
                   return (
-                    <div key={i} className="flex items-center justify-between">
+                    <div key={i} className="flex items-start justify-between">
                       <div className="flex items center gap-2">
                         <div className="flex">
                           <img
-                            className="w-10 h-10 rounded-full object-cover border"
+                            className="w-12 h-12 rounded-full object-cover border"
                             src={cmt.user.profilePicture}
                             alt={`${username} avatar`}
                           />
                         </div>
                         <div className="flex flex-col">
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm">{cmt.user.username}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {new Date().toLocaleDateString()}
+                            </p>
+                          </div>
                           <p className="text-sm">{cmt.message}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {new Date().toLocaleDateString()}
-                          </p>
                         </div>
                       </div>
                       <MoreHorizontal className="h-5 w-5 text-muted-foreground cursor-pointer " />

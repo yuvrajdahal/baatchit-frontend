@@ -9,13 +9,19 @@ import Loading from "@/components/loading";
 import { useEffect } from "react";
 import usePostStore from "@/hooks/use-post";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
+import OthersProfileInfo from "@/components/profile/others-profile";
 
 export default function ProfilePage() {
-  const { getUserById, userById: user, isLoading } = useAuthStore();
+  const {
+    getUserById,
+    userById: user,
+    isLoading,
+    followUser,
+    unfollowUser,
+  } = useAuthStore();
   const { setCommentsModalOpen, isCommentsModalOpen, getComments } =
     usePostStore();
   const params: { id: string } = useParams();
-  console.log(user)
   useEffect(() => {
     if (params.id) {
       getUserById(params.id);
@@ -26,7 +32,12 @@ export default function ProfilePage() {
       <div className="h-full w-full flex justify-between">
         <Sidebar />
         <div className="bg-muted/20 flex-1  flex flex-col  items-center overflow-x-hidden  remove-scrollbar transition-all duration-300 ease-in-out px-6 py-6">
-          <ProfileInfo user={user} isLoading={isLoading} />
+          <OthersProfileInfo
+            folowUser={followUser}
+            unfollowUser={unfollowUser}
+            user={user}
+            isLoading={isLoading}
+          />
           <Grid
             user={user}
             isLoading={isLoading}

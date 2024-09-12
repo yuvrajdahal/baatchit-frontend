@@ -1,15 +1,22 @@
 "use client";
 import useAuthStore from "@/hooks/use-auth";
-import { Archive, Settings } from "lucide-react";
+import { Archive, Settings, Flag } from "lucide-react";
 import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
 import { User } from "@/data-access/types";
 
-interface ProfileInfoProps {
+interface OthersProfileInfoProps {
   user: User | null;
   isLoading: boolean;
+  folowUser: (userId: string) => Promise<boolean>;
+  unfollowUser: (userId: string) => Promise<boolean>;
 }
-const ProfileInfo: React.FC<ProfileInfoProps> = ({ isLoading, user }) => {
+const OthersProfileInfo: React.FC<OthersProfileInfoProps> = ({
+  isLoading,
+  user,
+  folowUser,
+  unfollowUser,
+}) => {
   const [isMounted, setMounted] = useState(true);
   useEffect(() => {
     setMounted(false);
@@ -32,15 +39,15 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ isLoading, user }) => {
                   <Button
                     size="lg"
                     disabled
-                    className="bg-gray-300 text-transparent"
-                  >
-                    Edit profile
-                  </Button>
+                    className="w-[100px] bg-gray-300 text-transparent"
+                  ></Button>
+                  <Button
+                    size="lg"
+                    disabled
+                    className="px-4 bg-gray-300"
+                  ></Button>
                   <Button size="lg" disabled className="px-4 bg-gray-300">
-                    <Archive size={20} className="text-gray-400" />
-                  </Button>
-                  <Button size="lg" disabled className="px-4 bg-gray-300">
-                    <Settings size={20} className="text-gray-400" />
+                    <Flag size={20} className="text-gray-400" />
                   </Button>
                 </div>
               </div>
@@ -85,12 +92,28 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ isLoading, user }) => {
                 <p className="text-muted-foreground">{user?.fullname}</p>
               </div>
               <div className="flex items-center gap-2">
-                <Button size={"lg"}>Edit profile</Button>
+                {user?.isFollowing ? (
+                  <Button
+                    size={"lg"}
+                    className="px-4"
+                    onClick={() => unfollowUser(user?._id)}
+                  >
+                    Unfollow
+                  </Button>
+                ) : (
+                  <Button
+                    size={"lg"}
+                    className="px-4"
+                    onClick={() => folowUser(user?._id!)}
+                  >
+                    Follow
+                  </Button>
+                )}
                 <Button size={"lg"} className="px-4">
-                  <Archive size={20} />
+                  Message
                 </Button>
-                <Button size={"lg"} className="px-4">
-                  <Settings size={20} />
+                <Button size={"lg"} variant={"destructive"} className="px-4">
+                  <Flag size={20} />
                 </Button>
               </div>
             </div>
@@ -133,4 +156,4 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ isLoading, user }) => {
   );
 };
 
-export default ProfileInfo;
+export default OthersProfileInfo;

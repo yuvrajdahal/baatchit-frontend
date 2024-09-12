@@ -16,7 +16,7 @@ export default function RootLayout({
   return (
     <section className="w-full h-full">
       <AuthProvider>
-        <Suspense> {children}</Suspense>
+         {children}
       </AuthProvider>
     </section>
   );
