@@ -130,7 +130,7 @@ const Suggestion: React.FC = () => {
       </div>
       {/* Footer */}
       <div className="text-gray-400 text-xs mt-10 space-y-2">
-        <p>About · Help · Press · API · Jobs · Privacy · Terms · Locations</p>
+        <p>About · Help · Privacy · Terms · Locations</p>
         <p>Language · Meta Verified</p>
       </div>
       <p className="mt-6 text-gray-400 text-xs">&copy; 2024 BAATCHIT</p>
