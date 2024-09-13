@@ -70,7 +70,7 @@ const Suggestion: React.FC = () => {
     return <SkeletonSuggestion />;
   console.log(suggestedUsers);
   return (
-    <div className="bg-white p-4 max-w-lg border-l pr-6">
+    <div className="bg-white p-4 min-w-[350px] border-l pr-6">
       {/* Profile section */}
       <div className="flex justify-between items-center">
         <div className="flex space-x-3 items-center">
@@ -131,7 +131,7 @@ const Suggestion: React.FC = () => {
       {/* Footer */}
       <div className="text-gray-400 text-xs mt-10 space-y-2">
         <p>About · Help · Privacy · Terms · Locations</p>
-        <p>Language · Meta Verified</p>
+        <p>Language · English · Nepali</p>
       </div>
       <p className="mt-6 text-gray-400 text-xs">&copy; 2024 BAATCHIT</p>
     </div>

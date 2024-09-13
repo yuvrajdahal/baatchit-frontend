@@ -77,8 +77,14 @@ class Api {
       throw error;
     }
   }
-
-  // Implement put, delete, and patch methods similarly
+  public async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
+    try {
+      const response = await this.axiosInstance.delete<T>(url, config);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default Api;

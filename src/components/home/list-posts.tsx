@@ -80,6 +80,7 @@ const ListPosts: React.FC = () => {
         likesCount={posts[index]?.likesCount!}
         avatarUrl={posts[index]?.user?.profilePicture ?? ""}
         username={posts[index]?.user.username ?? ""}
+        user={user}
       />
     </>
   );

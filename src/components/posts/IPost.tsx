@@ -1,10 +1,23 @@
 import React, { useOptimistic, useState } from "react";
-import { Heart, MessageCircle, MoreHorizontal } from "lucide-react";
+import {
+  Flag,
+  Heart,
+  MessageCircle,
+  MoreHorizontal,
+  Trash2,
+} from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import CommentModal from "./comments-modal";
 import Link from "next/link";
 import { Post, User } from "@/data-access/types";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Menubar,
+  MenubarContent,
+  MenubarMenu,
+  MenubarTrigger,
+} from "@radix-ui/react-menubar";
+import { MenubarItem } from "../ui/menubar";
 
 // interface InstagramPostProps {
 //   id: string;
@@ -58,12 +71,12 @@ const InstagramPost: React.FC<IPostProps> = ({
     }
   }
   return (
-    <div className=" border border-neutral-400 border-1  min-w-[350px] mx-auto p-4 rounded-lg">
+    <div className=" border border-neutral-400 border-1  min-w-[350px] 2xl:min-w-[400px] mx-auto p-4 rounded-lg">
       {/* Header */}
-      <div className="flex items-start justify-between mb-3">
+      <div className="flex items-start justify-between mb-3 2xl:mb-4">
         <div className="flex items-center">
           <img
-            className="w-10 h-10 rounded-full object-cover border"
+            className="w-10 h-10 2xl:h-12 2xl:w-12 rounded-full object-cover border"
             src={post?.user.profilePicture}
             alt={`${post?.user.username} avatar`}
           />
@@ -72,35 +85,61 @@ const InstagramPost: React.FC<IPostProps> = ({
               href={
                 disbaleLikeAndComment
                   ? ""
-                  : user?._id === post?._id
+                  : user?._id === post?.user._id
                   ? `/profile`
                   : `/profile/${post?._id}`
               }
             >
               <p
                 className={twMerge(
-                  "font-semibold text-sm",
+                  "font-semibold text-sm 2xl:text-lg",
                   disbaleLikeAndComment ? "cursor-default" : "cursor-pointer"
                 )}
               >
                 {post?.user.username}
               </p>
             </Link>
-            <p className="text-muted-foreground text-xs">
+            <p className="text-muted-foreground text-xs 2xl:text-sm">
               {new Date(post?.createdAt!).toDateString()}
             </p>
           </div>
         </div>
-        <MoreHorizontal
-          className={twMerge(
-            "text-muted-foreground ",
-            disbaleLikeAndComment ? " " : "cursor-pointer"
-          )}
-        />
+        <MoreButton
+          trigger={
+            <MoreHorizontal
+              className={twMerge(
+                "text-muted-foreground ",
+                disbaleLikeAndComment ? " " : "cursor-pointer"
+              )}
+            />
+          }
+        >
+          <div className="flex flex-col divide-y divide-gray-300">
+            {" "}
+            {user?._id === post?.user._id && (
+              <MenubarItem
+                className={twMerge(
+                  `relative w-32 flex rounded-none items-center justify-between py-2   cursor-pointer tranition duration-300 ease-in-out  space-x-4 `
+                )}
+              >
+                Delete
+                <Trash2 className="w-4 h-4 text-red-500" />
+              </MenubarItem>
+            )}
+            <MenubarItem
+              className={twMerge(
+                `relative w-32 flex rounded-none items-center justify-between py-2  cursor-pointer tranition duration-300 ease-in-out  space-x-4 `
+              )}
+            >
+              Report
+              <Flag className="w-4 h-4 text-red-500" />
+            </MenubarItem>
+          </div>
+        </MoreButton>
       </div>
 
       {/* Image */}
-      <div className="w-full mb-3">
+      <div className="w-full mb-3 2xl:mb-4">
         <div className="relative pt-[125%]">
           <img
             src={post?.image}
@@ -116,7 +155,7 @@ const InstagramPost: React.FC<IPostProps> = ({
         <div className="flex space-x-4">
           <Heart
             className={twMerge(
-              "h-5 w-5",
+              "h-5 w-5 2xl:h-6 2xl:w-6",
               post?.isLiked ? "text-red-500" : "",
               disbaleLikeAndComment ? " text-gray-400" : "cursor-pointer"
             )}
@@ -126,7 +165,7 @@ const InstagramPost: React.FC<IPostProps> = ({
           />{" "}
           <MessageCircle
             className={twMerge(
-              "h-5 w-5",
+              "h-5 w-5 2xl:h-6 2xl:w-6",
               disbaleLikeAndComment ? " text-gray-400" : "cursor-pointer"
             )}
             onClick={() => {
@@ -138,18 +177,18 @@ const InstagramPost: React.FC<IPostProps> = ({
         </div>
       </div>
 
-      <p className="font-semibold text-sm mt-1">
+      <p className="font-semibold text-sm mt-1 2xl:text-lg">
         {post?.likesCount.toString()} likes
       </p>
 
-      <p className="text-sm">
+      <p className="text-sm 2xl:text-lg 2xl:mb-2">
         <span className="font-semibold ">{post?.user?.username} </span>
         {post?.description}
       </p>
 
       <p
         className={twMerge(
-          "text-muted-foreground text-sm mt-1",
+          "text-muted-foreground text-sm mt-1 2xl:text-lg",
           disbaleLikeAndComment ? "" : "cursor-pointer"
         )}
         onClick={() => {
@@ -163,7 +202,7 @@ const InstagramPost: React.FC<IPostProps> = ({
 
       <div className="relative flex justify-center items-center mt-1">
         <input
-          className="text-sm text-muted-foreground bg-transparent border-none w-full p-0 outline-none"
+          className="text-sm 2xl:text-lg text-muted-foreground bg-transparent border-none w-full p-0 outline-none"
           placeholder="Add a comment... "
           onChange={(e) => setComment(e.target.value)}
           disabled={isCreatingComment || disbaleLikeAndComment}
@@ -182,3 +221,32 @@ const InstagramPost: React.FC<IPostProps> = ({
 };
 
 export default InstagramPost;
+interface MoreItemProps {
+  trigger: React.ReactNode;
+  onClick?: () => void;
+  children?: React.ReactNode;
+}
+const MoreButton: React.FC<MoreItemProps> = ({
+  trigger,
+  onClick,
+  children,
+}) => {
+  return (
+    <Menubar className="z-[1000]">
+      <MenubarMenu>
+        <MenubarTrigger
+          onClick={onClick}
+          className={
+            twMerge()
+            // `relative group flex items-center cursor-pointer w-full tranition bg-white duration-300 ease-in-out hover:bg-muted py-3 px-5 gap-4`
+          }
+        >
+          {trigger}
+        </MenubarTrigger>
+        <MenubarContent className={twMerge("w-full bg-white border rounded ")}>
+          {children}
+        </MenubarContent>
+      </MenubarMenu>
+    </Menubar>
+  );
+};

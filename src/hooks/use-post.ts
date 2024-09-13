@@ -5,6 +5,7 @@ import {
   likePostUsecase,
   createCommentUsecase,
   getCommentsUsecase,
+  deletePostUsecase,
 } from "@/use-cases/posts-usecase";
 import { Comment, Post } from "@/data-access/types";
 
@@ -15,6 +16,7 @@ interface PostState {
   isCreatingPost: boolean;
   isLoading: boolean;
   error: string | null;
+  isPostDeletingLoading: boolean;
   comments: Comment[];
   isCreatingComment: boolean;
   isCommentsLoading: boolean;
@@ -26,6 +28,7 @@ interface PostState {
   likePost: (id: string) => Promise<boolean>;
   getComments: (id: string) => Promise<void>;
   clearError: () => void;
+  deletePost: (id: string) => Promise<boolean>;
 }
 
 const usePostStore = create<PostState>((set, get) => ({
@@ -34,6 +37,7 @@ const usePostStore = create<PostState>((set, get) => ({
   isCreatingPost: false,
   isCommentsModalOpen: false,
   isCommentsLoading: false,
+  isPostDeletingLoading: false,
   error: null,
   setTogglePostModal: (togglePostModal: boolean) => set({ togglePostModal }),
   setCommentsModalOpen: (isCommentsModalOpen: boolean) =>
@@ -194,6 +198,31 @@ const usePostStore = create<PostState>((set, get) => ({
         error: "An unexpected error occurred while fetching comments",
         isCommentsLoading: false,
       });
+    }
+  },
+  deletePost: async (id: string) => {
+    set({ isPostDeletingLoading: true, error: null });
+    try {
+      const result = await deletePostUsecase(id);
+      if (result.success) {
+        set((state) => ({
+          posts: state.posts.filter((post) => post._id !== id),
+          isPostDeletingLoading: false,
+        }));
+        return true;
+      } else {
+        set({
+          error: result.error || "Failed to delete post",
+          isPostDeletingLoading: false,
+        });
+        return false;
+      }
+    } catch (error) {
+      set({
+        error: "An unexpected error occurred while deleting the post",
+        isPostDeletingLoading: false,
+      });
+      return false;
     }
   },
   clearError: () => set({ error: null }),

@@ -2,6 +2,7 @@ import { getUserById } from "@/data-access/auth";
 import {
   createComment,
   createPost,
+  deletePost,
   getComments,
   getPosts,
   likePost,
@@ -151,6 +152,22 @@ export async function getCommentsUsecase(id: string): Promise<{
         error: "An unexpected error occurred",
         comments: [],
       };
+    }
+  }
+}
+export async function deletePostUsecase(id: string): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  try {
+    const { success } = await deletePost(id, localStorage.getItem("token")!);
+    return { success };
+  } catch (error) {
+    if ((error as ApiError).status !== undefined) {
+      const apiError = error as ApiError;
+      return { success: false, error: apiError.data.error };
+    } else {
+      return { success: false, error: "An unexpected error occurred" };
     }
   }
 }

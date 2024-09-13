@@ -1,12 +1,13 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
-import { Post } from "@/data-access/types";
+import { Post, User } from "@/data-access/types";
 import React, { useState, useEffect, SetStateAction, Dispatch } from "react";
 import { AspectRatio } from "../ui/aspect-ratio";
 import usePostStore from "@/hooks/use-post";
 import { MoreHorizontal } from "lucide-react";
 import { Cross2Icon } from "@radix-ui/react-icons";
+import Link from "next/link";
 
 interface CommentModalProps {
   modal?: boolean;
@@ -19,6 +20,7 @@ interface CommentModalProps {
   likesCount: number;
   avatarUrl: string;
   username: string;
+  user?: User | null;
 }
 
 const CommentModal: React.FC<CommentModalProps> = ({
@@ -29,6 +31,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
   description,
   image,
   avatarUrl,
+  user,
   username,
   likesCount,
 }) => {
@@ -82,7 +85,16 @@ const CommentModal: React.FC<CommentModalProps> = ({
                         </div>
                         <div className="flex flex-col">
                           <div className="flex items-center gap-2">
-                            <p className="text-sm">{cmt.user.username}</p>
+                            <Link
+                              href={
+                                user?._id === cmt?.user._id
+                                  ? `/profile`
+                                  : `/profile/${cmt.user?._id}`
+                              }
+                            >
+                              {" "}
+                              <p className="text-sm">{cmt.user.username}</p>
+                            </Link>
                             <p className="text-xs text-muted-foreground">
                               {new Date().toLocaleDateString()}
                             </p>
