@@ -12,11 +12,23 @@ import { useToast } from "@/hooks/use-toast";
 import useAuthStore from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import Loading from "@/components/loading";
+import { Post } from "@/data-access/types";
+import { useEffect, useState } from "react";
+import usePostStore from "@/hooks/use-post";
+import PostSkeleton from "@/components/posts/skeletal-iposts";
 
 function Signup() {
   const { register, isRegisterLoading, error } = useAuthStore();
   const { toast } = useToast();
+  const [isMounted, setMounted] = useState(true);
+  const { posts, error: postError, fetchPosts, isLoading } = usePostStore();
+
   const router = useRouter();
+  useEffect(() => {
+    setMounted(false);
+    fetchPosts();
+  }, []);
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -100,7 +112,7 @@ function Signup() {
               className="w-full"
               disabled={isRegisterLoading}
             >
-              {isRegisterLoading ? <Loading /> : "Sinup"}
+              {isRegisterLoading ? <Loading /> : "Signup"}
             </Button>
           </div>
 
@@ -113,23 +125,17 @@ function Signup() {
         </form>
       </div>
       <div className="hidden bg-muted  snap-y snap-mandatory lg:flex flex-col  items-center overflow-hidden overflow-y-scroll remove-scrollbar transition-all duration-300 ease-in-out">
-        {[...Array(10)].map((_, i) => {
+        {(isLoading || isMounted) &&
+          [...Array(5)].map((_, i) => {
+            return <PostSkeleton key={i} />;
+          })}
+        {posts.map((post, i) => {
           return (
             <div
               className="snap-center flex-shrink-0 h-full flex flex-col justify-center items-center"
               key={i}
             >
-              <InstagramPost
-                id="60c7b8d8c9b4d1d6c0b0"
-                isLiked={false}
-                avatarUrl="https://placeholder.pics/svg/200"
-                postImageUrl="https://placeholder.pics/svg/1080"
-                username="mihirlifts"
-                timeAgo="10m"
-                likes={6763}
-                caption="6ft Aesthetics ✨"
-                commentCount={66}
-              />
+              <InstagramPost post={post} disbaleLikeAndComment />
             </div>
           );
         })}
@@ -137,4 +143,29 @@ function Signup() {
     </div>
   );
 }
+const post: Post = {
+  _id: "60c7b8d8c9b4d1d6c0b0",
+  createdAt: new Date(),
+  comments: [],
+  description: "6ft Aesthetics ✨",
+  image: "https://placeholder.pics/svg/1080",
+  imageid: "60c7b8d8c9b4d1d6c0b0",
+  isLiked: false,
+  likesCount: 0,
+  links: [],
+  user: {
+    _id: "60c7b8d8c9b4d1d6c0b0",
+    createdAt: new Date(),
+    email: "",
+    emailToken: "",
+    fullname: "mihirlifts",
+    followers: [],
+    following: [],
+    isFollowing: false,
+    isVerified: false,
+    password: "",
+    profilePicture: "https://placeholder.pics/svg/200",
+    username: "mihirlifts",
+  },
+};
 export default Signup;

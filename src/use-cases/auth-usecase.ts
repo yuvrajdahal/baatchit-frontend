@@ -5,6 +5,7 @@ import {
   getUserById,
   unfollowUser,
   followUser,
+  getSuggestedUsers,
 } from "@/data-access/auth";
 import { User } from "@/data-access/types";
 import { ApiError } from "@/lib/axios";
@@ -149,6 +150,29 @@ export async function unfollowUserUsecase(
     } else {
       return { success: false, error: "Failed to unfollow user" };
     }
+  } catch (error) {
+    if ((error as ApiError).status !== undefined) {
+      const apiError = error as ApiError;
+      return {
+        success: false,
+        error: apiError.data.error || "Failed to fetch user",
+      };
+    } else {
+      return {
+        success: false,
+        error: "An unexpected error occurred",
+      };
+    }
+  }
+}
+export async function getSuggestedUsersUsecase(token: string): Promise<{
+  success: boolean;
+  error?: string;
+  data?: User[];
+}> {
+  try {
+    const { success, data } = await getSuggestedUsers(token!);
+    return { success, data };
   } catch (error) {
     if ((error as ApiError).status !== undefined) {
       const apiError = error as ApiError;

@@ -112,3 +112,15 @@ export async function unfollowUser(
     )
   );
 }
+export async function getSuggestedUsers(
+  token: string
+): Promise<{ success: boolean; data: User[] }> {
+  return asyncHandler(() =>
+    api.get<{
+      success: boolean;
+      data: User[];
+    }>("/auth/suggested_friends", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+  );
+}

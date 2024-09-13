@@ -9,6 +9,7 @@ import {
   getUserByIdUsecase,
   unfollowUserUsecase,
   followUserUsecase,
+  getSuggestedUsersUsecase,
 } from "@/use-cases/auth-usecase";
 
 interface AuthState {
@@ -22,6 +23,9 @@ interface AuthState {
   isLoading: boolean;
   userById: User | null;
   error: string | null;
+  suggestedUsers: User[] | null;
+  isSuggestedUsersLoading: boolean;
+  getSuggestedUsers: () => Promise<boolean>;
   register: (
     email: string,
     fullname: string,
@@ -45,6 +49,8 @@ const useAuthStore = create<AuthState>()(
       isLoginLoading: false,
       isRegisterLoading: false,
       error: null,
+      suggestedUsers: null,
+      isSuggestedUsersLoading: false,
       register: async (
         email: string,
         fullname: string,
@@ -303,6 +309,40 @@ const useAuthStore = create<AuthState>()(
               : null,
             error: "An unexpected error occurred while unfollowing user",
           }));
+          return false;
+        }
+      },
+      getSuggestedUsers: async () => {
+        set({ isSuggestedUsersLoading: true, error: null });
+        try {
+          const token = localStorage.getItem("token");
+          if (token) {
+            const result = await getSuggestedUsersUsecase(token);
+            if (result.success && result.data) {
+              set({
+                suggestedUsers: result.data,
+                isSuggestedUsersLoading: false,
+              });
+              return true;
+            } else {
+              set({
+                error: result.error || "Failed to get suggested users",
+                isSuggestedUsersLoading: false,
+              });
+              return false;
+            }
+          } else {
+            set({
+              error: "Token not found after getting suggested users",
+              isSuggestedUsersLoading: false,
+            });
+            return false;
+          }
+        } catch (error) {
+          set({
+            error: "An unexpected error occurred while getting suggested users",
+            isSuggestedUsersLoading: false,
+          });
           return false;
         }
       },

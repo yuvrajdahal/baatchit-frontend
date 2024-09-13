@@ -59,21 +59,11 @@ const ListPosts: React.FC = () => {
             <InstagramPost
               createComment={createComment}
               isCreatingComment={isCreatingComment}
-              id={post._id}
-              isLiked={post.isLiked}
-              avatarUrl={post.user?.profilePicture ?? ""}
-              postImageUrl={post.image ?? ""}
-              likePost={likePost}
-              username={post.user.username ?? ""}
-              timeAgo="10m"
-              postUserId={post.user?._id}
+              post={post}
               handleComment={handleComment}
-              likes={post.likesCount}
-              caption={post.description ?? ""}
-              commentCount={post.comments?.length ?? 0}
-              setCommentsModalOpen={setCommentsModalOpen}
               user={user}
               isCommentsModalOpen={isCommentsModalOpen}
+              setCommentsModalOpen={setCommentsModalOpen}
             />
           </div>
         );

@@ -14,7 +14,6 @@ import Loading from "@/components/loading";
 import usePostStore from "@/hooks/use-post";
 import PostSkeleton from "@/components/posts/skeletal-iposts";
 
-
 function Login() {
   const { toast } = useToast();
   const { login, logout, error, isLoginLoading } = useAuthStore();
@@ -23,7 +22,7 @@ function Login() {
 
   const router = useRouter();
   const params = useSearchParams();
-  const param=params.get("logout");
+  const param = params.get("logout");
   useEffect(() => {
     setMounted(false);
     fetchPosts();
@@ -113,18 +112,7 @@ function Login() {
               className="snap-center flex-shrink-0 h-full flex flex-col justify-center items-center"
               key={i}
             >
-              <InstagramPost
-                id={post?._id}
-                isLiked={false}
-                disbaleLikeAndComment={true}
-                avatarUrl={post?.user?.profilePicture ?? ""}
-                postImageUrl={post?.image ?? ""}
-                username={post?.user?.username ?? ""}
-                timeAgo="10m"
-                likes={post?.likesCount}
-                caption={post?.description ?? ""}
-                commentCount={post?.comments?.length ?? 0}
-              />
+              <InstagramPost post={post} disbaleLikeAndComment />
             </div>
           );
         })}

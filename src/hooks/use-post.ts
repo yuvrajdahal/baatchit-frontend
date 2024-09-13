@@ -150,6 +150,14 @@ const usePostStore = create<PostState>((set, get) => ({
       const result = await createCommentUsecase(message, postId);
       if (result.success && result.comment) {
         set((state) => ({
+          posts: get()
+            .posts.filter((post) => post._id == postId)
+            .map((post) => {
+              return {
+                ...post,
+                comments: [...post.comments, result.comment],
+              };
+            }),
           comments: [...state.comments, result.comment],
           isCreatingComment: false,
         }));

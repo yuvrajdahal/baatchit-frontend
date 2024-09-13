@@ -93,14 +93,15 @@ const Sidebar: React.FC = () => {
       <div className="h-screen pb-5  bg-white w-64 flex flex-col items-start border-r">
         <h1 className="text-3xl font-bold mb-6 py-5 px-5">Baatchit</h1>
         <div className="flex flex-col  w-full">
-          <Link href="/">
-            <SidebarItem
-              Icon={Home}
-              text="Home"
-              active={pathName === "/"}
-              onClick={() => fetchPosts()}
-            />
-          </Link>
+          <SidebarItem
+            Icon={Home}
+            text="Home"
+            active={pathName === "/"}
+            onClick={() => {
+              fetchPosts();
+              router.push("/");
+            }}
+          />
           <SidebarItem Icon={Search} text="Search" />
           <SidebarItem Icon={Compass} text="Explore" />
           <SidebarItem Icon={MessageSquare} text="Messages" notification="3" />
@@ -110,13 +111,14 @@ const Sidebar: React.FC = () => {
             text="Create"
             onClick={() => setTogglePostModal(true)}
           />
-          <Link href="/profile">
-            <SidebarItem
-              Icon={User}
-              active={pathName === "/profile"}
-              text="Profile"
-            />
-          </Link>
+          <SidebarItem
+            Icon={User}
+            active={pathName === "/profile"}
+            text="Profile"
+            onClick={() => {
+              router.push("/profile");
+            }}
+          />
         </div>
         <div className="w-full mt-auto">
           <MenuSideBarItem Icon={Menu} text="More">

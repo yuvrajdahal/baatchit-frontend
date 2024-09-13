@@ -3,50 +3,60 @@ import { Heart, MessageCircle, MoreHorizontal } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import CommentModal from "./comments-modal";
 import Link from "next/link";
-import { User } from "@/data-access/types";
+import { Post, User } from "@/data-access/types";
+import { useToast } from "@/hooks/use-toast";
 
-interface InstagramPostProps {
-  id: string;
-  avatarUrl: string;
-  postImageUrl: string;
-  likePost?: (id: string) => Promise<boolean>;
-  username: string;
-  timeAgo: string;
-  likes: number;
-  disbaleLikeAndComment?: boolean;
-  caption: string;
-  commentCount: number;
-  isLiked: boolean;
-  createComment?: (message: string, postId: string) => Promise<boolean>;
-  isCreatingComment?: boolean;
-  postUserId?: string;
+// interface InstagramPostProps {
+//   id: string;
+//   avatarUrl: string;
+//   postImageUrl: string;
+//   likePost?: (id: string) => Promise<boolean>;
+//   username: string;
+//   timeAgo: string;
+//   likes: number;
+//   disbaleLikeAndComment?: boolean;
+//   caption: string;
+//   commentCount: number;
+//   isLiked: boolean;
+//   createComment?: (message: string, postId: string) => Promise<boolean>;
+//   isCreatingComment?: boolean;
+//   postUserId?: string;
+//   isCommentsModalOpen?: boolean;
+//   setCommentsModalOpen?: (open: boolean) => void;
+//   handleComment?: (id: string) => void;
+//   user?: User | null;
+// }
+interface IPostProps {
+  post: Post | null;
+  user?: User | null;
   isCommentsModalOpen?: boolean;
   setCommentsModalOpen?: (open: boolean) => void;
+  disbaleLikeAndComment?: boolean;
+  createComment?: (message: string, postId: string) => Promise<boolean>;
+  isCreatingComment?: boolean;
   handleComment?: (id: string) => void;
-  user?: User | null;
+  likePost?: (id: string) => Promise<boolean>;
 }
 
-const InstagramPost: React.FC<InstagramPostProps> = ({
-  id,
-  avatarUrl,
-  postImageUrl,
-  likePost,
-  username,
+const InstagramPost: React.FC<IPostProps> = ({
   handleComment,
   disbaleLikeAndComment = false,
-  timeAgo,
-  likes,
-  isLiked,
-  postUserId,
   setCommentsModalOpen,
-  caption,
   isCommentsModalOpen,
   isCreatingComment = false,
+  likePost,
   createComment,
-  commentCount,
+  post,
   user,
 }) => {
+  const { toast } = useToast();
   const [comment, setComment] = useState("");
+  async function submitComment(id: string) {
+    const success = await createComment!(comment, id);
+    if (success) {
+      setComment("");
+    }
+  }
   return (
     <div className=" border border-neutral-400 border-1  min-w-[350px] mx-auto p-4 rounded-lg">
       {/* Header */}
@@ -54,18 +64,31 @@ const InstagramPost: React.FC<InstagramPostProps> = ({
         <div className="flex items-center">
           <img
             className="w-10 h-10 rounded-full object-cover border"
-            src={avatarUrl}
-            alt={`${username} avatar`}
+            src={post?.user.profilePicture}
+            alt={`${post?.user.username} avatar`}
           />
           <div className=" ml-3">
             <Link
               href={
-                user?._id === postUserId ? `/profile` : `/profile/${postUserId}`
+                disbaleLikeAndComment
+                  ? ""
+                  : user?._id === post?._id
+                  ? `/profile`
+                  : `/profile/${post?._id}`
               }
             >
-              <p className="font-semibold text-sm cursor-pointer">{username}</p>
+              <p
+                className={twMerge(
+                  "font-semibold text-sm",
+                  disbaleLikeAndComment ? "cursor-default" : "cursor-pointer"
+                )}
+              >
+                {post?.user.username}
+              </p>
             </Link>
-            <p className="text-muted-foreground text-xs">{timeAgo}</p>
+            <p className="text-muted-foreground text-xs">
+              {new Date(post?.createdAt!).toDateString()}
+            </p>
           </div>
         </div>
         <MoreHorizontal
@@ -79,18 +102,9 @@ const InstagramPost: React.FC<InstagramPostProps> = ({
       {/* Image */}
       <div className="w-full mb-3">
         <div className="relative pt-[125%]">
-          {" "}
-          {/* Aspect ratio is now 4:5 (1080:1350) */}
           <img
-            src={postImageUrl} // Optimize for container width
-            // srcSet={`
-            //   ${getOptimizedImageUrl(postImageUrl, 300)} 300w,
-            //   ${getOptimizedImageUrl(postImageUrl, 600)} 600w,
-            //   ${getOptimizedImageUrl(postImageUrl, 900)} 900w,
-            //   ${postImageUrl} 1080w
-            // `}
-            // sizes="(max-width: 600px) 100vw, 600px"
-            alt={caption}
+            src={post?.image}
+            alt={post?.description}
             className="absolute top-0 left-0 w-full h-full object-cover rounded-lg"
             loading="lazy"
           />
@@ -103,11 +117,11 @@ const InstagramPost: React.FC<InstagramPostProps> = ({
           <Heart
             className={twMerge(
               "h-5 w-5",
-              isLiked ? "text-red-500" : "",
+              post?.isLiked ? "text-red-500" : "",
               disbaleLikeAndComment ? " text-gray-400" : "cursor-pointer"
             )}
             onClick={() => {
-              if (disbaleLikeAndComment === false) likePost!(id);
+              if (disbaleLikeAndComment === false) likePost!(post?._id!);
             }}
           />{" "}
           <MessageCircle
@@ -116,18 +130,21 @@ const InstagramPost: React.FC<InstagramPostProps> = ({
               disbaleLikeAndComment ? " text-gray-400" : "cursor-pointer"
             )}
             onClick={() => {
+              if (disbaleLikeAndComment) return;
               setCommentsModalOpen!(true);
-              handleComment!(id);
+              handleComment!(post?._id!);
             }}
           />
         </div>
       </div>
 
-      <p className="font-semibold text-sm mt-1">{likes.toString()} likes</p>
+      <p className="font-semibold text-sm mt-1">
+        {post?.likesCount.toString()} likes
+      </p>
 
       <p className="text-sm">
-        <span className="font-semibold ">{username} </span>
-        {caption}
+        <span className="font-semibold ">{post?.user?.username} </span>
+        {post?.description}
       </p>
 
       <p
@@ -136,23 +153,24 @@ const InstagramPost: React.FC<InstagramPostProps> = ({
           disbaleLikeAndComment ? "" : "cursor-pointer"
         )}
         onClick={() => {
+          if (disbaleLikeAndComment) return;
           setCommentsModalOpen!(true);
-          handleComment!(id);
+          handleComment!(post?._id!);
         }}
       >
-        View all {commentCount} comments
+        View all {post?.comments.length} comments
       </p>
 
       <div className="relative flex justify-center items-center mt-1">
         <input
-          className="text-sm text-muted-foreground border-none w-full p-0 outline-none"
+          className="text-sm text-muted-foreground bg-transparent border-none w-full p-0 outline-none"
           placeholder="Add a comment... "
           onChange={(e) => setComment(e.target.value)}
           disabled={isCreatingComment || disbaleLikeAndComment}
         />
         {comment.length > 0 && (
           <div
-            onClick={() => createComment!(comment, id)}
+            onClick={() => submitComment(post?._id!)}
             className="cursor-pointer absolute right-2 font-semibold text-sm"
           >
             {isCreatingComment ? "..." : "Post"}

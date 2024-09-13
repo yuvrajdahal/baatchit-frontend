@@ -53,12 +53,22 @@ const users: SUser[] = [
 ];
 
 const Suggestion: React.FC = () => {
-  const { user, logout, isLoading } = useAuthStore();
+  const {
+    user,
+    logout,
+    isLoading,
+    isSuggestedUsersLoading,
+    getSuggestedUsers,
+    suggestedUsers,
+  } = useAuthStore();
   const [isMounted, setMounted] = useState(true);
   useEffect(() => {
     setMounted(false);
+    getSuggestedUsers();
   }, []);
-  if (isLoading || isMounted) return <SkeletonSuggestion />;
+  if (isLoading || isMounted || isSuggestedUsersLoading)
+    return <SkeletonSuggestion />;
+  console.log(suggestedUsers);
   return (
     <div className="bg-white p-4 max-w-lg border-l pr-6">
       {/* Profile section */}
