@@ -4,8 +4,9 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
-  title: "Profile Page",
-  description: "User Profile Page",
+  title: "Baatchit: Profile",
+  description:
+    "Website where you can share your ideas and connect with like-minded people.",
 };
 
 export default function RootLayout({

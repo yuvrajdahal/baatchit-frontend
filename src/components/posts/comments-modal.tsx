@@ -39,6 +39,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
   open = false,
   onChange,
   id,
+  setOpenCommentsModal,
   description,
   image,
   deletePost,
@@ -90,7 +91,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
                   trigger={
                     <MoreHorizontal
                       className={twMerge(
-                        "text-muted-foreground h-5 w-5 bg-transparent border-none "
+                        "text-muted-foreground h-5 w-5 bg-transparent border-none cursor-pointer"
                       )}
                     />
                   }
@@ -136,25 +137,6 @@ const CommentModal: React.FC<CommentModalProps> = ({
                     </MenubarItem>
                   </div>
                 </MoreButton>
-
-                <MoreButton
-                  trigger={
-                    <MoreHorizontal
-                      className={twMerge(
-                        "text-muted-foreground h-5 w-5 bg-transparent border-none "
-                      )}
-                    />
-                  }
-                >
-                  {" "}
-                  <MenubarItem
-                    className={twMerge(
-                      `relative w-32 flex rounded-none z-[100000] items-center justify-between py-2  cursor-pointer tranition duration-300 ease-in-out  space-x-4 `
-                    )}
-                  >
-                    Report
-                  </MenubarItem>
-                </MoreButton>
               </div>
             </div>
             <hr className="mt-2" />
@@ -174,6 +156,9 @@ const CommentModal: React.FC<CommentModalProps> = ({
                         <div className="flex flex-col">
                           <div className="flex items-center gap-2">
                             <Link
+                              onClick={() => {
+                                setOpenCommentsModal!(false);
+                              }}
                               href={
                                 user?._id === cmt?.user._id
                                   ? `/profile`
@@ -233,18 +218,17 @@ const MoreButton: React.FC<MoreItemProps> = ({
   children,
 }) => {
   return (
-    <Menubar className="z-[1000]">
+    <Menubar>
       <MenubarMenu>
         <MenubarTrigger
           onClick={onClick}
-          className={
-            twMerge()
-            // `relative group flex items-center cursor-pointer w-full tranition bg-white duration-300 ease-in-out hover:bg-muted py-3 px-5 gap-4`
-          }
+          className={twMerge("border-none bg-transparent")}
         >
           {trigger}
         </MenubarTrigger>
-        <MenubarContent className={twMerge("w-full bg-white border rounded ")}>
+        <MenubarContent
+          className={twMerge(" bg-white border rounded min-w-32 z-[3000]")}
+        >
           {children}
         </MenubarContent>
       </MenubarMenu>

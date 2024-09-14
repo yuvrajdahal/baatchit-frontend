@@ -104,28 +104,43 @@ const Suggestion: React.FC = () => {
           </a>
         </div>
         <div className="mt-4 space-y-3">
-          {users.map((user, index) => (
-            <div key={index} className="flex items-center justify-between">
-              <div className="flex space-x-3 items-center">
-                <img
-                  src={user?.avatar}
-                  alt={user?.username}
-                  width={40}
-                  height={40}
-                  className="rounded-full"
-                />
-                <div>
-                  <p className="font-semibold text-sm">{user?.username}</p>
-                  <p className="text-gray-500 text-xs">
-                    {user?.suggested ? "Suggested for you" : user?.mutuals}
-                  </p>
+          {suggestedUsers?.map((suser, i) => {
+            return (
+              <div key={i} className="flex items-center justify-between">
+                <div className="flex space-x-3 items-center">
+                  <img
+                    src={suser?.profilePicture}
+                    alt={suser?.username}
+                    width={40}
+                    height={40}
+                    className="rounded-full"
+                  />
+                  <div>
+                    <Link
+                      href={
+                        user?._id === suser?._id
+                          ? `/profile`
+                          : `/profile/${suser?._id}`
+                      }
+                    >
+                      {" "}
+                      <p className="text-sm">{suser?.username}</p>
+                    </Link>
+                    <p className="text-gray-500 text-xs">
+                      {/* {suser?.suggested ? "Suggested for you" : user?.mutuals} */}
+                      Suggested for you
+                    </p>
+                  </div>
+                </div>
+                <div
+                  // onClick={() => unfollowUser(user?._id)}
+                  className="text-blue-500 text-xs font-semibold cursor-pointer"
+                >
+                  Follow
                 </div>
               </div>
-              <a href="#" className="text-blue-500 text-xs font-semibold">
-                Follow
-              </a>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
       {/* Footer */}

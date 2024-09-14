@@ -171,7 +171,7 @@ const InstagramPost: React.FC<IPostProps> = ({
           <img
             src={post?.image}
             alt={post?.description}
-            className="absolute top-0 left-0 w-full h-full object-cover rounded-lg"
+            className="absolute top-0 border left-0 w-full h-full object-cover rounded-lg"
             loading="lazy"
           />
         </div>
