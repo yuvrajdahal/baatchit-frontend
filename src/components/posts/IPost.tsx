@@ -93,7 +93,7 @@ const InstagramPost: React.FC<IPostProps> = ({
                   ? ""
                   : user?._id === post?.user._id
                   ? `/profile`
-                  : `/profile/${post?._id}`
+                  : `/profile/${post?.user._id}`
               }
             >
               <p
