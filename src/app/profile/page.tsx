@@ -13,9 +13,9 @@ export default function ProfilePage() {
   const { refreshUser, user, isLoading } = useAuthStore();
   const { setCommentsModalOpen, isCommentsModalOpen, getComments } =
     usePostStore();
-  useEffect(() => {
-    refreshUser();
-  }, []);
+  // useEffect(() => {
+  //   refreshUser();
+  // }, []);
   return (
     <div className="bg-dark h-screen w-screen text-light ">
       <div className="h-full w-full flex justify-between">
