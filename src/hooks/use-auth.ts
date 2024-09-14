@@ -37,6 +37,7 @@ interface AuthState {
   logout: () => void;
   refreshUser: () => Promise<void>;
   getUserById: (id: string) => Promise<void>;
+  followSuggestedUser: (id: string) => Promise<boolean>;
 }
 
 const useAuthStore = create<AuthState>()(
@@ -275,20 +276,11 @@ const useAuthStore = create<AuthState>()(
               : null,
           }));
           const token = localStorage.getItem("token");
-          if (token) {
+          if (token!) {
             const result = await unfollowUserUsecase(userId, token);
             if (result.success && result.data) {
               return true;
             } else {
-              set((state) => ({
-                userById: state.userById
-                  ? {
-                      ...state.userById,
-                      isFollowing: !get().userById?.isFollowing,
-                      followersCount: get().userById?.followersCount! + 1,
-                    }
-                  : null,
-              }));
               set({
                 error: result.error || "Failed to unfollow user",
               });
@@ -322,7 +314,7 @@ const useAuthStore = create<AuthState>()(
             const result = await getSuggestedUsersUsecase(token);
             if (result.success && result.data) {
               set({
-                suggestedUsers: result.data,
+                suggestedUsers: [...result.data],
                 isSuggestedUsersLoading: false,
               });
               return true;
@@ -345,6 +337,36 @@ const useAuthStore = create<AuthState>()(
             error: "An unexpected error occurred while getting suggested users",
             isSuggestedUsersLoading: false,
           });
+          return false;
+        }
+      },
+      followSuggestedUser: async (userId: string) => {
+        set({ error: null });
+        try {
+          const token = localStorage.getItem("token");
+          if (token) {
+            const result = await followUserUsecase(userId, token);
+            if (result.success && result.data) {
+              set((state) => ({
+                suggestedUsers: state.suggestedUsers?.filter(
+                  (user) => user._id !== userId
+                ),
+              }));
+
+              return true;
+            } else {
+              set({
+                error: result.error || "Failed to follow user",
+              });
+              return false;
+            }
+          } else {
+            set({
+              error: "Token not found after following user",
+            });
+            return false;
+          }
+        } catch (error) {
           return false;
         }
       },

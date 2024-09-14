@@ -27,6 +27,7 @@ interface CommentModalProps {
   id: string;
   description: string;
   image: string;
+  post?: Post | null;
   likesCount: number;
   avatarUrl: string;
   username: string;
@@ -45,6 +46,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
   deletePost,
   avatarUrl,
   user,
+  post,
   username,
   likesCount,
 }) => {
@@ -97,36 +99,37 @@ const CommentModal: React.FC<CommentModalProps> = ({
                   }
                 >
                   <div className="flex flex-col divide-y divide-gray-300">
-                    {" "}
-                    <MenubarItem
-                      onClick={async (e) => {
-                        e.preventDefault();
-                        setDeleteLoading(true);
-                        const success = await deletePost!(id);
-                        setDeleteLoading(false);
+                    {user?._id === post?.user?._id && (
+                      <MenubarItem
+                        onClick={async (e) => {
+                          e.preventDefault();
+                          setDeleteLoading(true);
+                          const success = await deletePost!(id);
+                          setDeleteLoading(false);
 
-                        if (success) {
-                          toast({
-                            title: "Post deleted",
-                            description: "Post deleted successfully",
-                          });
-                        }
-                        // MenubarTrigger.call(this, {});
-                      }}
-                      className={twMerge(
-                        `relative flex rounded-none items-center justify-between py-2  tranition duration-300 ease-in-out  space-x-4 `,
-                        deleteLoading
-                          ? "cursor-wait text-muted-foreground"
-                          : "cursor-pointer"
-                      )}
-                    >
-                      Delete
-                      {deleteLoading ? (
-                        <Loading className="w-4 h-4 text-red-500" />
-                      ) : (
-                        <Trash2 className="w-4 h-4 text-red-500" />
-                      )}
-                    </MenubarItem>
+                          if (success) {
+                            toast({
+                              title: "Post deleted",
+                              description: "Post deleted successfully",
+                            });
+                          }
+                          // MenubarTrigger.call(this, {});
+                        }}
+                        className={twMerge(
+                          `relative flex rounded-none items-center justify-between py-2  tranition duration-300 ease-in-out  space-x-4 `,
+                          deleteLoading
+                            ? "cursor-wait text-muted-foreground"
+                            : "cursor-pointer"
+                        )}
+                      >
+                        Delete
+                        {deleteLoading ? (
+                          <Loading className="w-4 h-4 text-red-500" />
+                        ) : (
+                          <Trash2 className="w-4 h-4 text-red-500" />
+                        )}
+                      </MenubarItem>
+                    )}
                     <MenubarItem
                       className={twMerge(
                         `relative  flex rounded-none items-center justify-between py-2  cursor-pointer tranition duration-300 ease-in-out  space-x-4 `

@@ -80,6 +80,7 @@ const ListPosts: React.FC = () => {
         onChange={() => setCommentsModalOpen!(!isCommentsModalOpen)}
         setOpenCommentsModal={setCommentsModalOpen}
         id={posts[index]?._id}
+        post={posts[index]}
         description={posts[index]?.description!}
         image={posts[index]?.image!}
         likesCount={posts[index]?.likesCount!}

@@ -263,7 +263,7 @@ const MoreButton: React.FC<MoreItemProps> = ({
       <MenubarMenu>
         <MenubarTrigger
           onClick={onClick}
-          className={twMerge("border-none bg-transparent")}
+          className={twMerge("border-none bg-transparent px-1")}
         >
           {trigger}
         </MenubarTrigger>
