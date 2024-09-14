@@ -4,7 +4,13 @@ import DataProvider from "./data-provider";
 import Loading from "@/components/loading";
 import useAuthStore from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
-
+import { Grand_Hotel } from "next/font/google";
+import { twMerge } from "tailwind-merge";
+const grandHotel = Grand_Hotel({
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
+});
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
@@ -24,7 +30,14 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   if (!isMounted) {
     return (
       <div className="h-screen w-screen flex justify-center items-center">
-        <Loading className="h-6 w-6" />
+        <p
+          className={twMerge(
+            "text-gray-500 animate-pulse text-4xl ",
+            grandHotel.className
+          )}
+        >
+          Baatchit
+        </p>
       </div>
     );
   }

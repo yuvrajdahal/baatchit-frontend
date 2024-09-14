@@ -22,7 +22,13 @@ import { twMerge } from "tailwind-merge";
 import useAuthStore from "@/hooks/use-auth";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import { useState } from "react";
+import { Grand_Hotel } from "next/font/google";
+
+const grandHotel = Grand_Hotel({
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
+});
 interface SidebarItemProps {
   Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   text: string;
@@ -91,7 +97,9 @@ const Sidebar: React.FC = () => {
   return (
     <>
       <div className="h-screen pb-5  bg-white w-64 flex flex-col items-start border-r">
-        <h1 className="text-3xl font-bold mb-6 py-5 px-5">Baatchit</h1>
+        <h1 className={twMerge("text-4xl font-bold mb-6 py-5 px-5",grandHotel.className)}>
+          Baatchit
+        </h1>
         <div className="flex flex-col  w-full">
           <SidebarItem
             Icon={Home}
