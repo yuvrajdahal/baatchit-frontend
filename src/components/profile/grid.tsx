@@ -12,12 +12,14 @@ interface GridProps {
   setCommentsModalOpen: (open: boolean) => void;
   isCommentsModalOpen: boolean;
   getComments: (id: string) => void;
+  deletePost?: (id: string) => Promise<boolean>;
 }
 const Grid: React.FC<GridProps> = ({
   user,
   isLoading,
   setCommentsModalOpen,
   isCommentsModalOpen,
+  deletePost,
   getComments,
 }) => {
   const [isMounted, setMounted] = useState(true);
@@ -67,6 +69,7 @@ const Grid: React.FC<GridProps> = ({
         likesCount={user?.posts?.[index]?.likesCount!}
         avatarUrl={user?.profilePicture ?? ""}
         username={user?.fullname ?? ""}
+        deletePost={deletePost}
       />
     </div>
   );

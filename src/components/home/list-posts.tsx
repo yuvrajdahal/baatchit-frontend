@@ -23,6 +23,8 @@ const ListPosts: React.FC = () => {
     isCommentsModalOpen,
     getComments,
     setCommentsModalOpen,
+    deletePost,
+    isPostDeletingLoading,
   } = usePostStore();
   const { user } = useAuthStore();
   useEffect(() => {
@@ -61,9 +63,12 @@ const ListPosts: React.FC = () => {
               isCreatingComment={isCreatingComment}
               post={post}
               handleComment={handleComment}
+              likePost={likePost}
               user={user}
               isCommentsModalOpen={isCommentsModalOpen}
               setCommentsModalOpen={setCommentsModalOpen}
+              isPostDeletingLoading={isPostDeletingLoading}
+              deletePost={deletePost}
             />
           </div>
         );
@@ -81,6 +86,7 @@ const ListPosts: React.FC = () => {
         avatarUrl={posts[index]?.user?.profilePicture ?? ""}
         username={posts[index]?.user.username ?? ""}
         user={user}
+        deletePost={deletePost}
       />
     </>
   );

@@ -5,9 +5,19 @@ import { Post, User } from "@/data-access/types";
 import React, { useState, useEffect, SetStateAction, Dispatch } from "react";
 import { AspectRatio } from "../ui/aspect-ratio";
 import usePostStore from "@/hooks/use-post";
-import { MoreHorizontal } from "lucide-react";
+import { Flag, MoreHorizontal, Trash2 } from "lucide-react";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import Link from "next/link";
+import {
+  Menubar,
+  MenubarItem,
+  MenubarContent,
+  MenubarMenu,
+  MenubarTrigger,
+} from "@/components/ui/menubar";
+import { twMerge } from "tailwind-merge";
+import Loading from "../loading";
+import { useToast } from "@/hooks/use-toast";
 
 interface CommentModalProps {
   modal?: boolean;
@@ -20,6 +30,7 @@ interface CommentModalProps {
   likesCount: number;
   avatarUrl: string;
   username: string;
+  deletePost?: (id: string) => Promise<boolean>;
   user?: User | null;
 }
 
@@ -30,12 +41,16 @@ const CommentModal: React.FC<CommentModalProps> = ({
   id,
   description,
   image,
+  deletePost,
   avatarUrl,
   user,
   username,
   likesCount,
 }) => {
   const { isCommentsLoading, comments } = usePostStore();
+  const { toast } = useToast();
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
   return (
     <>
       {/* <div className="absolute top-6 right-6 z-[10000] ">
@@ -43,7 +58,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
       </div> */}
       <Dialog modal={modal} open={open} onOpenChange={onChange}>
         <DialogContent
-          className="sm:max-w-4xl  flex  gap-0 p-0 outline-none"
+          className="sm:max-w-4xl flex z-[1000] gap-0 p-0 outline-none"
           showCancelIcon="hide"
         >
           <div className="w-1/2  overflow-hiden aspect-square">
@@ -57,16 +72,89 @@ const CommentModal: React.FC<CommentModalProps> = ({
             </div>{" "}
           </div>
           <div className="w-1/2  aspect-square">
-            <div className="flex space-x-3 items-center px-2 pt-2">
-              <img
-                className="w-12 h-12 rounded-full object-cover border"
-                src={avatarUrl}
-                alt={`${username} avatar`}
-              />
+            <div className="flex justify-between items-center  px-2">
+              <div className="flex space-x-3 items-center  pt-2">
+                <img
+                  className="w-12 h-12 rounded-full object-cover border"
+                  src={avatarUrl}
+                  alt={`${username} avatar`}
+                />
+                <div>
+                  <p className="font-semibold text-sm">
+                    {username ?? "user06934"}
+                  </p>
+                </div>
+              </div>
               <div>
-                <p className="font-semibold text-sm">
-                  {username ?? "user06934"}
-                </p>
+                <MoreButton
+                  trigger={
+                    <MoreHorizontal
+                      className={twMerge(
+                        "text-muted-foreground h-5 w-5 bg-transparent border-none "
+                      )}
+                    />
+                  }
+                >
+                  <div className="flex flex-col divide-y divide-gray-300">
+                    {" "}
+                    <MenubarItem
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        setDeleteLoading(true);
+                        const success = await deletePost!(id);
+                        setDeleteLoading(false);
+
+                        if (success) {
+                          toast({
+                            title: "Post deleted",
+                            description: "Post deleted successfully",
+                          });
+                        }
+                        // MenubarTrigger.call(this, {});
+                      }}
+                      className={twMerge(
+                        `relative flex rounded-none items-center justify-between py-2  tranition duration-300 ease-in-out  space-x-4 `,
+                        deleteLoading
+                          ? "cursor-wait text-muted-foreground"
+                          : "cursor-pointer"
+                      )}
+                    >
+                      Delete
+                      {deleteLoading ? (
+                        <Loading className="w-4 h-4 text-red-500" />
+                      ) : (
+                        <Trash2 className="w-4 h-4 text-red-500" />
+                      )}
+                    </MenubarItem>
+                    <MenubarItem
+                      className={twMerge(
+                        `relative  flex rounded-none items-center justify-between py-2  cursor-pointer tranition duration-300 ease-in-out  space-x-4 `
+                      )}
+                    >
+                      Report
+                      <Flag className="w-4 h-4 text-red-500" />
+                    </MenubarItem>
+                  </div>
+                </MoreButton>
+
+                <MoreButton
+                  trigger={
+                    <MoreHorizontal
+                      className={twMerge(
+                        "text-muted-foreground h-5 w-5 bg-transparent border-none "
+                      )}
+                    />
+                  }
+                >
+                  {" "}
+                  <MenubarItem
+                    className={twMerge(
+                      `relative w-32 flex rounded-none z-[100000] items-center justify-between py-2  cursor-pointer tranition duration-300 ease-in-out  space-x-4 `
+                    )}
+                  >
+                    Report
+                  </MenubarItem>
+                </MoreButton>
               </div>
             </div>
             <hr className="mt-2" />
@@ -128,62 +216,38 @@ const CommentModal: React.FC<CommentModalProps> = ({
                 ))}
             </div>
           </div>
-          {/* <div className="w-1/2 aspect-square ">
-          <img
-            className="h-full w-full bg-contain  rounded-lg "
-            style={{ backgroundImage: `url(${image})` }}
-          />
-        </div> */}
-          {/* <div className="w-1/2 aspect-square p-2">
-          <div className="flex space-x-3 items-center ">
-            <img
-              className="w-10 h-10 rounded-full object-cover border"
-              src={avatarUrl}
-              alt={`${username} avatar`}
-            />
-            <div>
-              <p className="font-semibold text-sm">{username ?? "user06934"}</p>
-            </div>
-          </div>
-          <hr className="mt-2" />
-          <div className="flex flex-col overflow-hidden  mt-2 gap-2 ">
-            {!isCommentsLoading &&
-              comments.map((cmt, i) => {
-                return (
-                  <div key={i} className="flex items-center justify-between">
-                    <div className="flex items center gap-2">
-                      <div className="flex">
-                        <img
-                          className="w-10 h-10 rounded-full object-cover border"
-                          src={cmt.user.profilePicture}
-                          alt={`${username} avatar`}
-                        />
-                      </div>
-                      <div className="flex flex-col">
-                        <p className="text-sm">{cmt.message}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {new Date().toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                    <MoreHorizontal className="text-muted-foreground " />
-                  </div>
-                );
-              })}
-            {isCommentsLoading && (
-              <div className="flex space-x-3 items-center mt-2">
-                <div className="h-10 w-10 rounded-full border bg-gray-300 animate-pulse" />
-                <div>
-                  <p className="animate-pulse bg-gray-300 font-semibold text-sm w-[100px] h-2"></p>
-                  <p className="animate-pulse bg-gray-300 text-sm mt-1 w-[50px] h-2"></p>
-                </div>
-              </div>
-            )}
-          </div>
-        </div> */}
         </DialogContent>
       </Dialog>
     </>
   );
 };
 export default CommentModal;
+interface MoreItemProps {
+  trigger: React.ReactNode;
+  onClick?: () => void;
+  children?: React.ReactNode;
+}
+const MoreButton: React.FC<MoreItemProps> = ({
+  trigger,
+  onClick,
+  children,
+}) => {
+  return (
+    <Menubar className="z-[1000]">
+      <MenubarMenu>
+        <MenubarTrigger
+          onClick={onClick}
+          className={
+            twMerge()
+            // `relative group flex items-center cursor-pointer w-full tranition bg-white duration-300 ease-in-out hover:bg-muted py-3 px-5 gap-4`
+          }
+        >
+          {trigger}
+        </MenubarTrigger>
+        <MenubarContent className={twMerge("w-full bg-white border rounded ")}>
+          {children}
+        </MenubarContent>
+      </MenubarMenu>
+    </Menubar>
+  );
+};

@@ -11,12 +11,13 @@ import CommentModal from "./comments-modal";
 import Link from "next/link";
 import { Post, User } from "@/data-access/types";
 import { useToast } from "@/hooks/use-toast";
+import Loading from "@/components/loading";
 import {
   Menubar,
   MenubarContent,
   MenubarMenu,
   MenubarTrigger,
-} from "@radix-ui/react-menubar";
+} from "@/components/ui/menubar";
 import { MenubarItem } from "../ui/menubar";
 
 // interface InstagramPostProps {
@@ -49,6 +50,8 @@ interface IPostProps {
   isCreatingComment?: boolean;
   handleComment?: (id: string) => void;
   likePost?: (id: string) => Promise<boolean>;
+  isPostDeletingLoading?: boolean;
+  deletePost?: (id: string) => Promise<boolean>;
 }
 
 const InstagramPost: React.FC<IPostProps> = ({
@@ -61,6 +64,8 @@ const InstagramPost: React.FC<IPostProps> = ({
   createComment,
   post,
   user,
+  isPostDeletingLoading,
+  deletePost,
 }) => {
   const { toast } = useToast();
   const [comment, setComment] = useState("");
@@ -70,6 +75,7 @@ const InstagramPost: React.FC<IPostProps> = ({
       setComment("");
     }
   }
+  const [deleteLoading, setDeleteLoading] = useState(false);
   return (
     <div className=" border border-neutral-400 border-1  min-w-[350px] 2xl:min-w-[400px] mx-auto p-4 rounded-lg">
       {/* Header */}
@@ -118,17 +124,38 @@ const InstagramPost: React.FC<IPostProps> = ({
             {" "}
             {user?._id === post?.user._id && (
               <MenubarItem
+                onClick={async (e) => {
+                  e.preventDefault();
+                  setDeleteLoading(true);
+                  const success = await deletePost!(post?._id!);
+                  setDeleteLoading(false);
+
+                  if (success) {
+                    toast({
+                      title: "Post deleted",
+                      description: "Post deleted successfully",
+                    });
+                  }
+                  // MenubarTrigger.call(this, {});
+                }}
                 className={twMerge(
-                  `relative w-32 flex rounded-none items-center justify-between py-2   cursor-pointer tranition duration-300 ease-in-out  space-x-4 `
+                  `relative flex rounded-none items-center justify-between py-2  tranition duration-300 ease-in-out  space-x-4 `,
+                  deleteLoading
+                    ? "cursor-wait text-muted-foreground"
+                    : "cursor-pointer"
                 )}
               >
                 Delete
-                <Trash2 className="w-4 h-4 text-red-500" />
+                {deleteLoading ? (
+                  <Loading className="w-4 h-4 text-red-500" />
+                ) : (
+                  <Trash2 className="w-4 h-4 text-red-500" />
+                )}
               </MenubarItem>
             )}
             <MenubarItem
               className={twMerge(
-                `relative w-32 flex rounded-none items-center justify-between py-2  cursor-pointer tranition duration-300 ease-in-out  space-x-4 `
+                `relative  flex rounded-none items-center justify-between py-2  cursor-pointer tranition duration-300 ease-in-out  space-x-4 `
               )}
             >
               Report
@@ -236,14 +263,13 @@ const MoreButton: React.FC<MoreItemProps> = ({
       <MenubarMenu>
         <MenubarTrigger
           onClick={onClick}
-          className={
-            twMerge()
-            // `relative group flex items-center cursor-pointer w-full tranition bg-white duration-300 ease-in-out hover:bg-muted py-3 px-5 gap-4`
-          }
+          className={twMerge("border-none bg-transparent")}
         >
           {trigger}
         </MenubarTrigger>
-        <MenubarContent className={twMerge("w-full bg-white border rounded ")}>
+        <MenubarContent
+          className={twMerge(" bg-white border rounded min-w-32")}
+        >
           {children}
         </MenubarContent>
       </MenubarMenu>

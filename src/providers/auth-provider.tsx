@@ -6,6 +6,7 @@ import useAuthStore from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { Grand_Hotel } from "next/font/google";
 import { twMerge } from "tailwind-merge";
+import LogoLoading from "@/components/logo-loading";
 const grandHotel = Grand_Hotel({
   subsets: ["latin"],
   weight: ["400"],
@@ -30,14 +31,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   if (!isMounted) {
     return (
       <div className="h-screen w-screen flex justify-center items-center">
-        <p
-          className={twMerge(
-            "text-gray-500 animate-pulse text-4xl ",
-            grandHotel.className
-          )}
-        >
-          Baatchit
-        </p>
+        <LogoLoading />
       </div>
     );
   }

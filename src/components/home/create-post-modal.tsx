@@ -11,8 +11,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import useAuthStore from "@/hooks/use-auth";
+import usePostStore from "@/hooks/use-post";
 import { useToast } from "@/hooks/use-toast";
-import { createPostUsecase } from "@/use-cases/posts-usecase";
+import Loading from "@/components/loading";
 import React, { useState, useEffect, SetStateAction, Dispatch } from "react";
 
 interface CreatePostModalProps {
@@ -34,7 +35,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
   const [description, setDescription] = useState("");
   const { user } = useAuthStore();
   const { toast } = useToast();
-
+  const { createPost, error, isCreatingPost } = usePostStore();
   function onfileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0] ?? null;
     setFile(file);
@@ -55,7 +56,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
   async function handleImageUpload() {
     const image = new FormData();
     image.append("image", file!);
-    const { success, error } = await createPostUsecase(description, image);
+    const success = await createPost(description, image);
     if (success) {
       toast({
         title: "Success",
@@ -99,11 +100,15 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
           )}
           {image !== null && !toggleForm && (
             <div className="flex flex-col ">
-               <DialogDescription className="text-center text-xs pb-2">
-            The image will be croped to 4:5 ratio
-          </DialogDescription>
+              <DialogDescription className="text-center text-xs pb-2">
+                The image will be croped to 4:5 ratio
+              </DialogDescription>
               <div className="aspect-square overflow-hidden rounded-lg">
-                <img className="h-full w-full object-contain" src={image} alt="Post Image" />
+                <img
+                  className="h-full w-full object-contain"
+                  src={image}
+                  alt="Post Image"
+                />
               </div>
 
               <Button
@@ -144,12 +149,13 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
               <Button
                 size="sm"
                 className="mt-2 w-full"
+                disabled={isCreatingPost}
                 onClick={(e) => {
                   e.preventDefault();
                   handleImageUpload();
                 }}
               >
-                Share
+                {isCreatingPost ? <Loading /> : "Share"}
               </Button>
             </form>
           )}

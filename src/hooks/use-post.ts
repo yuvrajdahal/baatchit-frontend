@@ -8,6 +8,9 @@ import {
   deletePostUsecase,
 } from "@/use-cases/posts-usecase";
 import { Comment, Post } from "@/data-access/types";
+import { getCurrentUserUsecase } from "@/use-cases/auth-usecase";
+import useAuthStore from "./use-auth";
+import { Elsie_Swash_Caps } from "next/font/google";
 
 interface PostState {
   posts: Post[];
@@ -70,11 +73,19 @@ const usePostStore = create<PostState>((set, get) => ({
     try {
       const result = await createPostUsecase(description, image);
       if (result.success && result.post) {
+        const user = await getCurrentUserUsecase(
+          localStorage.getItem("token")!
+        );
+        const posts = await getPostsUsecase();
+        if (user.success && user.user) {
+          useAuthStore.getState().user = user.user;
+        }
+        if (posts.success && posts.posts) {
+          usePostStore.getState().posts = posts.posts;
+        }
         set((state) => ({
-          posts: [result.post, ...state.posts],
           isCreatingPost: false,
         }));
-        get().fetchPosts();
         return true;
       } else {
         set({
