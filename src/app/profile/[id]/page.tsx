@@ -15,9 +15,9 @@ export default function ProfilePage() {
   const {
     getUserById,
     userById: user,
-    isLoading,
     followUser,
     unfollowUser,
+    userByIdLoading
   } = useAuthStore();
   const { setCommentsModalOpen, isCommentsModalOpen, deletePost, getComments } =
     usePostStore();
@@ -36,11 +36,11 @@ export default function ProfilePage() {
             folowUser={followUser}
             unfollowUser={unfollowUser}
             user={user}
-            isLoading={isLoading}
+            isLoading={userByIdLoading}
           />
           <Grid
             user={user}
-            isLoading={isLoading}
+            isLoading={userByIdLoading}
             deletePost={deletePost}
             setCommentsModalOpen={setCommentsModalOpen}
             isCommentsModalOpen={isCommentsModalOpen}

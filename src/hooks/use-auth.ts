@@ -21,6 +21,7 @@ interface AuthState {
   unfollowUser: (userId: string) => Promise<boolean>;
   isRegisterLoading: boolean;
   isLoading: boolean;
+  userByIdLoading: boolean;
   userById: User | null;
   error: string | null;
   suggestedUsers: User[] | null;
@@ -44,6 +45,7 @@ const useAuthStore = create<AuthState>()(
       user: null,
       token: null,
       isAuthenticated: false,
+      userByIdLoading: false,
       isLoading: false,
       userById: null,
       isLoginLoading: false,
@@ -187,24 +189,24 @@ const useAuthStore = create<AuthState>()(
         }
       },
       getUserById: async (id: string) => {
-        set({ isLoading: true, error: null });
+        set({ userByIdLoading: true, error: null });
         try {
           const result = await getUserByIdUsecase(id);
           if (result.success && result.user) {
             set({
               userById: result.user,
-              isLoading: false,
+              userByIdLoading: false,
             });
           } else {
             set({
               error: result.error || "Failed to get user data",
-              isLoading: false,
+              userByIdLoading: false,
             });
           }
         } catch (error) {
           set({
             error: "An unexpected error occurred while getting user data",
-            isLoading: false,
+            userByIdLoading: false,
           });
         }
       },
