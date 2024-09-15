@@ -18,6 +18,7 @@ import {
 import { twMerge } from "tailwind-merge";
 import Loading from "../loading";
 import { useToast } from "@/hooks/use-toast";
+import { formatDistanceToNowStrict } from "date-fns";
 
 interface CommentModalProps {
   modal?: boolean;
@@ -85,6 +86,11 @@ const CommentModal: React.FC<CommentModalProps> = ({
                 <div>
                   <p className="font-semibold text-sm">
                     {username ?? "user06934"}
+                  </p>
+                  <p className="text-muted-foreground pt-0.5 text-xs 2xl:text-sm">
+                    {formatDistanceToNowStrict(new Date(post?.createdAt!), {
+                      addSuffix: true,
+                    })}
                   </p>
                 </div>
               </div>

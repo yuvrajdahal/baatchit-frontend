@@ -19,27 +19,8 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import { MenubarItem } from "../ui/menubar";
+import { format, formatDistanceToNowStrict } from "date-fns";
 
-// interface InstagramPostProps {
-//   id: string;
-//   avatarUrl: string;
-//   postImageUrl: string;
-//   likePost?: (id: string) => Promise<boolean>;
-//   username: string;
-//   timeAgo: string;
-//   likes: number;
-//   disbaleLikeAndComment?: boolean;
-//   caption: string;
-//   commentCount: number;
-//   isLiked: boolean;
-//   createComment?: (message: string, postId: string) => Promise<boolean>;
-//   isCreatingComment?: boolean;
-//   postUserId?: string;
-//   isCommentsModalOpen?: boolean;
-//   setCommentsModalOpen?: (open: boolean) => void;
-//   handleComment?: (id: string) => void;
-//   user?: User | null;
-// }
 interface IPostProps {
   post: Post | null;
   user?: User | null;
@@ -105,8 +86,10 @@ const InstagramPost: React.FC<IPostProps> = ({
                 {post?.user.username}
               </p>
             </Link>
-            <p className="text-muted-foreground text-xs 2xl:text-sm">
-              {new Date(post?.createdAt!).toDateString()}
+            <p className="text-muted-foreground pt-0.5 text-xs 2xl:text-sm">
+              {formatDistanceToNowStrict(new Date(post?.createdAt!), {
+                addSuffix: true,
+              })}
             </p>
           </div>
         </div>
