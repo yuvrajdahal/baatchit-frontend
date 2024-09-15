@@ -216,6 +216,13 @@ const usePostStore = create<PostState>((set, get) => ({
     try {
       const result = await deletePostUsecase(id);
       if (result.success) {
+      
+        const user = await getCurrentUserUsecase(
+          localStorage.getItem("token")!
+        );
+        if (user.success && user.user) {
+          useAuthStore.getState().user = user.user;
+        }
         set((state) => ({
           posts: state.posts.filter((post) => post._id !== id),
           isPostDeletingLoading: false,
