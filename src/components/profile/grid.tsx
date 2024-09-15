@@ -63,6 +63,7 @@ const Grid: React.FC<GridProps> = ({
         avatarUrl={user?.profilePicture ?? ""}
         username={user?.fullname ?? ""}
         deletePost={deletePost}
+        user={user}
       />
     </div>
   );

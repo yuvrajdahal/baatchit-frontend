@@ -42,6 +42,7 @@ export default function ProfilePage() {
             user={user}
             isLoading={userByIdLoading}
           />
+          <hr className="mb-10 w-full " />
           <Grid
             user={user}
             isLoading={userByIdLoading}

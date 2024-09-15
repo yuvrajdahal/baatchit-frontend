@@ -18,7 +18,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ isLoading, user }) => {
     return (
       <div className="animate-pulse">
         <div className="w-full">
-          <div className="flex justify-center items-start gap-[3rem] mb-8 pt-10">
+          <div className="flex justify-center items-start gap-[3rem] pt-10">
             <div className="flex items-center space-x-4">
               <div className="w-[150px] h-[150px] bg-gray-300 rounded-full" />
             </div>
@@ -28,20 +28,12 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ isLoading, user }) => {
                   <div className="h-8 bg-gray-300 w-40 mb-2 rounded" />
                   <div className="h-4 bg-gray-300 w-32 rounded" />
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    size="lg"
-                    disabled
-                    className="bg-gray-300 text-transparent"
-                  >
-                    Edit profile
-                  </Button>
-                  <Button size="lg" disabled className="px-4 bg-gray-300">
-                    <Archive size={20} className="text-gray-400" />
-                  </Button>
-                  <Button size="lg" disabled className="px-4 bg-gray-300">
-                    <Settings size={20} className="text-gray-400" />
-                  </Button>
+                <div className="flex items-start gap-2">
+                  <div className="h-10 bg-gray-300 w-[100px]  rounded" />
+
+                  <div className="h-10 bg-gray-300 w-[40px]  rounded" />
+                  <div className="h-10 bg-gray-300 w-[40px]  rounded" />
+
                 </div>
               </div>
               <div className="flex justify-between">
@@ -68,7 +60,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ isLoading, user }) => {
   return (
     <div className=" ">
       <div className="w-full">
-        <div className="flex  justify-center items-start gap-[3rem] mb-8  pt-10">
+        <div className="flex  justify-center items-start gap-[3rem]  pt-10">
           <div className="flex items-center space-x-4">
             <img
               src={user?.profilePicture ?? "https://placeholder.pics/svg/200"}
@@ -94,7 +86,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ isLoading, user }) => {
                 </Button>
               </div>
             </div>
-            <div className="flex justify-between ">
+            <div className="flex gap-10 ">
               <div className="flex flex-col">
                 <p>
                   <span className="font-semibold">{user?.posts?.length}</span>{" "}

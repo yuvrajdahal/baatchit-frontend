@@ -19,6 +19,7 @@ export default function ProfilePage() {
         <Sidebar />
         <div className="bg-muted/20 flex-1  flex flex-col  items-center overflow-x-hidden  remove-scrollbar transition-all duration-300 ease-in-out px-6 py-6">
           <ProfileInfo user={user} isLoading={isLoading} />
+          <hr className="mb-10 w-full " />
           <Grid
             deletePost={deletePost}
             user={user}
