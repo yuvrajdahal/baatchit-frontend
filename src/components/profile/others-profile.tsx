@@ -7,6 +7,8 @@ import { User } from "@/data-access/types";
 
 interface OthersProfileInfoProps {
   user: User | null;
+  isUnfollowingLoadin: boolean;
+  isFollowingLoading: boolean;
   isLoading: boolean;
   folowUser: (userId: string) => Promise<boolean>;
   unfollowUser: (userId: string) => Promise<boolean>;
@@ -16,6 +18,8 @@ const OthersProfileInfo: React.FC<OthersProfileInfoProps> = ({
   user,
   folowUser,
   unfollowUser,
+  isFollowingLoading,
+  isUnfollowingLoadin,
 }) => {
   const [isMounted, setMounted] = useState(true);
   useEffect(() => {
@@ -97,16 +101,18 @@ const OthersProfileInfo: React.FC<OthersProfileInfoProps> = ({
                     size={"lg"}
                     className="px-4"
                     onClick={() => unfollowUser(user?._id)}
+                    disabled={isUnfollowingLoadin}
                   >
-                    Unfollow
+                   {isUnfollowingLoadin ? "Unfollowing..." : "Unfollow"}
                   </Button>
                 ) : (
                   <Button
                     size={"lg"}
                     className="px-4"
                     onClick={() => folowUser(user?._id!)}
+                    disabled={isFollowingLoading}
                   >
-                    Follow
+                    {isFollowingLoading ? "Following..." : "Follow"}
                   </Button>
                 )}
                 <Button size={"lg"} className="px-4">

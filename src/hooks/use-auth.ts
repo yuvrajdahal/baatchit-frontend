@@ -17,6 +17,8 @@ interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
   isLoginLoading: boolean;
+  isFollowingLoading: boolean;
+  isUnfollowingLoading: boolean;
   followUser: (userId: string) => Promise<boolean>;
   unfollowUser: (userId: string) => Promise<boolean>;
   isRegisterLoading: boolean;
@@ -46,6 +48,8 @@ const useAuthStore = create<AuthState>()(
       user: null,
       token: null,
       isAuthenticated: false,
+      isFollowingLoading: false,
+      isUnfollowingLoading: false,
       userByIdLoading: false,
       isLoading: false,
       userById: null,
@@ -212,24 +216,69 @@ const useAuthStore = create<AuthState>()(
         }
       },
       followUser: async (userId: string) => {
-        set({ error: null });
+        set({ isFollowingLoading: true, error: null });
         try {
-          set((state) => ({
-            userById: state.userById
-              ? {
-                  ...state.userById,
-                  isFollowing: !get().userById?.isFollowing,
-                  followersCount: get().userById?.followersCount! + 1,
-                }
-              : null,
-          }));
           const token = localStorage.getItem("token");
           if (token) {
             const result = await followUserUsecase(userId, token);
             if (result.success && result.data) {
+              set((state) => ({
+                isFollowingLoading: false,
+                userById: state.userById
+                  ? {
+                      ...state.userById,
+                      isFollowing: !get().userById?.isFollowing,
+                      followersCount: get().userById?.followersCount! + 1,
+                    }
+                  : null,
+              }));
               return true;
             } else {
               set((state) => ({
+                isFollowingLoading: false,
+                // userById: state.userById
+                //   ? {
+                //       ...state.userById,
+                //       isFollowing: !get().userById?.isFollowing,
+                //       followersCount: get().userById?.followersCount! - 1,
+                //     }
+                //   : null,
+                error: result.error || "Failed to follow user",
+              }));
+              return false;
+            }
+          } else {
+            set({
+              isFollowingLoading: false,
+              error: "Token not found after following user",
+            });
+            return false;
+          }
+        } catch (error) {
+          set((state) => ({
+            isFollowingLoading: false,
+
+            // userById: state.userById
+            //   ? {
+            //       ...state.userById,
+            //       isFollowing: !get().userById?.isFollowing,
+            //       followersCount: get().userById?.followersCount! - 1,
+            //     }
+            //   : null,
+            error: "An unexpected error occurred while following user",
+          }));
+          return false;
+        }
+      },
+      unfollowUser: async (userId: string) => {
+        set({ isUnfollowingLoading: true, error: null });
+        try {
+          const token = localStorage.getItem("token");
+          if (token!) {
+            const result = await unfollowUserUsecase(userId, token);
+            if (result.success && result.data) {
+              set((state) => ({
+                isUnfollowingLoading: false,
                 userById: state.userById
                   ? {
                       ...state.userById,
@@ -238,69 +287,32 @@ const useAuthStore = create<AuthState>()(
                     }
                   : null,
               }));
-              set({
-                error: result.error || "Failed to follow user",
-              });
-              return false;
-            }
-          } else {
-            set({
-              error: "Token not found after following user",
-            });
-            return false;
-          }
-        } catch (error) {
-          set((state) => ({
-            userById: state.userById
-              ? {
-                  ...state.userById,
-                  isFollowing: !get().userById?.isFollowing,
-                  followersCount: get().userById?.followersCount! - 1,
-                }
-              : null,
-            error: "An unexpected error occurred while following user",
-          }));
-          return false;
-        }
-      },
-      unfollowUser: async (userId: string) => {
-        set({ error: null });
-        try {
-          set((state) => ({
-            userById: state.userById
-              ? {
-                  ...state.userById,
-                  isFollowing: !get().userById?.isFollowing,
-                  followersCount: get().userById?.followersCount! - 1,
-                }
-              : null,
-          }));
-          const token = localStorage.getItem("token");
-          if (token!) {
-            const result = await unfollowUserUsecase(userId, token);
-            if (result.success && result.data) {
               return true;
             } else {
               set({
+                isUnfollowingLoading: false,
                 error: result.error || "Failed to unfollow user",
               });
               return false;
             }
           } else {
             set({
+              isUnfollowingLoading: false,
               error: "Token not found after unfollowing user",
             });
             return false;
           }
         } catch (error) {
           set((state) => ({
-            userById: state.userById
-              ? {
-                  ...state.userById,
-                  isFollowing: !get().userById?.isFollowing,
-                  followersCount: get().userById?.followersCount! + 1,
-                }
-              : null,
+            isUnfollowingLoading: false,
+
+            // userById: state.userById
+            //   ? {
+            //       ...state.userById,
+            //       isFollowing: !get().userById?.isFollowing,
+            //       followersCount: get().userById?.followersCount! + 1,
+            //     }
+            //   : null,
             error: "An unexpected error occurred while unfollowing user",
           }));
           return false;
