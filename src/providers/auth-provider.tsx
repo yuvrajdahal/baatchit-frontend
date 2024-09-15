@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { Grand_Hotel } from "next/font/google";
 import { twMerge } from "tailwind-merge";
 import LogoLoading from "@/components/logo-loading";
+import { useToast } from "@/hooks/use-toast";
 const grandHotel = Grand_Hotel({
   subsets: ["latin"],
   weight: ["400"],
@@ -17,6 +18,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [isMounted, setIsMounted] = useState(false);
   const { isLoading, user, refreshUser } = useAuthStore();
+  const [showonce, setShowonce] = useState(false);
+  const { toast } = useToast();
   const router = useRouter();
   useEffect(() => {
     setIsMounted(true);
@@ -25,8 +28,16 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     if (!isLoading && user === null) {
       router.push("/login");
+    } else {
+      if (isMounted && showonce === false) {
+        toast({
+          title: `Hello ${user?.fullname}`,
+          description: "The first load of system can take a while",
+        });
+        setShowonce(true);
+      }
     }
-  }, [router, isLoading, user]);
+  }, [router, isLoading, user, isMounted]);
 
   if (!isMounted) {
     return (
