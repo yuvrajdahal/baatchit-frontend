@@ -88,9 +88,12 @@ const CommentModal: React.FC<CommentModalProps> = ({
                     {username ?? "user06934"}
                   </p>
                   <p className="text-muted-foreground pt-0.5 text-xs 2xl:text-sm">
-                    {formatDistanceToNowStrict(new Date(post?.createdAt!), {
-                      addSuffix: true,
-                    })}
+                    {formatDistanceToNowStrict(
+                      post?.createdAt ? new Date(post?.createdAt!) : new Date(),
+                      {
+                        addSuffix: true,
+                      }
+                    )}
                   </p>
                 </div>
               </div>
