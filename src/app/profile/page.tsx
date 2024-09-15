@@ -13,10 +13,6 @@ export default function ProfilePage() {
   useEffect(() => {
     refreshUser();
   }, []);
-  function deleteHandler(id: string) {
-    deletePost(id);
-    
-  }
   return (
     <div className="bg-dark h-screen w-screen text-light ">
       <div className="h-full w-full flex justify-between">

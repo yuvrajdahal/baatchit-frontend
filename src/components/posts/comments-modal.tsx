@@ -106,6 +106,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
                           setDeleteLoading(true);
                           const success = await deletePost!(id);
                           setDeleteLoading(false);
+                          setOpenCommentsModal!(false);
 
                           if (success) {
                             toast({
