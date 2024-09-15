@@ -1,11 +1,8 @@
 "use client";
 import Sidebar from "@/components/home/sidebar";
-import Suggestion from "@/components/home/suggetstion";
-import ListPosts from "@/components/home/list-posts";
 import useAuthStore from "@/hooks/use-auth";
 import Grid from "@/components/profile/grid";
 import ProfileInfo from "@/components/profile/profile-info";
-import Loading from "@/components/loading";
 import { useEffect } from "react";
 import usePostStore from "@/hooks/use-post";
 
@@ -16,6 +13,10 @@ export default function ProfilePage() {
   useEffect(() => {
     refreshUser();
   }, []);
+  function deleteHandler(id: string) {
+    deletePost(id);
+    
+  }
   return (
     <div className="bg-dark h-screen w-screen text-light ">
       <div className="h-full w-full flex justify-between">

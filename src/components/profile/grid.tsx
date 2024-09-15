@@ -30,6 +30,7 @@ const Grid: React.FC<GridProps> = ({
   if (isLoading || isMounted) {
     return <SkeletalGrid />;
   }
+
   return (
     <div className="grid grid-cols-3 gap-1 w-full">
       {user?.posts?.map((post, i) => (
@@ -51,14 +52,6 @@ const Grid: React.FC<GridProps> = ({
           />
         </div>
       ))}
-      {/* {user?.posts?.length === 0 && (
-        <div className="col-span-3  w-full flex flex-col justify-center">
-          <hr/>
-          <span className="mt-4 text-center text-lg text-center text-muted-foreground">
-            No Posts Yet
-          </span>
-        </div>
-      )} */}
       <CommentModal
         open={isCommentsModalOpen}
         onChange={() => setCommentsModalOpen!(!isCommentsModalOpen)}
