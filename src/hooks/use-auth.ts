@@ -16,8 +16,6 @@ interface AuthState {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
-  loadMessage: boolean;
-  setLoadMessage: (loadMessage: boolean) => void;
   isLoginLoading: boolean;
   isFollowingLoading: boolean;
   isUnfollowingLoading: boolean;
@@ -53,7 +51,6 @@ const useAuthStore = create<AuthState>()(
       isFollowingLoading: false,
       isUnfollowingLoading: false,
       userByIdLoading: false,
-      loadMessage: false,
       isLoading: false,
       userById: null,
       isLoginLoading: false,
@@ -61,7 +58,6 @@ const useAuthStore = create<AuthState>()(
       error: null,
       suggestedUsers: null,
       isSuggestedUsersLoading: false,
-      setLoadMessage: (loadMessage: boolean) => set({ loadMessage }),
       register: async (
         email: string,
         fullname: string,

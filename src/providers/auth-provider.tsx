@@ -17,9 +17,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
-  const { isLoading, user, refreshUser, loadMessage, setLoadMessage } =
-    useAuthStore();
-  const [showonce, setShowonce] = useState(false);
+  const { isLoading, user, refreshUser } = useAuthStore();
   const { toast } = useToast();
   const router = useRouter();
   useEffect(() => {
@@ -29,14 +27,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     if (!isLoading && user === null) {
       router.push("/login");
-    } else {
-      if (isMounted && loadMessage === false) {
-        toast({
-          title: `Hello ${user?.fullname}`,
-          description: "The first load of system can take a while",
-        });
-        setLoadMessage(true);
-      }
     }
   }, [router, isLoading, user, isMounted]);
 
