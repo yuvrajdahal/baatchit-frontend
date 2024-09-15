@@ -118,6 +118,7 @@ export const SuggetedUsers: React.FC<{
           return (
             <SuggestedUserTile
               user={suser}
+              currentUserId={user?._id!}
               key={i}
               handleFollow={handleFollow}
             />
@@ -129,8 +130,9 @@ export const SuggetedUsers: React.FC<{
 };
 const SuggestedUserTile: React.FC<{
   user: User | null;
+  currentUserId: string;
   handleFollow: (id: string) => void;
-}> = ({ user, handleFollow }) => {
+}> = ({ user, handleFollow ,currentUserId}) => {
   const [isLoading, setIsLoading] = useState(false);
   async function followUserHandler(id: string) {
     setIsLoading(true);
@@ -150,7 +152,7 @@ const SuggestedUserTile: React.FC<{
         <div>
           <Link
             href={
-              user?._id === user?._id ? `/profile` : `/profile/${user?._id}`
+              currentUserId === user?._id ? `/profile` : `/profile/${user?._id}`
             }
           >
             {" "}
