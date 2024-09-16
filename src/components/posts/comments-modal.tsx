@@ -19,6 +19,7 @@ import { twMerge } from "tailwind-merge";
 import Loading from "../loading";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNowStrict } from "date-fns";
+import useAuthStore from "@/hooks/use-auth";
 
 interface CommentModalProps {
   modal?: boolean;
@@ -55,6 +56,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
     usePostStore();
   const { toast } = useToast();
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const { user: existingUser } = useAuthStore();
   return (
     <>
       <Dialog modal={modal} open={open} onOpenChange={onChange}>
@@ -116,7 +118,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
                   }
                 >
                   <div className="flex flex-col divide-y divide-gray-300">
-                    {user?._id === post?.user?._id && (
+                    {existingUser?._id === post?.user?._id && (
                       <MenubarItem
                         onClick={async (e) => {
                           e.preventDefault();
