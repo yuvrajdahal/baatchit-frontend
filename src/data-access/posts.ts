@@ -170,3 +170,22 @@ export async function deletePost(
     })
   );
 }
+export async function deleteComment(
+  id: string,
+  commentId: string,
+  token: string
+): Promise<{
+  success: boolean;
+  data: {};
+}> {
+  return asyncHandler(() =>
+    api.delete<{
+      success: boolean;
+      data: {};
+    }>(`/posts/${id}/comments/${commentId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+  );
+}

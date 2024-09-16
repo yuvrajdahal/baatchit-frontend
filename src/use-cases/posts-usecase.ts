@@ -2,6 +2,7 @@ import { getUserById } from "@/data-access/auth";
 import {
   createComment,
   createPost,
+  deleteComment,
   deletePost,
   getComments,
   getPosts,
@@ -161,6 +162,29 @@ export async function deletePostUsecase(id: string): Promise<{
 }> {
   try {
     const { success } = await deletePost(id, localStorage.getItem("token")!);
+    return { success };
+  } catch (error) {
+    if ((error as ApiError).status !== undefined) {
+      const apiError = error as ApiError;
+      return { success: false, error: apiError.data.error };
+    } else {
+      return { success: false, error: "An unexpected error occurred" };
+    }
+  }
+}
+export async function deleteCommentUsecase(
+  id: string,
+  commentId: string
+): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  try {
+    const { success } = await deleteComment(
+      id,
+      commentId,
+      localStorage.getItem("token")!
+    );
     return { success };
   } catch (error) {
     if ((error as ApiError).status !== undefined) {

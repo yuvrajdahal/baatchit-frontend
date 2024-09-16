@@ -34,6 +34,8 @@ interface CommentModalProps {
   username: string;
   deletePost?: (id: string) => Promise<boolean>;
   user?: User | null;
+  isCommentDeleting: boolean;
+  deleteComment: (id: string, commentId: string) => Promise<boolean>;
 }
 
 const CommentModal: React.FC<CommentModalProps> = ({
@@ -45,6 +47,8 @@ const CommentModal: React.FC<CommentModalProps> = ({
   description,
   image,
   deletePost,
+  deleteComment,
+  isCommentDeleting,
   avatarUrl,
   user,
   post,
@@ -188,7 +192,60 @@ const CommentModal: React.FC<CommentModalProps> = ({
                           <p className="text-sm">{cmt.message}</p>
                         </div>
                       </div>
-                      <MoreHorizontal className="h-5 w-5 text-muted-foreground cursor-pointer " />
+                      <MoreButton
+                        trigger={
+                          <MoreHorizontal
+                            className={twMerge(
+                              "text-muted-foreground h-5 w-5 bg-transparent border-none cursor-pointer"
+                            )}
+                          />
+                        }
+                      >
+                        <div className="flex flex-col divide-y divide-gray-300">
+                          {user?._id === cmt?.user?._id && (
+                            <MenubarItem
+                              onClick={async (e) => {
+                                e.preventDefault();
+                                setDeleteLoading(true);
+                                const success = await deleteComment!(
+                                  id,
+                                  cmt._id,
+                                );
+                                setDeleteLoading(false);
+                                setOpenCommentsModal!(false);
+
+                                if (success) {
+                                  toast({
+                                    title: "Post deleted",
+                                    description: "Post deleted successfully",
+                                  });
+                                }
+                              }}
+                              className={twMerge(
+                                `relative flex rounded-none items-center justify-between py-2  tranition duration-300 ease-in-out  space-x-4 `,
+                                isCommentDeleting
+                                  ? "cursor-wait text-muted-foreground"
+                                  : "cursor-pointer"
+                              )}
+                            >
+                              Delete
+                              {isCommentDeleting ? (
+                                <Loading className="w-4 h-4 text-red-500" />
+                              ) : (
+                                <Trash2 className="w-4 h-4 text-red-500" />
+                              )}
+                            </MenubarItem>
+                          )}
+                          {/* <MenubarItem
+                            className={twMerge(
+                              `relative  flex rounded-none items-center justify-between py-2  cursor-pointer tranition duration-300 ease-in-out  space-x-4 `
+                            )}
+                          >
+                            Report
+                            <Flag className="w-4 h-4 text-red-500" />
+                          </MenubarItem> */}
+                        </div>
+                      </MoreButton>
                     </div>
                   );
                 })}
@@ -235,7 +292,7 @@ const MoreButton: React.FC<MoreItemProps> = ({
       <MenubarMenu>
         <MenubarTrigger
           onClick={onClick}
-          className={twMerge("border-none bg-transparent")}
+          className={twMerge("border-none bg-transparent px-0 pr-1")}
         >
           {trigger}
         </MenubarTrigger>

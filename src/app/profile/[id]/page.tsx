@@ -21,8 +21,14 @@ export default function ProfilePage() {
     unfollowUser,
     userByIdLoading,
   } = useAuthStore();
-  const { setCommentsModalOpen, isCommentsModalOpen, deletePost, getComments } =
-    usePostStore();
+  const {
+    setCommentsModalOpen,
+    isCommentsModalOpen,
+    isCommentDeleting,
+    deleteComment,
+    deletePost,
+    getComments,
+  } = usePostStore();
   const params: { id: string } = useParams();
   useEffect(() => {
     if (params.id) {
@@ -50,6 +56,8 @@ export default function ProfilePage() {
             setCommentsModalOpen={setCommentsModalOpen}
             isCommentsModalOpen={isCommentsModalOpen}
             getComments={getComments}
+            isCommentDeleting={isCommentDeleting}
+            deleteComment={deleteComment}
           />{" "}
         </div>
       </div>

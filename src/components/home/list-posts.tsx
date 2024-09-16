@@ -24,6 +24,8 @@ const ListPosts: React.FC = () => {
     getComments,
     setCommentsModalOpen,
     deletePost,
+    isCommentDeleting,
+    deleteComment,
     isPostDeletingLoading,
   } = usePostStore();
   const { user } = useAuthStore();
@@ -88,6 +90,8 @@ const ListPosts: React.FC = () => {
         username={posts[index]?.user.username ?? ""}
         user={user}
         deletePost={deletePost}
+        deleteComment={deleteComment}
+        isCommentDeleting={isCommentDeleting}
       />
     </>
   );

@@ -52,9 +52,7 @@ const InstagramPost: React.FC<IPostProps> = ({
   const [comment, setComment] = useState("");
   async function submitComment(id: string) {
     const success = await createComment!(comment, id);
-    if (success) {
-      setComment("");
-    }
+    setComment("");
   }
   const [deleteLoading, setDeleteLoading] = useState(false);
   return (
@@ -215,6 +213,7 @@ const InstagramPost: React.FC<IPostProps> = ({
 
       <div className="relative flex justify-center items-center mt-1">
         <input
+        value={comment}
           className="text-sm 2xl:text-lg text-muted-foreground bg-transparent border-none w-full p-0 outline-none"
           placeholder="Add a comment... "
           onChange={(e) => setComment(e.target.value)}

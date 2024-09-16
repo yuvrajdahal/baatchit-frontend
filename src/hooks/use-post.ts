@@ -6,6 +6,7 @@ import {
   createCommentUsecase,
   getCommentsUsecase,
   deletePostUsecase,
+  deleteCommentUsecase,
 } from "@/use-cases/posts-usecase";
 import { Comment, Post } from "@/data-access/types";
 import { getCurrentUserUsecase } from "@/use-cases/auth-usecase";
@@ -19,12 +20,14 @@ interface PostState {
   isCreatingPost: boolean;
   isLoading: boolean;
   error: string | null;
+  isCommentDeleting: boolean;
   isPostDeletingLoading: boolean;
   comments: Comment[];
   isCreatingComment: boolean;
   isCommentsLoading: boolean;
   createComment: (message: string, postId: string) => Promise<boolean>;
   setTogglePostModal: (togglePostModal: boolean) => void;
+  deleteComment: (id: string, commentId: string) => Promise<boolean>;
   setCommentsModalOpen: (isCommentsModalOpen: boolean) => void;
   fetchPosts: () => Promise<void>;
   createPost: (description: string, image: FormData) => Promise<boolean>;
@@ -41,13 +44,14 @@ const usePostStore = create<PostState>((set, get) => ({
   isCommentsModalOpen: false,
   isCommentsLoading: false,
   isPostDeletingLoading: false,
+  isCommentDeleting: false,
   error: null,
-  setTogglePostModal: (togglePostModal: boolean) => set({ togglePostModal }),
-  setCommentsModalOpen: (isCommentsModalOpen: boolean) =>
-    set({ isCommentsModalOpen }),
   togglePostModal: false,
   comments: [],
   isCreatingComment: false,
+  setTogglePostModal: (togglePostModal: boolean) => set({ togglePostModal }),
+  setCommentsModalOpen: (isCommentsModalOpen: boolean) =>
+    set({ isCommentsModalOpen }),
   fetchPosts: async () => {
     set({ isLoading: true, error: null });
     try {
@@ -81,7 +85,7 @@ const usePostStore = create<PostState>((set, get) => ({
           useAuthStore.getState().user = user.user;
         }
         if (posts.success && posts.posts) {
-          usePostStore.getState().posts = posts.posts;
+          get().posts = posts.posts;
         }
         set((state) => ({
           isCreatingPost: false,
@@ -165,14 +169,16 @@ const usePostStore = create<PostState>((set, get) => ({
       const result = await createCommentUsecase(message, postId);
       if (result.success && result.comment) {
         set((state) => ({
-          posts: get()
-            .posts.filter((post) => post._id == postId)
-            .map((post) => {
+          posts: get().posts.map((post) => {
+            if (post._id === postId) {
               return {
                 ...post,
                 comments: [...post.comments, result.comment],
               };
-            }),
+            }
+            return post;
+          }),
+
           comments: [...state.comments, result.comment],
           isCreatingComment: false,
         }));
@@ -235,6 +241,41 @@ const usePostStore = create<PostState>((set, get) => ({
       set({
         error: "An unexpected error occurred while deleting the post",
         isPostDeletingLoading: false,
+      });
+      return false;
+    }
+  },
+  deleteComment: async (id: string, commentId: string) => {
+    set({ isCommentDeleting: true, error: null });
+    try {
+      const result = await deleteCommentUsecase(id, commentId);
+      if (result.success) {
+        set((state) => ({
+          posts: get().posts.map((post) => {
+            return {
+              ...post,
+              comments: post.comments.filter(
+                (comment) => comment._id !== commentId
+              ),
+            };
+          }),
+          comments: state.comments.filter(
+            (comment) => comment._id !== commentId
+          ),
+          isCommentDeleting: false,
+        }));
+        return true;
+      } else {
+        set({
+          error: result.error || "Failed to delete comment",
+          isCommentDeleting: false,
+        });
+        return false;
+      }
+    } catch (error) {
+      set({
+        error: "An unexpected error occurred while deleting the comment",
+        isCommentDeleting: false,
       });
       return false;
     }

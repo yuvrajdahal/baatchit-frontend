@@ -13,6 +13,8 @@ interface GridProps {
   isCommentsModalOpen: boolean;
   getComments: (id: string) => void;
   deletePost?: (id: string) => Promise<boolean>;
+  isCommentDeleting: boolean;
+  deleteComment: (id: string, commentId: string) => Promise<boolean>;
 }
 const Grid: React.FC<GridProps> = ({
   user,
@@ -21,6 +23,8 @@ const Grid: React.FC<GridProps> = ({
   isCommentsModalOpen,
   deletePost,
   getComments,
+  isCommentDeleting,
+  deleteComment,
 }) => {
   const [isMounted, setMounted] = useState(true);
   const [index, setIndex] = useState(0);
@@ -64,6 +68,8 @@ const Grid: React.FC<GridProps> = ({
         username={user?.fullname ?? ""}
         deletePost={deletePost}
         user={user}
+        deleteComment={deleteComment}
+        isCommentDeleting={isCommentDeleting}
       />
     </div>
   );
