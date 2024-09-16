@@ -58,6 +58,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
   const { isCommentsLoading, comments } = usePostStore();
   const { toast } = useToast();
   const [deleteLoading, setDeleteLoading] = useState(false);
+  console.log(post)
 
   return (
     <>

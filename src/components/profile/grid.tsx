@@ -57,6 +57,7 @@ const Grid: React.FC<GridProps> = ({
         </div>
       ))}
       <CommentModal
+        post={user?.posts?.[index]}
         open={isCommentsModalOpen}
         onChange={() => setCommentsModalOpen!(!isCommentsModalOpen)}
         setOpenCommentsModal={setCommentsModalOpen}
