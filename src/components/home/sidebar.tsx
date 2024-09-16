@@ -97,7 +97,12 @@ const Sidebar: React.FC = () => {
   return (
     <>
       <div className="h-screen pb-5  bg-white w-64 flex flex-col items-start border-r">
-        <h1 className={twMerge("text-4xl font-bold mb-6 py-5 px-5",grandHotel.className)}>
+        <h1
+          className={twMerge(
+            "text-4xl font-bold mb-6 py-5 px-5",
+            grandHotel.className
+          )}
+        >
           Baatchit
         </h1>
         <div className="flex flex-col  w-full">
@@ -111,7 +116,14 @@ const Sidebar: React.FC = () => {
             }}
           />
           <SidebarItem Icon={Search} text="Search" />
-          <SidebarItem Icon={Compass} text="Explore" />
+          <SidebarItem
+            Icon={Compass}
+            text="Explore"
+            active={pathName === "/explore"}
+            onClick={() => {
+              router.push("/explore");
+            }}
+          />
           <SidebarItem Icon={MessageSquare} text="Messages" notification="3" />
           <SidebarItem Icon={Heart} text="Notifications" />
           <SidebarItem

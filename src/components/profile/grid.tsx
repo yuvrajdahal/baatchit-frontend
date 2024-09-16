@@ -69,8 +69,6 @@ const Grid: React.FC<GridProps> = ({
         username={user?.fullname ?? ""}
         deletePost={deletePost}
         user={user}
-        deleteComment={deleteComment}
-        isCommentDeleting={isCommentDeleting}
       />
     </div>
   );

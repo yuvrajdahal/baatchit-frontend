@@ -34,8 +34,6 @@ interface CommentModalProps {
   username: string;
   deletePost?: (id: string) => Promise<boolean>;
   user?: User | null;
-  isCommentDeleting: boolean;
-  deleteComment: (id: string, commentId: string) => Promise<boolean>;
 }
 
 const CommentModal: React.FC<CommentModalProps> = ({
@@ -47,24 +45,18 @@ const CommentModal: React.FC<CommentModalProps> = ({
   description,
   image,
   deletePost,
-  deleteComment,
-  isCommentDeleting,
   avatarUrl,
   user,
   post,
   username,
   likesCount,
 }) => {
-  const { isCommentsLoading, comments } = usePostStore();
+  const { isCommentsLoading, comments, deleteComment, isCommentDeleting } =
+    usePostStore();
   const { toast } = useToast();
   const [deleteLoading, setDeleteLoading] = useState(false);
-  console.log(post)
-
   return (
     <>
-      {/* <div className="absolute top-6 right-6 z-[10000] ">
-        <Cross2Icon className="h-5 w-5 cursor-pointer"color="white" />
-      </div> */}
       <Dialog modal={modal} open={open} onOpenChange={onChange}>
         <DialogContent
           className="sm:max-w-4xl flex z-[1000] gap-0 p-0 outline-none"
@@ -89,9 +81,20 @@ const CommentModal: React.FC<CommentModalProps> = ({
                   alt={`${username} avatar`}
                 />
                 <div>
-                  <p className="font-semibold text-sm">
-                    {username ?? "user06934"}
-                  </p>
+                  <Link
+                    onClick={() => {
+                      setOpenCommentsModal!(false);
+                    }}
+                    href={
+                      user?._id === post?.user._id
+                        ? `/profile`
+                        : `/profile/${post?.user._id}`
+                    }
+                  >
+                    <p className="font-semibold text-sm">
+                      {username ?? "user06934"}
+                    </p>
+                  </Link>
                   <p className="text-muted-foreground pt-0.5 text-xs 2xl:text-sm">
                     {formatDistanceToNowStrict(
                       post?.createdAt ? new Date(post?.createdAt!) : new Date(),
@@ -210,7 +213,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
                                 setDeleteLoading(true);
                                 const success = await deleteComment!(
                                   id,
-                                  cmt._id,
+                                  cmt._id
                                 );
                                 setDeleteLoading(false);
                                 setOpenCommentsModal!(false);

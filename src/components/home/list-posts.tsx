@@ -90,8 +90,6 @@ const ListPosts: React.FC = () => {
         username={posts[index]?.user.username ?? ""}
         user={user}
         deletePost={deletePost}
-        deleteComment={deleteComment}
-        isCommentDeleting={isCommentDeleting}
       />
     </>
   );

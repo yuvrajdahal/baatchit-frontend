@@ -12,7 +12,7 @@ const LogoLoading: React.FC<Props> = ({ className }) => {
   return (
     <p
       className={twMerge(
-        "text-gray-500 animate-pulse text-4xl ",
+        "text-gray-500 animate-pulse text-6xl ",
         grandHotel.className,
         className
       )}

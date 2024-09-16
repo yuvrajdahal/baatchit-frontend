@@ -8,8 +8,14 @@ import usePostStore from "@/hooks/use-post";
 
 export default function ProfilePage() {
   const { refreshUser, user, isLoading } = useAuthStore();
-  const { setCommentsModalOpen, isCommentsModalOpen, deletePost, getComments } =
-    usePostStore();
+  const {
+    setCommentsModalOpen,
+    isCommentsModalOpen,
+    deletePost,
+    getComments,
+    deleteComment,
+    isCommentDeleting,
+  } = usePostStore();
   useEffect(() => {
     refreshUser();
   }, []);
@@ -23,6 +29,8 @@ export default function ProfilePage() {
           <Grid
             deletePost={deletePost}
             user={user}
+            deleteComment={deleteComment}
+            isCommentDeleting={isCommentDeleting}
             isLoading={isLoading}
             setCommentsModalOpen={setCommentsModalOpen}
             isCommentsModalOpen={isCommentsModalOpen}
