@@ -61,7 +61,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
     <>
       <Dialog modal={modal} open={open} onOpenChange={onChange}>
         <DialogContent
-          className="sm:max-w-4xl flex z-[100000] gap-0 p-0 outline-none"
+          className="sm:max-w-4xl flex z-[1000] gap-0 p-0 outline-none"
           showCancelIcon="hide"
         >
           <div className="w-1/2  overflow-hiden aspect-square">

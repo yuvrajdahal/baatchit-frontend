@@ -110,7 +110,7 @@ const Sidebar: React.FC = () => {
   const pathName = usePathname();
   return (
     <>
-      <div className={twMerge("h-screen z-[1000] group w-64")}>
+      <div className={twMerge("h-screen  group w-64")}>
         <div
           className={twMerge(
             "h-full pb-5  bg-white transition-all duration-600 flex flex-col items-start border-r",
