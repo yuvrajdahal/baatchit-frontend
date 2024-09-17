@@ -5,6 +5,7 @@ import {
   Compass,
   MessageSquare,
   Heart,
+  X,
   PlusSquare,
   User,
   Menu,
@@ -23,7 +24,7 @@ import useAuthStore from "@/hooks/use-auth";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Grand_Hotel } from "next/font/google";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
 
 const grandHotel = Grand_Hotel({
@@ -60,7 +61,12 @@ const MenuSideBarItem: React.FC<SidebarItemProps> = ({
           )}
         >
           <Icon className="w-6 h-6  group-hover:scale-110" />
-          <span className={twMerge("text-lg", show ? "opacity-100" : "opacity-0 absolute")}>
+          <span
+            className={twMerge(
+              "text-lg",
+              show ? "opacity-100" : "opacity-0 absolute"
+            )}
+          >
             {text}
           </span>
         </MenubarTrigger>
@@ -91,7 +97,12 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
       )}
     >
       <Icon className="w-6 h-6 group-hover:scale-110" />
-      <span className={twMerge("text-lg", show ? "opacity-100" : "opacity-0 absolute")}>
+      <span
+        className={twMerge(
+          "text-lg",
+          show ? "opacity-100" : "opacity-0 absolute"
+        )}
+      >
         {text}
       </span>
       {notification && (
@@ -110,10 +121,10 @@ const Sidebar: React.FC = () => {
   const pathName = usePathname();
   return (
     <>
-      <div className={twMerge("h-screen  w-64 z-100")}>
+      <div className={twMerge("h-screen z-50  relative w-64  ")}>
         <div
           className={twMerge(
-            "h-full pb-5  bg-white transition-all duration-600 flex flex-col items-start border-r",
+            "h-full  pb-5 z-200 bg-white transition-all duration-600 flex flex-col items-start border-r",
             "data-[show='true']:w-full data-[show='false']:w-14"
           )}
           data-show={show}
@@ -194,7 +205,7 @@ const Sidebar: React.FC = () => {
           </div>
         </div>
       </div>
-      <SearchModal show={show} />
+      <SearchModal show={show} setShow={setShow} />
       <CreatePostModal
         open={togglePostModal}
         onChange={() => setTogglePostModal(!togglePostModal)}
@@ -207,16 +218,31 @@ const Sidebar: React.FC = () => {
 export default Sidebar;
 const SearchModal: React.FC<{
   show: boolean;
-}> = ({ show }) => {
+  setShow: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({ show, setShow }) => {
+  const ref = useRef<HTMLDivElement>(null);
+
   return (
     <div
+      ref={ref}
       className={twMerge(
-        "z-50 absolute flex h-full w-[360px]  border items-center justify-center border-r bg-white",
+        " absolute flex transition h-full w-[360px] shadow-lg  border  border-r bg-white",
         "data-[show='false']:flex data-[show='true']:hidden",
-        "",
-        "data-[show='true']:translate-x-[-100%] data-[show='false']:translate-x-0"
+        "z-10 px-5 py-5"
       )}
-      data-show={show}
-    ></div>
+      style={{
+        transform: `translateX(${show ? "-100%" : "55px"})`,
+      }}
+      // data-show={show}
+    >
+      <div className="w-full flex justify-end">
+        <X
+          className="w-6 h-6 cursor-pointer"
+          onClick={() => {
+            setShow((prev) => !prev);
+          }}
+        />
+      </div>
+    </div>
   );
 };
