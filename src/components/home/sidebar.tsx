@@ -110,7 +110,7 @@ const Sidebar: React.FC = () => {
   const pathName = usePathname();
   return (
     <>
-      <div className={twMerge("h-screen  group w-64")}>
+      <div className={twMerge("h-screen  w-64 z-100")}>
         <div
           className={twMerge(
             "h-full pb-5  bg-white transition-all duration-600 flex flex-col items-start border-r",
@@ -211,7 +211,7 @@ const SearchModal: React.FC<{
   return (
     <div
       className={twMerge(
-        "absolute flex h-full w-[360px]  border items-center justify-center border-r bg-white",
+        "z-50 absolute flex h-full w-[360px]  border items-center justify-center border-r bg-white",
         "data-[show='false']:flex data-[show='true']:hidden",
         "",
         "data-[show='true']:translate-x-[-100%] data-[show='false']:translate-x-0"
