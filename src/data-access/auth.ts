@@ -124,3 +124,16 @@ export async function getSuggestedUsers(
     })
   );
 }
+export async function getUsersByUserName(
+  token: string,
+  userName: string
+): Promise<{ success: boolean; data: User[] }> {
+  return asyncHandler(() =>
+    api.get<{
+      success: boolean;
+      data: User[];
+    }>(`/auth/users?username[regex]=${userName}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+  );
+}

@@ -26,6 +26,7 @@ import Link from "next/link";
 import { Grand_Hotel } from "next/font/google";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
+import SearchModal from "./search-modal";
 
 const grandHotel = Grand_Hotel({
   subsets: ["latin"],
@@ -190,7 +191,7 @@ const Sidebar: React.FC = () => {
             />
           </div>
           <div className="w-full mt-auto">
-            <MenuSideBarItem Icon={Menu} text="More" show={show}>
+            <MenuSideBarItem Icon={Menu} active={false} text="More" show={show}>
               <MenubarItem
                 className={twMerge(
                   `relative flex items-center cursor-pointer  duration-300 ease-in-out  py-2 px-5 space-x-4 `
@@ -216,33 +217,3 @@ const Sidebar: React.FC = () => {
 };
 
 export default Sidebar;
-const SearchModal: React.FC<{
-  show: boolean;
-  setShow: React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({ show, setShow }) => {
-  const ref = useRef<HTMLDivElement>(null);
-
-  return (
-    <div
-      ref={ref}
-      className={twMerge(
-        " absolute flex transition h-full w-[360px] shadow-lg  border  border-r bg-white",
-        "data-[show='false']:flex data-[show='true']:hidden",
-        "z-10 px-5 py-5"
-      )}
-      style={{
-        transform: `translateX(${show ? "-100%" : "55px"})`,
-      }}
-      // data-show={show}
-    >
-      <div className="w-full flex justify-end">
-        <X
-          className="w-6 h-6 cursor-pointer"
-          onClick={() => {
-            setShow((prev) => !prev);
-          }}
-        />
-      </div>
-    </div>
-  );
-};

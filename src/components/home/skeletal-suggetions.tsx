@@ -19,7 +19,7 @@ const SkeletonSuggestion: React.FC = () => {
                   <p className="animate-pulse bg-gray-300 text-sm mt-1 w-[50px] h-2"></p>
                 </div>
               </div>
-              <MoreHorizontal className="text-gray-300" />
+              <div className="animate-pulse bg-gray-300 w-6 h-2" />
             </div>
           );
         })}

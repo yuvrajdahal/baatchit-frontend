@@ -5,7 +5,7 @@ const PostSkeleton: React.FC = () => {
     <div
       className="snap-center flex-shrink-0 h-full flex flex-col justify-center items-center"
     >
-      <div className="border border-neutral-400 border-1 min-w-[350px] mx-auto p-4 rounded-lg animate-pulse">
+      <div className="border border-neutral-400 border-1 min-w-[350px] 2xl:min-w-[400px] mx-auto p-4 rounded-lg animate-pulse">
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center">
@@ -19,7 +19,7 @@ const PostSkeleton: React.FC = () => {
         </div>
 
         {/* Image */}
-        <div className="w-full border aspect-square bg-gray-300 rounded-lg mb-3" />
+        <div className="w-full border h-[350px] 2xl:h-[400px] bg-gray-300 rounded-lg mb-3" />
 
         {/* Action buttons */}
         <div className="flex justify-between items-center mb-3">

@@ -10,6 +10,7 @@ import {
   unfollowUserUsecase,
   followUserUsecase,
   getSuggestedUsersUsecase,
+  getUsersByUserNameUsecase,
 } from "@/use-cases/auth-usecase";
 
 interface AuthState {
@@ -19,8 +20,6 @@ interface AuthState {
   isLoginLoading: boolean;
   isFollowingLoading: boolean;
   isUnfollowingLoading: boolean;
-  followUser: (userId: string) => Promise<boolean>;
-  unfollowUser: (userId: string) => Promise<boolean>;
   isRegisterLoading: boolean;
   isLoading: boolean;
   userByIdLoading: boolean;
@@ -28,6 +27,11 @@ interface AuthState {
   error: string | null;
   suggestedUsers: User[] | null;
   isSuggestedUsersLoading: boolean;
+  isUsersByUserNameLoading: boolean;
+  usersByUserName: User[] | null;
+  getUsersByUserName: (username: string) => Promise<boolean>;
+  followUser: (userId: string) => Promise<boolean>;
+  unfollowUser: (userId: string) => Promise<boolean>;
   getSuggestedUsers: () => Promise<boolean>;
   register: (
     email: string,
@@ -58,6 +62,8 @@ const useAuthStore = create<AuthState>()(
       error: null,
       suggestedUsers: null,
       isSuggestedUsersLoading: false,
+      usersByUserName: null,
+      isUsersByUserNameLoading: false,
       register: async (
         email: string,
         fullname: string,
@@ -379,6 +385,41 @@ const useAuthStore = create<AuthState>()(
             return false;
           }
         } catch (error) {
+          return false;
+        }
+      },
+      getUsersByUserName: async (userName: string) => {
+        set({ isUsersByUserNameLoading: true, error: null });
+        try {
+          const token = localStorage.getItem("token");
+          if (token) {
+            const result = await getUsersByUserNameUsecase(userName);
+            if (result.success && result.data) {
+              set({
+                usersByUserName: result.data,
+                isUsersByUserNameLoading: false,
+              });
+              return true;
+            } else {
+              set({
+                error: result.error || "Failed to get users by username",
+                isUsersByUserNameLoading: false,
+              });
+              return false;
+            }
+          } else {
+            set({
+              error: "Token not found after getting users by username",
+              isUsersByUserNameLoading: false,
+            });
+            return false;
+          }
+        } catch (error) {
+          set({
+            error:
+              "An unexpected error occurred while getting users by username",
+            isUsersByUserNameLoading: false,
+          });
           return false;
         }
       },
