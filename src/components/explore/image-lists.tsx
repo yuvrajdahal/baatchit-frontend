@@ -5,6 +5,7 @@ import Grid from "../profile/grid";
 import usePostStore from "@/hooks/use-post";
 import CommentModal from "../posts/comments-modal";
 import { useEffect, useState } from "react";
+import ImageModal from "./image-modal";
 
 const ImageList = () => {
   const {
@@ -36,6 +37,14 @@ const ImageList = () => {
   if (isLoading || isMounted) {
     return <SkeletalGrid />;
   }
+  function selectNext() {
+    setIndex((prev) => (prev + 1) % posts?.length);
+    getComments(posts?.[index]?._id!);
+  }
+  function selectPrev() {
+    setIndex((prev) => (prev - 1 + posts?.length) % posts?.length);
+    getComments(posts?.[index]?._id!);
+  }
 
   return (
     <div className=" w-full">
@@ -59,12 +68,16 @@ const ImageList = () => {
             />
           </div>
         ))}
-        <CommentModal
+        <ImageModal
           post={posts?.[index]}
+          showLeftIcon={index !== 0}
+          showRightIcon={index !== posts?.length - 1}
           open={isCommentsModalOpen}
           onChange={() => setCommentsModalOpen!(!isCommentsModalOpen)}
           setOpenCommentsModal={setCommentsModalOpen}
           id={posts?.[index]?._id!}
+          selectNext={selectNext}
+          selectPrev={selectPrev}
           description={posts?.[index]?.description!}
           image={posts?.[index]?.image!}
           likesCount={posts?.[index]?.likesCount!}

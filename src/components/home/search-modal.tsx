@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import { Input } from "../ui/input";
@@ -16,22 +16,33 @@ const SearchModal: React.FC<{
     usersByUserName,
     user,
     isUsersByUserNameLoading,
+    clearUsersByUserName,
   } = useAuthStore();
   const [search, setSearch] = useState("");
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const value = event.target.value;
-    setSearch(value);
-    if (value.length > 0) {
-      getUsersByUserName(value);
+    if (show == false) {
+      const value = event.target.value;
+      setSearch(value);
+      if (value.length !== 0) {
+        getUsersByUserName(value);
+      } else {
+        clearUsersByUserName();
+      }
     }
   }
+  useEffect(() => {
+    if (show) {
+      setSearch("");
+      clearUsersByUserName();
+    }
+  }, [show]);
   return (
     <div
       ref={ref}
       className={twMerge(
-        " absolute flex transition h-full w-[360px] shadow-lg  border  border-r bg-white",
+        "absolute top-0  flex transition h-full w-[360px] shadow-lg  border  border-r bg-white",
         "data-[show='false']:flex flex-col data-[show='true']:hidden",
-        "z-40  py-5"
+        " py-5"
       )}
       style={{
         transform: `translateX(${show ? "-100%" : "55px"})`,
@@ -50,8 +61,20 @@ const SearchModal: React.FC<{
         <Input placeholder="Search..." value={search} onChange={handleChange} />
       </div>
       <div className="flex flex-col gap-4 divider overflow-hidden py-4 overflow-y-scroll remove-scrollbar">
-        {usersByUserName &&
-          usersByUserName.map((user) => <UserTile user={user} />)}
+        {usersByUserName.length > 0 &&
+          usersByUserName.map((u) => <UserTile user={u} key={u._id} />)}
+        {!isUsersByUserNameLoading &&
+          search.length > 0 &&
+          usersByUserName.length === 0 && (
+            <div className="flex justify-center items-center">
+              <p className="text-gray-500 text-sm">No users found</p>
+            </div>
+          )}
+        {search.length === 0 && (
+          <div className="flex justify-center items-center">
+            <p className="text-gray-500 text-sm">Search users by <span className="underline underline-offset-4 decoration-dotted">username</span></p>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -61,6 +84,7 @@ export default SearchModal;
 const UserTile: React.FC<{
   user: User | null;
 }> = ({ user }) => {
+  console.log(user);
   return (
     <div className="flex items-center px-5 py-2  justify-between cursor-pointer hover:bg-muted">
       <div className="flex space-x-3 items-center">
@@ -73,9 +97,24 @@ const UserTile: React.FC<{
         />
         <div>
           {" "}
-          <p className="text-sm">{user?.username}</p>
-          <p className="text-gray-500 text-xs">
-            {/* {user?.mutuals}/{user?.suggested} */}
+          <p className="text-sm flex justify-between items-center">
+            <span>{user?.username}</span>
+            {user?.isFollowing && (
+              <span className="text-blue-500 text-xs font-semibold">
+              {" "}· Following
+              </span>
+            )}
+          </p>
+          <p className="text-muted-foreground flex items-center text-xs">
+            {user?.fullname} · {user?.followersCount} followers
+            {user?.mutualFollowers!?.length > 0 && (
+              <span className="">
+                ·{" "}
+                {user?.mutualFollowersCount! > 1
+                  ? `${user?.mutualFollowersCount} mutual followers`
+                  : `${user?.mutualFollowersCount} mutual follower`}
+              </span>
+            )}
           </p>
         </div>
       </div>

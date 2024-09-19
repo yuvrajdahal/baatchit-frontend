@@ -199,7 +199,7 @@ const usePostStore = create<PostState>((set, get) => ({
     }
   },
   getComments: async (id: string) => {
-    set({ isCommentsLoading: true, error: null });
+    set({ comments: [], isCommentsLoading: true, error: null });
     try {
       const result = await getCommentsUsecase(id);
       if (result.success && result.comments) {

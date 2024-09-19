@@ -121,11 +121,15 @@ const Sidebar: React.FC = () => {
   const router = useRouter();
   const pathName = usePathname();
   return (
-    <>
-      <div className={twMerge("h-screen z-50  relative w-64  ")}>
+    <div className="w-64 z-50">
+      <div className={twMerge("h-screen  relative  z-50",
+        "data-[show='true']:w-full data-[show='false']:w-14"
+      )}
+      data-show={show}
+      >
         <div
           className={twMerge(
-            "h-full  pb-5 z-200 bg-white transition-all duration-600 flex flex-col items-start border-r",
+            "h-full  pb-5  bg-white transition-all duration-600 flex flex-col items-start border-r",
             "data-[show='true']:w-full data-[show='false']:w-14"
           )}
           data-show={show}
@@ -212,7 +216,7 @@ const Sidebar: React.FC = () => {
         onChange={() => setTogglePostModal(!togglePostModal)}
         setOpenPostModal={setTogglePostModal}
       />
-    </>
+    </div>
   );
 };
 

@@ -28,7 +28,7 @@ interface AuthState {
   suggestedUsers: User[] | null;
   isSuggestedUsersLoading: boolean;
   isUsersByUserNameLoading: boolean;
-  usersByUserName: User[] | null;
+  usersByUserName: User[];
   getUsersByUserName: (username: string) => Promise<boolean>;
   followUser: (userId: string) => Promise<boolean>;
   unfollowUser: (userId: string) => Promise<boolean>;
@@ -44,6 +44,7 @@ interface AuthState {
   refreshUser: () => Promise<void>;
   getUserById: (id: string) => Promise<void>;
   followSuggestedUser: (id: string) => Promise<boolean>;
+  clearUsersByUserName: () => void;
 }
 
 const useAuthStore = create<AuthState>()(
@@ -62,7 +63,7 @@ const useAuthStore = create<AuthState>()(
       error: null,
       suggestedUsers: null,
       isSuggestedUsersLoading: false,
-      usersByUserName: null,
+      usersByUserName: [],
       isUsersByUserNameLoading: false,
       register: async (
         email: string,
@@ -422,6 +423,9 @@ const useAuthStore = create<AuthState>()(
           });
           return false;
         }
+      },
+      clearUsersByUserName: () => {
+        set({ usersByUserName: [] });
       },
     }),
     {
