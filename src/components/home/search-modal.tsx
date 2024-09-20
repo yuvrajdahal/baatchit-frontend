@@ -61,18 +61,25 @@ const SearchModal: React.FC<{
         <Input placeholder="Search..." value={search} onChange={handleChange} />
       </div>
       <div className="flex flex-col gap-4 divider overflow-hidden py-4 overflow-y-scroll remove-scrollbar">
-        {usersByUserName.length > 0 &&
+        {search.length > 0 &&
+          !isUsersByUserNameLoading &&
+          usersByUserName.length > 0 &&
           usersByUserName.map((u) => <UserTile user={u} key={u._id} />)}
-        {!isUsersByUserNameLoading &&
-          search.length > 0 &&
+        {search.length > 0 &&
+          !isUsersByUserNameLoading &&
           usersByUserName.length === 0 && (
             <div className="flex justify-center items-center">
               <p className="text-gray-500 text-sm">No users found</p>
             </div>
           )}
-        {search.length === 0 && (
+        {search.length === 0 && !isUsersByUserNameLoading && (
           <div className="flex justify-center items-center">
-            <p className="text-gray-500 text-sm">Search users by <span className="underline underline-offset-4 decoration-dotted">username</span></p>
+            <p className="text-gray-500 text-sm">
+              Search users by{" "}
+              <span className="underline underline-offset-4 decoration-dotted">
+                username
+              </span>
+            </p>
           </div>
         )}
       </div>
@@ -101,7 +108,8 @@ const UserTile: React.FC<{
             <span>{user?.username}</span>
             {user?.isFollowing && (
               <span className="text-blue-500 text-xs font-semibold">
-              {" "}· Following
+                {" "}
+                · Following
               </span>
             )}
           </p>
