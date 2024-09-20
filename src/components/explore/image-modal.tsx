@@ -80,7 +80,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
           {showLeftIcon && (
             <div
               onClick={selectPrev}
-              className="text-xl cursor-pointer fixed flex justify-center items-center text-white h-10 w-10 rounded-full bg-white -left-[20%] top-[50%]"
+              className="text-xl cursor-pointer fixed flex justify-center items-center text-white h-10 w-10 rounded-full bg-white -left-[20%] top-[40%]"
             >
               <ChevronLeft  className="text-gray-500" />
             </div>
@@ -302,7 +302,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
           {showRightIcon && (
             <div
               onClick={selectNext}
-              className="text-xl cursor-pointer flex justify-center items-center fixed text-white h-10 w-10 rounded-full bg-white -right-[20%] top-[50%]"
+              className="text-xl cursor-pointer flex justify-center items-center fixed text-white h-10 w-10 rounded-full bg-white -right-[20%] top-[40%]"
             >
               <ChevronRight  className="text-gray-500" />
             </div>

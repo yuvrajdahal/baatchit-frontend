@@ -198,17 +198,17 @@ const CommentModal: React.FC<CommentModalProps> = ({
                           <p className="text-sm">{cmt.message}</p>
                         </div>
                       </div>
-                      <MoreButton
-                        trigger={
-                          <MoreHorizontal
-                            className={twMerge(
-                              "text-muted-foreground h-5 w-5 bg-transparent border-none cursor-pointer"
-                            )}
-                          />
-                        }
-                      >
-                        <div className="flex flex-col divide-y divide-gray-300">
-                          {user?._id === cmt?.user?._id && (
+                      {user?._id === cmt?.user?._id && (
+                        <MoreButton
+                          trigger={
+                            <MoreHorizontal
+                              className={twMerge(
+                                "text-muted-foreground h-5 w-5 bg-transparent border-none cursor-pointer"
+                              )}
+                            />
+                          }
+                        >
+                          <div className="flex flex-col divide-y divide-gray-300">
                             <MenubarItem
                               onClick={async (e) => {
                                 e.preventDefault();
@@ -241,17 +241,9 @@ const CommentModal: React.FC<CommentModalProps> = ({
                                 <Trash2 className="w-4 h-4 text-red-500" />
                               )}
                             </MenubarItem>
-                          )}
-                          {/* <MenubarItem
-                            className={twMerge(
-                              `relative  flex rounded-none items-center justify-between py-2  cursor-pointer tranition duration-300 ease-in-out  space-x-4 `
-                            )}
-                          >
-                            Report
-                            <Flag className="w-4 h-4 text-red-500" />
-                          </MenubarItem> */}
-                        </div>
-                      </MoreButton>
+                          </div>
+                        </MoreButton>
+                      )}{" "}
                     </div>
                   );
                 })}
