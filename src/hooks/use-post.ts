@@ -35,6 +35,7 @@ interface PostState {
   getComments: (id: string) => Promise<void>;
   clearError: () => void;
   deletePost: (id: string) => Promise<boolean>;
+  clearComments: () => void;
 }
 
 const usePostStore = create<PostState>((set, get) => ({
@@ -281,6 +282,7 @@ const usePostStore = create<PostState>((set, get) => ({
     }
   },
   clearError: () => set({ error: null }),
+  clearComments: () => set({ comments: [] }),
 }));
 
 export default usePostStore;

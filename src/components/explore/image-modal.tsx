@@ -1,10 +1,8 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
-import { Post, User } from "@/data-access/types";
+import { Comment, Post, User } from "@/data-access/types";
 import React, { useState, useEffect, SetStateAction, Dispatch } from "react";
-import { AspectRatio } from "../ui/aspect-ratio";
-import usePostStore from "@/hooks/use-post";
 import {
   ChevronRight,
   ChevronLeft,
@@ -40,33 +38,49 @@ interface ImageModalProps {
   username: string;
   deletePost?: (id: string) => Promise<boolean>;
   user?: User | null;
+  selectNext: (id: string) => void;
+  selectPrev: (id: string) => void;
+  showLeftIcon: boolean;
+  showRightIcon: boolean;
+  comments: Comment[];
+  isCommentsLoading: boolean;
+  deleteComment: (id: string, commentId: string) => Promise<boolean>;
+  isCommentDeleting: boolean;
+}
+interface NImageModalProps {
+  modal?: boolean;
+  open?: boolean;
+  onChange?: () => void;
+  setOpenCommentsModal?: (open: boolean) => void;
+  post?: Post;
+  currentUser?: User | null;
+  isCommentsLoading: boolean;
+  comments: Comment[];
+  deleteComment: (id: string, commentId: string) => Promise<boolean>;
+  isCommentDeleting: boolean;
   selectNext: () => void;
   selectPrev: () => void;
   showLeftIcon: boolean;
   showRightIcon: boolean;
+  deletePost?: (id: string) => Promise<boolean>;
 }
-
-const ImageModal: React.FC<ImageModalProps> = ({
+const ImageModal: React.FC<NImageModalProps> = ({
   modal = true,
   open = false,
   onChange,
-  id,
   setOpenCommentsModal,
-  description,
-  image,
   deletePost,
   selectNext,
   selectPrev,
-  avatarUrl,
-  user,
-  post,
-  username,
   showLeftIcon,
   showRightIcon,
-  // likesCount,
+  comments,
+  isCommentsLoading,
+  deleteComment,
+  isCommentDeleting,
+  currentUser,
+  post,
 }) => {
-  const { isCommentsLoading, comments, deleteComment, isCommentDeleting } =
-    usePostStore();
   const { toast } = useToast();
   const [deleteLoading, setDeleteLoading] = useState(false);
   const { user: existingUser } = useAuthStore();
@@ -82,14 +96,14 @@ const ImageModal: React.FC<ImageModalProps> = ({
               onClick={selectPrev}
               className="text-xl cursor-pointer fixed flex justify-center items-center text-white h-10 w-10 rounded-full bg-white -left-[20%] top-[40%]"
             >
-              <ChevronLeft  className="text-gray-500" />
+              <ChevronLeft className="text-gray-500" />
             </div>
           )}
 
           <div className="w-1/2  overflow-hiden aspect-square">
             <div className="relative pt-[125%] overflow-hiden ">
               <img
-                src={image}
+                src={post?.image}
                 sizes="(max-width: 639px) 33vw, (max-width: 1079px) 300px, 357px"
                 className="absolute inset-0 w-full h-full object-cover"
                 loading="lazy"
@@ -101,8 +115,8 @@ const ImageModal: React.FC<ImageModalProps> = ({
               <div className="flex space-x-3 items-center  pt-2">
                 <img
                   className="w-12 h-12 rounded-full object-cover border"
-                  src={avatarUrl}
-                  alt={`${username} avatar`}
+                  src={post?.user?.profilePicture}
+                  alt={`${post?.user?.username} avatar`}
                 />
                 <div>
                   <Link
@@ -110,13 +124,13 @@ const ImageModal: React.FC<ImageModalProps> = ({
                       setOpenCommentsModal!(false);
                     }}
                     href={
-                      user?._id === post?.user._id
+                      currentUser?._id === post?.user?._id
                         ? `/profile`
                         : `/profile/${post?.user._id}`
                     }
                   >
                     <p className="font-semibold text-sm">
-                      {username ?? "user06934"}
+                      {post?.user?.username ?? "user06934"}
                     </p>
                   </Link>
                   <p className="text-muted-foreground pt-0.5 text-xs 2xl:text-sm">
@@ -145,7 +159,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
                         onClick={async (e) => {
                           e.preventDefault();
                           setDeleteLoading(true);
-                          const success = await deletePost!(id);
+                          const success = await deletePost!(post?._id!);
                           setDeleteLoading(false);
                           setOpenCommentsModal!(false);
 
@@ -195,7 +209,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
                           <img
                             className="w-12 h-12 rounded-full object-cover border"
                             src={cmt.user.profilePicture}
-                            alt={`${username} avatar`}
+                            alt={`${cmt.user.username} avatar`}
                           />
                         </div>
                         <div className="flex flex-col">
@@ -205,7 +219,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
                                 setOpenCommentsModal!(false);
                               }}
                               href={
-                                user?._id === cmt?.user._id
+                                currentUser?._id === cmt?.user._id
                                   ? `/profile`
                                   : `/profile/${cmt.user?._id}`
                               }
@@ -230,13 +244,13 @@ const ImageModal: React.FC<ImageModalProps> = ({
                         }
                       >
                         <div className="flex flex-col divide-y divide-gray-300">
-                          {user?._id === cmt?.user?._id && (
+                          {currentUser?._id === cmt?.user?._id && (
                             <MenubarItem
                               onClick={async (e) => {
                                 e.preventDefault();
                                 setDeleteLoading(true);
                                 const success = await deleteComment!(
-                                  id,
+                                  post?._id!,
                                   cmt._id
                                 );
                                 setDeleteLoading(false);
@@ -264,14 +278,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
                               )}
                             </MenubarItem>
                           )}
-                          {/* <MenubarItem
-                            className={twMerge(
-                              `relative  flex rounded-none items-center justify-between py-2  cursor-pointer tranition duration-300 ease-in-out  space-x-4 `
-                            )}
-                          >
-                            Report
-                            <Flag className="w-4 h-4 text-red-500" />
-                          </MenubarItem> */}
+                    
                         </div>
                       </MoreButton>
                     </div>
@@ -304,7 +311,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
               onClick={selectNext}
               className="text-xl cursor-pointer flex justify-center items-center fixed text-white h-10 w-10 rounded-full bg-white -right-[20%] top-[40%]"
             >
-              <ChevronRight  className="text-gray-500" />
+              <ChevronRight className="text-gray-500" />
             </div>
           )}
         </DialogContent>
