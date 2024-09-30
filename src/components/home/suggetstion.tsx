@@ -107,11 +107,12 @@ export const SuggetedUsers: React.FC<{
   if (isLoading) return <SkeletonSuggestion />;
   return (
     <div className="mt-6">
-      <div className="flex justify-between">
+      <div className="flex flex-col justify-between">
         <p className="text-gray-500 text-sm">Suggested for you</p>
-        <a href="#" className="text-xs font-semibold">
+        {/* <a href="#" className="text-xs font-semibold">
           See All
-        </a>
+        </a> */}
+        <div className="h-[1px] mt-4 bg-gray-300 w-full" />
       </div>
       <div className="mt-4 space-y-3">
         {suggestedUsers?.map((suser, i) => {

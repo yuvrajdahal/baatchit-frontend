@@ -15,7 +15,7 @@ export interface ApiError {
 class Api {
   private axiosInstance: AxiosInstance;
   constructor(
-    baseURL: string = (process.env.NODE_ENV === "development"
+    baseURL: string = (process.env.NODE_ENV=== "development"
       ? process.env.NEXT_PUBLIC_BACKEND_URL
       : process.env.NEXT_PUBLIC_PROD_BACKEND_URL) as string
   ) {

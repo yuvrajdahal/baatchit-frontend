@@ -122,10 +122,12 @@ const Sidebar: React.FC = () => {
   const pathName = usePathname();
   return (
     <div className="w-64 z-50">
-      <div className={twMerge("h-screen  relative  z-50",
-        "data-[show='true']:w-full data-[show='false']:w-14"
-      )}
-      data-show={show}
+      <div
+        className={twMerge(
+          "h-screen  relative  z-50",
+          "data-[show='true']:w-full data-[show='false']:w-14"
+        )}
+        data-show={show}
       >
         <div
           className={twMerge(
@@ -175,6 +177,9 @@ const Sidebar: React.FC = () => {
               Icon={MessageSquare}
               text="Messages"
               show={show}
+              onClick={() => {
+                router.push("/inbox");
+              }}
               notification="3"
             />
             <SidebarItem Icon={Heart} text="Notifications" show={show} />

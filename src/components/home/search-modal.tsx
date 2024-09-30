@@ -5,6 +5,8 @@ import { Input } from "../ui/input";
 import useAuthStore from "@/hooks/use-auth";
 import { User } from "@/data-access/types";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 const SearchModal: React.FC<{
   show: boolean;
@@ -18,6 +20,7 @@ const SearchModal: React.FC<{
     isUsersByUserNameLoading,
     clearUsersByUserName,
   } = useAuthStore();
+  const router = useRouter();
   const [search, setSearch] = useState("");
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     if (show == false) {
@@ -64,7 +67,9 @@ const SearchModal: React.FC<{
         {search.length > 0 &&
           !isUsersByUserNameLoading &&
           usersByUserName.length > 0 &&
-          usersByUserName.map((u) => <UserTile user={u} key={u._id} />)}
+          usersByUserName.map((u) => (
+            <UserTile user={u} key={u._id} router={router} />
+          ))}
         {search.length > 0 &&
           !isUsersByUserNameLoading &&
           usersByUserName.length === 0 && (
@@ -90,10 +95,15 @@ const SearchModal: React.FC<{
 export default SearchModal;
 const UserTile: React.FC<{
   user: User | null;
-}> = ({ user }) => {
-  console.log(user);
+  router: AppRouterInstance;
+}> = ({ user, router }) => {
   return (
-    <div className="flex items-center px-5 py-2  justify-between cursor-pointer hover:bg-muted">
+    <div
+      className="flex items-center px-5 py-2  justify-between cursor-pointer hover:bg-muted"
+      onClick={() => {
+        router.push(`/profile/${user?._id}`);
+      }}
+    >
       <div className="flex space-x-3 items-center">
         <img
           src={user?.profilePicture}
