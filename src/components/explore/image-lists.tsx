@@ -115,7 +115,7 @@ const SkeletalGrid: React.FC = () => {
       {[...Array(3)].map((_, i) => (
         <div
           key={i}
-          className="h-[350px] bg-gray-300 animate-pulse border border-white"
+          className="h-[450px] bg-gray-300 animate-pulse border border-white"
         ></div>
       ))}
     </div>

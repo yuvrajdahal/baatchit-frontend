@@ -29,6 +29,7 @@ interface AuthState {
   isSuggestedUsersLoading: boolean;
   isUsersByUserNameLoading: boolean;
   usersByUserName: User[];
+  messagingUsers: User[];
   getUsersByUserName: (username: string) => Promise<boolean>;
   followUser: (userId: string) => Promise<boolean>;
   unfollowUser: (userId: string) => Promise<boolean>;
@@ -58,6 +59,8 @@ const useAuthStore = create<AuthState>()(
       userByIdLoading: false,
       isLoading: false,
       userById: null,
+      messagingUsers: [],
+
       isLoginLoading: false,
       isRegisterLoading: false,
       error: null,

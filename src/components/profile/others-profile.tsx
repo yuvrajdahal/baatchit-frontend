@@ -107,7 +107,9 @@ const OthersProfileInfo: React.FC<OthersProfileInfoProps> = ({
                     {isFollowingLoading ? "Following..." : "Follow"}
                   </Button>
                 )}
-                <Button size={"lg"} className="px-4">
+                <Button size={"lg"} className="px-4"
+                
+                >
                   Message
                 </Button>
                 <Button size={"lg"} variant={"destructive"} className="px-4">

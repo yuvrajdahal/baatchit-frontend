@@ -27,6 +27,7 @@ import { Grand_Hotel } from "next/font/google";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
 import SearchModal from "./search-modal";
+import { setPriority } from "os";
 
 const grandHotel = Grand_Hotel({
   subsets: ["latin"],
@@ -116,39 +117,45 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
 };
 
 const Sidebar: React.FC = () => {
-  const [show, setShow] = useState(true);
+  const [isMinimized, minimizeSidebar] = useState(true);
   const { fetchPosts, setTogglePostModal, togglePostModal } = usePostStore();
+  const [showSearchModal, setSearchModal] = useState(true);
   const router = useRouter();
   const pathName = usePathname();
+  useEffect(() => {
+    if (pathName === "/inbox") {
+      minimizeSidebar(false);
+    }
+  }, [pathName]);
   return (
-    <div className="w-64 z-50">
+    <div className={twMerge("z-50", isMinimized ? "w-64" : "w-14")}>
       <div
         className={twMerge(
           "h-screen  relative  z-50",
           "data-[show='true']:w-full data-[show='false']:w-14"
         )}
-        data-show={show}
+        data-show={isMinimized}
       >
         <div
           className={twMerge(
             "h-full  pb-5  bg-white transition-all duration-600 flex flex-col items-start border-r",
             "data-[show='true']:w-full data-[show='false']:w-14"
           )}
-          data-show={show}
+          data-show={isMinimized}
         >
           <h1
             className={twMerge(
               "text-4xl font-bold mb-6 py-5 ",
-              show ? "px-5" : "pl-4",
+              isMinimized ? "px-5" : "pl-4",
               grandHotel.className
             )}
           >
-            {show ? "Baatchit" : "B"}
+            {isMinimized ? "Baatchit" : "B"}
           </h1>
           <div className="flex flex-col  w-full">
             <SidebarItem
               Icon={Home}
-              show={show}
+              show={isMinimized}
               text="Home"
               active={pathName === "/"}
               onClick={() => {
@@ -159,48 +166,56 @@ const Sidebar: React.FC = () => {
             <SidebarItem
               Icon={Search}
               text="Search"
-              show={show}
+              show={isMinimized}
               onClick={() => {
-                setShow((prev) => !prev);
+                minimizeSidebar((prev) => !prev);
+                setSearchModal((prev) => !prev);
               }}
             />
             <SidebarItem
               Icon={Compass}
               text="Explore"
-              show={show}
+              show={isMinimized}
               active={pathName === "/explore"}
               onClick={() => {
                 router.push("/explore");
+                
               }}
             />
-            <SidebarItem
+            {/* <SidebarItem
               Icon={MessageSquare}
               text="Messages"
-              show={show}
+              show={isMinimized}
               onClick={() => {
                 router.push("/inbox");
+                minimizeSidebar(false);
               }}
               notification="3"
             />
-            <SidebarItem Icon={Heart} text="Notifications" show={show} />
+            <SidebarItem Icon={Heart} text="Notifications" show={isMinimized} /> */}
             <SidebarItem
               Icon={PlusSquare}
               text="Create"
-              show={show}
+              show={isMinimized}
               onClick={() => setTogglePostModal(true)}
             />
             <SidebarItem
               Icon={User}
               active={pathName === "/profile"}
               text="Profile"
-              show={show}
+              show={isMinimized}
               onClick={() => {
                 router.push("/profile");
               }}
             />
           </div>
           <div className="w-full mt-auto">
-            <MenuSideBarItem Icon={Menu} active={false} text="More" show={show}>
+            <MenuSideBarItem
+              Icon={Menu}
+              active={false}
+              text="More"
+              show={isMinimized}
+            >
               <MenubarItem
                 className={twMerge(
                   `relative flex items-center cursor-pointer  duration-300 ease-in-out  py-2 px-5 space-x-4 `
@@ -215,7 +230,7 @@ const Sidebar: React.FC = () => {
           </div>
         </div>
       </div>
-      <SearchModal show={show} setShow={setShow} />
+      <SearchModal show={showSearchModal} setShow={setSearchModal} />
       <CreatePostModal
         open={togglePostModal}
         onChange={() => setTogglePostModal(!togglePostModal)}
