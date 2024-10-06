@@ -198,17 +198,17 @@ const CommentModal: React.FC<CommentModalProps> = ({
                           <p className="text-sm">{cmt.message}</p>
                         </div>
                       </div>
-                      {user?._id === cmt?.user?._id && (
-                        <MoreButton
-                          trigger={
-                            <MoreHorizontal
-                              className={twMerge(
-                                "text-muted-foreground h-5 w-5 bg-transparent border-none cursor-pointer"
-                              )}
-                            />
-                          }
-                        >
-                          <div className="flex flex-col divide-y divide-gray-300">
+                      <MoreButton
+                        trigger={
+                          <MoreHorizontal
+                            className={twMerge(
+                              "text-muted-foreground h-5 w-5 bg-transparent border-none cursor-pointer"
+                            )}
+                          />
+                        }
+                      >
+                        <div className="flex flex-col divide-y divide-gray-300">
+                          {user?._id === cmt?.user?._id && (
                             <MenubarItem
                               onClick={async (e) => {
                                 e.preventDefault();
@@ -241,9 +241,12 @@ const CommentModal: React.FC<CommentModalProps> = ({
                                 <Trash2 className="w-4 h-4 text-red-500" />
                               )}
                             </MenubarItem>
-                          </div>
-                        </MoreButton>
-                      )}{" "}
+                          )}{" "}
+                          <MenubarItem className="flex justify-between items-center">
+                            Report <Flag className="w-4 h-4 text-red-500" />
+                          </MenubarItem>
+                        </div>
+                      </MoreButton>
                     </div>
                   );
                 })}

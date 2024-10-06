@@ -1,7 +1,4 @@
-import Loading from "@/components/loading";
 import type { Metadata } from "next";
-import { Suspense } from "react";
-
 
 export const metadata: Metadata = {
   title: "Baatchit: Login",
@@ -14,9 +11,5 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <section className="w-full h-full">
-      <Suspense fallback={<Loading />}>{children}</Suspense>
-    </section>
-  );
+  return <section className="w-full h-full">{children}</section>;
 }

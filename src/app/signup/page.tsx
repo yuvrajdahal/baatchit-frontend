@@ -16,6 +16,7 @@ import { Post } from "@/data-access/types";
 import { useEffect, useState } from "react";
 import usePostStore from "@/hooks/use-post";
 import PostSkeleton from "@/components/posts/skeletal-iposts";
+import LogoLoading from "@/components/logo-loading";
 
 function Signup() {
   const { register, isRegisterLoading, error } = useAuthStore();
@@ -53,6 +54,12 @@ function Signup() {
       });
     }
   }
+  if (isMounted)
+    return (
+      <div className="h-screen w-full flex items-center justify-center">
+        <LogoLoading />
+      </div>
+    );
   return (
     <div className="w-full lg:grid h-screen lg:grid-cols-2">
       <div className="flex items-center justify-center py-12">
