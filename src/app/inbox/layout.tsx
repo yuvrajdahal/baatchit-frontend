@@ -1,24 +1,25 @@
-import Loading from "@/components/loading";
+import Sidebar from "@/components/home/sidebar";
+import ChatList from "@/components/inbox/chat-list";
 import AuthProvider from "@/providers/auth-provider";
-import type { Metadata } from "next";
-import { Suspense } from "react";
 
-export const metadata: Metadata = {
-  title: "Baatchit: Explore",
-  description:
-    "Website where you can share your ideas and connect with like-minded people.",
-};
-
-export default function RootLayout({
+export default function ChatLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <section className="w-full h-full">
-      <AuthProvider>
-         {children}
-      </AuthProvider>
-    </section>
+    <AuthProvider>
+      <div className="bg-dark h-screen w-screen text-light ">
+        <div className="h-full w-full flex justify-between">
+          <Sidebar />
+          <div className="w-[400px] border py-4 gap-y-4  h-full overflow-y-scroll overflow-hidden">
+            <ChatList />
+          </div>
+          <div className="bg-muted/20 flex-1 h-full w-full  flex flex-col  items-center overflow-x-hidden  remove-scrollbar transition-all duration-300 ease-in-out px-6 py-6">
+            {children}
+          </div>
+        </div>
+      </div>
+    </AuthProvider>
   );
 }

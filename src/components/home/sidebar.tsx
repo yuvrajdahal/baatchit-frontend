@@ -123,7 +123,7 @@ const Sidebar: React.FC = () => {
   const router = useRouter();
   const pathName = usePathname();
   useEffect(() => {
-    if (pathName === "/inbox") {
+    if (pathName.includes("inbox")) {
       minimizeSidebar(false);
     }
   }, [pathName]);
@@ -182,7 +182,7 @@ const Sidebar: React.FC = () => {
                 
               }}
             />
-            {/* <SidebarItem
+           <SidebarItem
               Icon={MessageSquare}
               text="Messages"
               show={isMinimized}
@@ -190,8 +190,9 @@ const Sidebar: React.FC = () => {
                 router.push("/inbox");
                 minimizeSidebar(false);
               }}
-              notification="3"
+              // notification="3"
             />
+              {/*
             <SidebarItem Icon={Heart} text="Notifications" show={isMinimized} /> */}
             <SidebarItem
               Icon={PlusSquare}

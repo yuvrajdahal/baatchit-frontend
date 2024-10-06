@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import usePostStore from "@/hooks/use-post";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import OthersProfileInfo from "@/components/profile/others-profile";
+import useChatStore from "@/hooks/use-chat";
 
 export default function ProfilePage() {
   const {
@@ -29,6 +30,7 @@ export default function ProfilePage() {
     deletePost,
     getComments,
   } = usePostStore();
+  const { createUserChat, createUserChatLoading } = useChatStore();
   const params: { id: string } = useParams();
   useEffect(() => {
     if (params.id) {
@@ -47,6 +49,8 @@ export default function ProfilePage() {
             unfollowUser={unfollowUser}
             user={user}
             isLoading={userByIdLoading}
+            createUserChat={createUserChat}
+            createUserChatLoading={createUserChatLoading}
           />
           <hr className="mb-10 w-full " />
           <Grid

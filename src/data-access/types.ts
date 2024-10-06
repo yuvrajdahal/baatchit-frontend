@@ -37,3 +37,9 @@ export type Comment = {
   user: User;
   createdAt: Date;
 };
+export type UserChats = {
+  _id: string;
+  receiver: User;
+  sender: User;
+  createdAt: Date;
+};

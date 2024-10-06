@@ -4,6 +4,7 @@ import { Archive, Settings, Flag } from "lucide-react";
 import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
 import { User } from "@/data-access/types";
+import { useRouter } from "next/navigation";
 
 interface OthersProfileInfoProps {
   user: User | null;
@@ -12,6 +13,9 @@ interface OthersProfileInfoProps {
   isLoading: boolean;
   folowUser: (userId: string) => Promise<boolean>;
   unfollowUser: (userId: string) => Promise<boolean>;
+  createUserChat: (id: string) => Promise<boolean>;
+
+  createUserChatLoading: boolean;
 }
 const OthersProfileInfo: React.FC<OthersProfileInfoProps> = ({
   isLoading,
@@ -20,11 +24,20 @@ const OthersProfileInfo: React.FC<OthersProfileInfoProps> = ({
   unfollowUser,
   isFollowingLoading,
   isUnfollowingLoadin,
+  createUserChat,
+  createUserChatLoading,
 }) => {
   const [isMounted, setMounted] = useState(true);
   useEffect(() => {
     setMounted(false);
   }, []);
+  const router = useRouter();
+  async function handleCreateChat() {
+    const success = await createUserChat(user?._id!);
+    if (success) {
+      router.push("/inbox");
+    }
+  }
   if (isLoading || isMounted) {
     return (
       <div className="animate-pulse">
@@ -44,7 +57,6 @@ const OthersProfileInfo: React.FC<OthersProfileInfoProps> = ({
 
                   <div className="h-10 bg-gray-300 w-[40px]  rounded" />
                   <div className="h-10 bg-gray-300 w-[40px]  rounded" />
-
                 </div>
               </div>
               <div className="flex justify-between">
@@ -95,7 +107,7 @@ const OthersProfileInfo: React.FC<OthersProfileInfoProps> = ({
                     onClick={() => unfollowUser(user?._id)}
                     disabled={isUnfollowingLoadin}
                   >
-                   {isUnfollowingLoadin ? "Unfollowing..." : "Unfollow"}
+                    {isUnfollowingLoadin ? "Unfollowing..." : "Unfollow"}
                   </Button>
                 ) : (
                   <Button
@@ -107,10 +119,8 @@ const OthersProfileInfo: React.FC<OthersProfileInfoProps> = ({
                     {isFollowingLoading ? "Following..." : "Follow"}
                   </Button>
                 )}
-                <Button size={"lg"} className="px-4"
-                
-                >
-                  Message
+                <Button size={"lg"} className="px-4" onClick={handleCreateChat}>
+                  {createUserChatLoading ? "Message..." : "Message"}
                 </Button>
                 <Button size={"lg"} variant={"destructive"} className="px-4">
                   <Flag size={20} />
