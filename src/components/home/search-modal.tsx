@@ -5,14 +5,16 @@ import { Input } from "../ui/input";
 import useAuthStore from "@/hooks/use-auth";
 import { User } from "@/data-access/types";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 const SearchModal: React.FC<{
   show: boolean;
+  minimizeSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({ show, setShow }) => {
+}> = ({ show, setShow, minimizeSidebar }) => {
   const ref = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
   const {
     getUsersByUserName,
     usersByUserName,
@@ -55,7 +57,8 @@ const SearchModal: React.FC<{
         <X
           className="w-6 h-6 cursor-pointer"
           onClick={() => {
-            setShow((prev) => !prev);
+            setShow(true);
+            minimizeSidebar(true);
           }}
         />
       </div>

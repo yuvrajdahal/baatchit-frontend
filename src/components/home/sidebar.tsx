@@ -126,9 +126,16 @@ const Sidebar: React.FC = () => {
     if (pathName.includes("inbox")) {
       minimizeSidebar(false);
     }
-  }, [pathName]);
+  }, [pathName,showSearchModal]);
   return (
-    <div className={twMerge("z-50", isMinimized ? "w-64" : "w-14")}>
+    <div
+      className={twMerge(
+        "z-50",
+        showSearchModal === true && isMinimized ? "w-64" : "w-14",
+        pathName !== "/inbox" && showSearchModal === false && "w-64",
+        pathName === "/inbox" && "w-14"
+      )}
+    >
       <div
         className={twMerge(
           "h-screen  relative  z-50",
@@ -168,8 +175,8 @@ const Sidebar: React.FC = () => {
               text="Search"
               show={isMinimized}
               onClick={() => {
-                minimizeSidebar((prev) => !prev);
-                setSearchModal((prev) => !prev);
+                minimizeSidebar(false);
+                setSearchModal(false);
               }}
             />
             <SidebarItem
@@ -179,10 +186,9 @@ const Sidebar: React.FC = () => {
               active={pathName === "/explore"}
               onClick={() => {
                 router.push("/explore");
-                
               }}
             />
-           <SidebarItem
+            <SidebarItem
               Icon={MessageSquare}
               text="Messages"
               show={isMinimized}
@@ -192,7 +198,7 @@ const Sidebar: React.FC = () => {
               }}
               // notification="3"
             />
-              {/*
+            {/*
             <SidebarItem Icon={Heart} text="Notifications" show={isMinimized} /> */}
             <SidebarItem
               Icon={PlusSquare}
@@ -231,7 +237,11 @@ const Sidebar: React.FC = () => {
           </div>
         </div>
       </div>
-      <SearchModal show={showSearchModal} setShow={setSearchModal} />
+      <SearchModal
+        show={showSearchModal}
+        setShow={setSearchModal}
+        minimizeSidebar={minimizeSidebar}
+      />
       <CreatePostModal
         open={togglePostModal}
         onChange={() => setTogglePostModal(!togglePostModal)}

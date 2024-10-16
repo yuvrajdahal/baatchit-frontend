@@ -27,6 +27,11 @@ export default function ChatList() {
       {userChats.map((u, i) => (
         <ChatUserTile user={u.receiver} key={i} router={router} />
       ))}
+      {userChats.length == 0 && (
+        <div className="flex items-center px-5 py-4  justify-between cursor-pointer bg-muted">
+          Get a friend bro!
+        </div>
+      )}
     </div>
   );
 }
