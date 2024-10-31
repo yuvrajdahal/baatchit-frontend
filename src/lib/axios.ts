@@ -5,6 +5,7 @@ import axios, {
   AxiosError,
   InternalAxiosRequestConfig,
 } from "axios";
+import { setupCache } from "axios-cache-interceptor";
 
 export interface ApiError {
   status: number | null;
@@ -19,12 +20,14 @@ class Api {
       ? process.env.NEXT_PUBLIC_BACKEND_URL
       : process.env.NEXT_PUBLIC_PROD_BACKEND_URL) as string
   ) {
-    this.axiosInstance = axios.create({
-      baseURL: baseURL,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    this.axiosInstance = setupCache(
+      axios.create({
+        baseURL: baseURL,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+    );
 
     this.axiosInstance.interceptors.request.use(
       (config) => this.handleRequest(config as InternalAxiosRequestConfig),
