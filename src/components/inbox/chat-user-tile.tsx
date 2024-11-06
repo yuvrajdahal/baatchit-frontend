@@ -22,8 +22,8 @@ const ChatUserTile: React.FC<{
         />
         <div>
           {" "}
-          <p className="text-sm flex justify-between items-center">
-            <span>{user?.username}</span>
+          <p className="text-sm capitalize flex justify-between items-center">
+            <span>{user?.fullname}</span>
           </p>
           <p className="text-muted-foreground flex items-center text-xs">
             Where are you bro?

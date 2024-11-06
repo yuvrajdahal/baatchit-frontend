@@ -13,6 +13,7 @@ interface ChatType {
   clearError: () => void;
   createUserChat: (id: string) => Promise<boolean>;
   fetchUserChats: () => Promise<void>;
+  getUserFromId: (id: string) => UserChats | undefined;
 }
 
 export const useChatStore = create<ChatType>((set, get) => ({
@@ -26,10 +27,10 @@ export const useChatStore = create<ChatType>((set, get) => ({
     try {
       const result = await createUserChatsUsecase(user);
       if (result.success && result.data) {
-          await get().fetchUserChats();
-          set((state) => ({
-            createUserChatLoading: false,
-          }));
+        await get().fetchUserChats();
+        set((state) => ({
+          createUserChatLoading: false,
+        }));
         return true;
       } else {
         set({
@@ -67,6 +68,10 @@ export const useChatStore = create<ChatType>((set, get) => ({
         fetchUserChatsLoading: false,
       });
     }
+  },
+  getUserFromId: (id: string) => {
+    const user = get().userChats.find((user) => user.receiver._id === id);
+    return user;
   },
 }));
 export default useChatStore;

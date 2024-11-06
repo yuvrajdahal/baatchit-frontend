@@ -15,7 +15,7 @@ export default function ChatLayout({
           <div className="w-[400px] border py-4 gap-y-4  h-full overflow-y-scroll overflow-hidden">
             <ChatList />
           </div>
-          <div className="bg-muted/20 flex-1 h-full w-full  flex flex-col  items-center overflow-x-hidden  remove-scrollbar transition-all duration-300 ease-in-out px-6 py-6">
+          <div className="bg-muted/20 flex-1 h-full w-full  flex flex-col  items-center overflow-x-hidden  remove-scrollbar">
             {children}
           </div>
         </div>

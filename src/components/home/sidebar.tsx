@@ -194,7 +194,7 @@ const Sidebar: React.FC = () => {
               show={isMinimized}
               onClick={() => {
                 router.push("/inbox");
-                minimizeSidebar(false);
+                // minimizeSidebar(false);
               }}
               // notification="3"
             />

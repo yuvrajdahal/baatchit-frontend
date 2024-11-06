@@ -16,7 +16,7 @@ export default function ChatList() {
   return (
     <div className="w-full h-full">
       <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2 cursor-pointer px-5 mb-4 mt-4">
+        <div className="flex items-center gap-2 cursor-pointer px-5 mb-4 mt-2">
           <div className="font-semibold ">{user?.username}</div>
           <ChevronDown />{" "}
         </div>

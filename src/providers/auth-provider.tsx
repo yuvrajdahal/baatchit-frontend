@@ -18,15 +18,17 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [isMounted, setIsMounted] = useState(false);
   const { isLoading, user, refreshUser } = useAuthStore();
-  const { toast } = useToast();
+  // const { toast } = useToast();
   const router = useRouter();
   useEffect(() => {
     setIsMounted(true);
     refreshUser();
   }, []);
   useEffect(() => {
-    if (!isLoading && user === null) {
-      router.push("/login");
+    if (isMounted) {
+      if (!isLoading && user === null) {
+        router.push("/login");
+      }
     }
   }, [router, isLoading, user, isMounted]);
 
