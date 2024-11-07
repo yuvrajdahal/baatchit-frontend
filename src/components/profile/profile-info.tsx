@@ -4,6 +4,9 @@ import { Archive, Settings } from "lucide-react";
 import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
 import { User } from "@/data-access/types";
+import SettingsModal from "../modals/settings-modal";
+import useToggleStore from "@/hooks/use-toggle";
+import { useRouter } from "next/navigation";
 
 interface ProfileInfoProps {
   user: User | null;
@@ -11,6 +14,8 @@ interface ProfileInfoProps {
 }
 const ProfileInfo: React.FC<ProfileInfoProps> = ({ isLoading, user }) => {
   const [isMounted, setMounted] = useState(true);
+  const { setToggleSettingsModal } = useToggleStore();
+  const router = useRouter();
   useEffect(() => {
     setMounted(false);
   }, []);
@@ -33,7 +38,6 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ isLoading, user }) => {
 
                   <div className="h-10 bg-gray-300 w-[40px]  rounded" />
                   <div className="h-10 bg-gray-300 w-[40px]  rounded" />
-
                 </div>
               </div>
               <div className="flex justify-between">
@@ -77,11 +81,23 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ isLoading, user }) => {
                 <p className="text-muted-foreground">{user?.fullname}</p>
               </div>
               <div className="flex items-center gap-2">
-                <Button size={"lg"}>Edit profile</Button>
-                <Button size={"lg"} className="px-4">
+                <Button size={"lg"}
+                onClick={
+                  ()=>router.push("/accounts/edit")
+                }
+                >Edit profile</Button>
+                <Button
+                  size={"lg"}
+                  className="px-4"
+                  onClick={() => router.push("/archive")}
+                >
                   <Archive size={20} />
                 </Button>
-                <Button size={"lg"} className="px-4">
+                <Button
+                  size={"lg"}
+                  className="px-4"
+                  onClick={() => setToggleSettingsModal(true)}
+                >
                   <Settings size={20} />
                 </Button>
               </div>
@@ -108,15 +124,10 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ isLoading, user }) => {
             </div>
             <div className="mb-8">
               <p>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                Nostrum.
+                Hi there, I'm <span className="font-semibold underline underline-offset-2">{user?.fullname}</span> and I'm a user on Baatchit.{" "}
+                <br /> I'm here to share my ideas and connect with like-minded
+                people.
               </p>
-              <a
-                href={`https://twitter.com/${user?.username}`}
-                className="text-blue-400 hover:underline"
-              >
-                {`https://twitter.com/${user?.username}`}
-              </a>
             </div>
           </div>
         </div>

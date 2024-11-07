@@ -5,6 +5,8 @@ import Grid from "@/components/profile/grid";
 import ProfileInfo from "@/components/profile/profile-info";
 import { useEffect } from "react";
 import usePostStore from "@/hooks/use-post";
+import SettingsModal from "@/components/modals/settings-modal";
+import useToggleStore from "@/hooks/use-toggle";
 
 export default function ProfilePage() {
   const { refreshUser, user, isLoading } = useAuthStore();
@@ -16,6 +18,8 @@ export default function ProfilePage() {
     deleteComment,
     isCommentDeleting,
   } = usePostStore();
+  const { isSettingsModalOpen, setToggleSettingsModal } = useToggleStore();
+
   useEffect(() => {
     refreshUser();
   }, []);
@@ -38,6 +42,7 @@ export default function ProfilePage() {
           />
         </div>
       </div>
+     
     </div>
   );
 }

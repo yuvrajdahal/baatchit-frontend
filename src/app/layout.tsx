@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
 import "./(root)/globals.css";
 import SystemMessage from "@/components/system-message";
+import ModalProvider from "@/providers/modal-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,7 +23,8 @@ export default function RootLayout({
       <body className={inter.className}>
         <main>{children}</main>
         <Toaster />
-        <SystemMessage/>
+        <SystemMessage />
+        <ModalProvider />
       </body>
     </html>
   );

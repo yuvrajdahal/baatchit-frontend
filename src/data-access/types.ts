@@ -2,6 +2,7 @@ export type User = {
   profilePicture?: string;
   username: string;
   fullname: string;
+  description?: string;
   email: string;
   emailToken?: string;
   password: string;
