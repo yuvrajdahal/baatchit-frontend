@@ -42,3 +42,38 @@ export async function getUserChats(token: string): Promise<{
     })
   );
 }
+// export const getMessages = asyncHandler(async (req, res, next) => {
+//   const { from, to } = req.query;
+//   const messages = await Chat.find({
+//     chatUsers: {
+//       $all: [from, to],
+//     },
+//   })
+//     .populate("from")
+//     .populate("to")
+//     .select("-cloud_id");
+
+//   res.status(201).json({
+//     success: true,
+//     data: messages,
+//   });
+// });
+export async function getUserMessages(
+  from: string,
+  to: string,
+  token: string
+): Promise<{
+  success: boolean;
+  data: UserChats[];
+}> {
+  return asyncHandler(() =>
+    api.get<{
+      success: boolean;
+      data: UserChats[];
+    }>(`/chats?from=${from}&to=${to}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+  );
+}

@@ -44,3 +44,12 @@ export type UserChats = {
   sender: User;
   createdAt: Date;
 };
+export type UserMessages = {
+  _id: string;
+  chatUsers: any[];
+  message: string;
+  sender: User;
+  receiver: User;
+  cloud_id: string;
+  createdAt: Date;
+};

@@ -132,7 +132,7 @@ function Signup() {
         </form>
       </div>
       <div className="hidden bg-muted  snap-y snap-mandatory lg:flex flex-col  items-center overflow-hidden overflow-y-scroll remove-scrollbar transition-all duration-300 ease-in-out">
-        {(isLoading || isMounted) &&
+        {(posts.length === 0 || isLoading || isMounted) &&
           [...Array(5)].map((_, i) => {
             return <PostSkeleton key={i} />;
           })}

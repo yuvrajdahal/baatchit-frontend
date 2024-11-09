@@ -1,8 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { FC, useState } from "react";
 
-const ChatInput = () => {
+interface ChatInputProps {
+  sendMessage: (message: string) => void;
+}
+
+const ChatInput: FC<ChatInputProps> = ({ sendMessage }) => {
   const [message, setMessage] = useState<string>("");
   return (
     <div className="px-4 w-full mb-4">
@@ -14,7 +18,19 @@ const ChatInput = () => {
           className="h-full border-0 outline-none ring-0 text-sm pl-4 ring-0"
         />
         {message.length > 0 && (
-          <button className="text-blue-500 text-sm font-semibold mr-4">
+          <button
+            className="text-blue-500 text-sm font-semibold mr-4"
+            onClick={() => {
+              sendMessage(message);
+              setMessage("");
+            }}
+            onKeyUpCapture={(e) => {
+              if (e.key === "Enter") {
+                sendMessage(message);
+                setMessage("");
+              }
+            }}
+          >
             Send
           </button>
         )}
