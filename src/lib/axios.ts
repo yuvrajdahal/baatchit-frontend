@@ -5,7 +5,7 @@ import axios, {
   AxiosError,
   InternalAxiosRequestConfig,
 } from "axios";
-import { setupCache } from "axios-cache-interceptor";
+import { buildWebStorage, setupCache } from "axios-cache-interceptor";
 
 export interface ApiError {
   status: number | null;
@@ -26,7 +26,25 @@ class Api {
         headers: {
           "Content-Type": "application/json",
         },
-      })
+      }),
+      {
+        storage: buildWebStorage(localStorage, "axios-cache:"),
+        ttl: 1000 * 60 * 5, // 5minute cache successfully response
+        interpretHeader: true,
+        methods: ["head", "get"],
+        cacheTakeover: true,
+        cachePredicate: {
+          statusCheck: (status) =>
+            [200, 203, 300, 301, 302, 404, 405, 410, 414, 501].includes(status),
+        },
+        etag: true,
+        staleIfError: (error) => {
+          if (axios.isAxiosError(error) && !error.response) {
+            return 3600;
+          }
+          return false;
+        },
+      }
     );
 
     this.axiosInstance.interceptors.request.use(
