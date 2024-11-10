@@ -20,12 +20,17 @@ class Api {
       ? process.env.NEXT_PUBLIC_BACKEND_URL
       : process.env.NEXT_PUBLIC_PROD_BACKEND_URL) as string
   ) {
+    const defaultHeaders = {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-cache",
+      Pragma: "no-cache",
+    };
+
     this.axiosInstance = setupCache(
       axios.create({
         baseURL: baseURL,
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: defaultHeaders,
+        withCredentials: true,
       }),
       {
         storage: buildWebStorage(
@@ -33,26 +38,28 @@ class Api {
           typeof window !== "undefined" ? window.localStorage : null,
           "axios-cache:"
         ),
-        ttl: 1000 * 60 * 5, // 5minute cache successfully response
-        interpretHeader: true,
-        methods: ["head", "get"],
-        cacheTakeover: true,
+        ttl: 1000 * 60 * 5,
+        methods: ["get"],
         cachePredicate: {
-          statusCheck: (status) =>
-            [200, 203, 300, 301, 302, 404, 405, 410, 414, 501].includes(status),
-        },
-        etag: true,
-        staleIfError: (error) => {
-          if (axios.isAxiosError(error) && !error.response) {
-            return 3600;
-          }
-          return false;
+          statusCheck: (status) => status === 200,
         },
       }
     );
 
     this.axiosInstance.interceptors.request.use(
-      (config) => this.handleRequest(config as InternalAxiosRequestConfig),
+      (config: InternalAxiosRequestConfig) => {
+        config.withCredentials = true;
+        // Ensure cache headers are set for non-GET requests
+        if (config.method !== "get") {
+          //@ts-ignore
+          config.headers = {
+            ...config.headers,
+            "Cache-Control": "no-cache",
+            "Pragma": "no-cache",
+          };
+        }
+        return config;
+      },
       (error) => this.handleError(error)
     );
 
@@ -60,12 +67,6 @@ class Api {
       (response) => this.handleResponse(response),
       (error) => Promise.reject(this.handleError(error))
     );
-  }
-
-  private handleRequest(
-    config: InternalAxiosRequestConfig
-  ): InternalAxiosRequestConfig {
-    return config;
   }
 
   private handleResponse(response: AxiosResponse): AxiosResponse {
@@ -83,7 +84,10 @@ class Api {
 
   public async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
     try {
-      const response = await this.axiosInstance.get<T>(url, config);
+      const response = await this.axiosInstance.get<T>(url, {
+        ...config,
+        withCredentials: true,
+      });
       return response.data;
     } catch (error) {
       throw error;
@@ -96,15 +100,27 @@ class Api {
     config?: AxiosRequestConfig
   ): Promise<T> {
     try {
-      const response = await this.axiosInstance.post<T>(url, data, config);
+      const response = await this.axiosInstance.post<T>(url, data, {
+        ...config,
+        withCredentials: true,
+        headers: {
+          ...config?.headers,
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+        },
+      });
       return response.data;
     } catch (error) {
       throw error;
     }
   }
+
   public async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
     try {
-      const response = await this.axiosInstance.delete<T>(url, config);
+      const response = await this.axiosInstance.delete<T>(url, {
+        ...config,
+        withCredentials: true,
+      });
       return response.data;
     } catch (error) {
       throw error;
