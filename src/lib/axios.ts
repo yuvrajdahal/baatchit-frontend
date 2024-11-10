@@ -28,7 +28,11 @@ class Api {
         },
       }),
       {
-        storage: buildWebStorage(localStorage, "axios-cache:"),
+        storage: buildWebStorage(
+          //@ts-ignore
+          typeof window !== "undefined" ? window.localStorage : null,
+          "axios-cache:"
+        ),
         ttl: 1000 * 60 * 5, // 5minute cache successfully response
         interpretHeader: true,
         methods: ["head", "get"],
