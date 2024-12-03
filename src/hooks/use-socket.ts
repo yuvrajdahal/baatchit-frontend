@@ -1,10 +1,8 @@
 import { create } from "zustand";
 import { io, Socket } from "socket.io-client";
 
-// Define message types
 type Message = any;
 
-// Define socket events
 interface ServerToClientEvents {
   "msg-receive": (message: Message) => void;
 }
@@ -16,7 +14,6 @@ interface ClientToServerEvents {
   "add-user": (userId: string) => void;
 }
 
-// Define store state
 interface StoreState {
   isConnected: boolean;
   messages: Message[];
@@ -28,11 +25,6 @@ interface StoreState {
   leaveRoom: (roomId: string) => void;
   addUser: (userId: string) => void;
 }
-// baseURL: string = (process.env.NODE_ENV === "development"
-//   ? process.env.NEXT_PUBLIC_BACKEND_URL
-//   : process.env.NEXT_PUBLIC_PROD_BACKEND_URL) as string
-
-// Create socket instance with proper typing
 const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
   (process.env.NODE_ENV === "development"
     ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/socket`
@@ -41,6 +33,9 @@ const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
     reconnectionDelay: 1000,
     reconnectionDelayMax: 5000,
     autoConnect: true,
+    auth: {
+      token: JSON.parse(localStorage.getItem("token") as string),
+    },
   }
 );
 

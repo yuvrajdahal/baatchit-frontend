@@ -68,7 +68,7 @@ const UserMessage: FC<{
       </Link>
       <div className="bg-gray-200/90 p-2 rounded-md">
         <p className="text-sm">
-          {user.username}-{message}
+          {message}
         </p>
       </div>
     </div>
