@@ -34,7 +34,7 @@ const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
     reconnectionDelayMax: 5000,
     autoConnect: true,
     auth: {
-      token: JSON.parse(localStorage.getItem("token") as string),
+      token: localStorage.getItem("token") as string,
     },
   }
 );
