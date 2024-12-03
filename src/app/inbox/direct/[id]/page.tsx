@@ -43,10 +43,10 @@ const Page = () => {
   //   }
   // }, [token]);
 
-  // useEffect(() => {
-  //   const userFromChatId = getUserFromId(id as string);
-  //   setReceiver(userFromChatId?.receiver);
-  // }, [id, userChats]);
+  useEffect(() => {
+    const userFromChatId = getUserFromId(id as string);
+    setReceiver(userFromChatId?.receiver);
+  }, [id, userChats]);
 
   useEffect(() => {
     fetchUserMessages(id as string, user?._id as string);

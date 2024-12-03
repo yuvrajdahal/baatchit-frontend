@@ -8,7 +8,7 @@ interface ServerToClientEvents {
 }
 
 interface ClientToServerEvents {
-  sendMessage: (message: Omit<Message, "id" | "timestamp">) => void;
+  "send-msg": (message: Omit<Message, "id" | "timestamp">) => void;
   joinRoom: (roomId: string) => void;
   leaveRoom: (roomId: string) => void;
   "add-user": (userId: string) => void;
@@ -82,7 +82,8 @@ const useSocketStore = create<StoreState>((set, get) => ({
   },
   sendMessage: (data: any) => {
     if (get().isConnected) {
-      socket.emit("sendMessage", data);
+      console.log(socket);
+      socket.emit("send-msg", data);
     } else {
       console.warn("Cannot send message: Socket not connected");
     }

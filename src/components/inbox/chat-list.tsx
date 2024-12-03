@@ -25,7 +25,11 @@ export default function ChatList() {
         Messages
       </div>
       {userChats.map((u, i) => (
-        <ChatUserTile user={u.receiver} key={i} router={router} />
+        <ChatUserTile
+          user={user?._id === u.receiver._id ? u.sender : u.receiver}
+          key={i}
+          router={router}
+        />
       ))}
       {userChats.length == 0 && (
         <div className="flex items-center px-5 py-4  justify-between cursor-pointer bg-muted">
