@@ -24,32 +24,36 @@ interface StoreState {
   joinRoom: (roomId: string) => void;
   leaveRoom: (roomId: string) => void;
   addUser: (userId: string) => void;
+  socket: Socket<ServerToClientEvents, ClientToServerEvents> | null;
 }
-const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
-  (process.env.NODE_ENV === "development"
-    ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/socket`
-    : `${process.env.NEXT_PUBLIC_PROD_BACKEND_URL}/socket`) as string,
-  {
-    reconnectionDelay: 1000,
-    reconnectionDelayMax: 5000,
-    autoConnect: true,
-    auth: {
-      token: localStorage.getItem("token") as string,
-    },
-  }
-);
-
 const useSocketStore = create<StoreState>((set, get) => ({
   isConnected: false,
   messages: [],
   error: null,
+  socket: null,
   initializeSocket: () => {
+    const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
+      (process.env.NODE_ENV === "development"
+        ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/socket`
+        : `${process.env.NEXT_PUBLIC_PROD_BACKEND_URL}/socket`) as string,
+      {
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+        autoConnect: true,
+        auth: {
+          token: localStorage.getItem("token") as string,
+        },
+      }
+    );
+    set({ socket });
+
     socket.on("connect", () => {
       set({ isConnected: true, error: null });
       console.log("Connected to socket server");
     });
 
     socket.on("msg-receive", (message: Message) => {
+      console.log(message);
       set((state) => ({
         messages: [...state.messages, message],
       }));
@@ -68,20 +72,27 @@ const useSocketStore = create<StoreState>((set, get) => ({
   },
 
   cleanup: () => {
-    socket.off("connect");
-    socket.off("disconnect");
-    socket.off("connect_error");
-    socket.off("msg-receive");
-    socket.disconnect();
+    const { socket } = get();
+    if (socket) {
+      socket.off("connect");
+      socket.off("disconnect");
+      socket.off("connect_error");
+      socket.off("msg-receive");
+      socket.disconnect();
+    }
   },
 
   addUser: (userId: string) => {
-    if (get().isConnected) {
+    const { socket } = get();
+
+    if (socket && get().isConnected) {
       socket.emit("add-user", userId);
     }
   },
   sendMessage: (data: any) => {
-    if (get().isConnected) {
+    const { socket } = get();
+
+    if (socket && get().isConnected) {
       console.log(socket);
       socket.emit("send-msg", data);
     } else {
@@ -90,13 +101,17 @@ const useSocketStore = create<StoreState>((set, get) => ({
   },
 
   joinRoom: (roomId: string) => {
-    if (get().isConnected) {
+    const { socket } = get();
+
+    if (socket && get().isConnected) {
       socket.emit("joinRoom", roomId);
     }
   },
 
   leaveRoom: (roomId: string) => {
-    if (get().isConnected) {
+    const { socket } = get();
+
+    if (socket && get().isConnected) {
       socket.emit("leaveRoom", roomId);
     }
   },

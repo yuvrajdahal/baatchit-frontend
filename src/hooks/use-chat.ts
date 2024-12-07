@@ -5,6 +5,7 @@ import {
   getUserMessagesUsecase,
 } from "@/use-cases/userchats-usecase";
 import { create } from "zustand";
+import useAuthStore from "./use-auth";
 
 interface ChatType {
   userChats: UserChats[];
@@ -17,7 +18,7 @@ interface ChatType {
   createUserChat: (id: string) => Promise<boolean>;
   fetchUserChats: () => Promise<void>;
   fetchUserMessages: (from: string, to: string) => Promise<void>;
-  getUserFromId: (id: string) => UserChats | undefined;
+  getUserFromId: (id: string, userId: string) => User | undefined;
 }
 
 export const useChatStore = create<ChatType>((set, get) => ({
@@ -97,9 +98,13 @@ export const useChatStore = create<ChatType>((set, get) => ({
       });
     }
   },
-  getUserFromId: (id: string) => {
-    const user = get().userChats.find((user) => user.receiver._id === id);
-    return user;
+  getUserFromId: (id: string, userId: string) => {
+    let user = get().userChats.find(
+      (user) => user.receiver._id === id || user.sender._id === id
+    );
+    if (user) {
+      return userId === user?.receiver._id ? user.sender : user.receiver;
+    }
   },
 }));
 export default useChatStore;

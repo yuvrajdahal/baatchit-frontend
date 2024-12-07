@@ -19,12 +19,13 @@ const Page = () => {
     useChatStore();
   const [receiver, setReceiver] = useState<UserChats["receiver"] | undefined>();
   const token = localStorage.getItem("token");
-  const socketref = useRef<any>(null);
 
   useEffect(() => {
-    initializeSocket();
+    if (user) {
+      initializeSocket();
+    }
     return cleanup;
-  }, []);
+  }, [user]);
 
   // useEffect(() => {
   //   if (token) {
@@ -44,9 +45,11 @@ const Page = () => {
   // }, [token]);
 
   useEffect(() => {
-    const userFromChatId = getUserFromId(id as string);
-    setReceiver(userFromChatId?.receiver);
-  }, [id, userChats]);
+    if (user) {
+      const userFromChatId = getUserFromId(id as string, user?._id as string);
+      setReceiver(userFromChatId);
+    }
+  }, [id, userChats, user]);
 
   useEffect(() => {
     fetchUserMessages(id as string, user?._id as string);
