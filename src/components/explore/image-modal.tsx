@@ -22,8 +22,8 @@ import { twMerge } from "tailwind-merge";
 import Loading from "../loading";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNowStrict } from "date-fns";
-import useAuthStore from "@/hooks/use-auth";
 import { useComments, useDeleteComment, useDeletePost } from "@/hooks/use-post";
+import { useCurrentUser } from "@/hooks/use-auth";
 
 interface NImageModalProps {
   modal?: boolean;
@@ -50,7 +50,7 @@ const ImageModal: React.FC<NImageModalProps> = ({
   post,
 }) => {
   const { toast } = useToast();
-  const { user: existingUser } = useAuthStore();
+  const { data: userData } = useCurrentUser();
   const {
     mutate: deletePost,
     isPending: deleteLoading,
@@ -135,7 +135,7 @@ const ImageModal: React.FC<NImageModalProps> = ({
                   }
                 >
                   <div className="flex flex-col divide-y divide-gray-300">
-                    {existingUser?._id === post?.user?._id && (
+                    {userData?.user?._id === post?.user?._id && (
                       <MenubarItem
                         onClick={async (e) => {
                           e.preventDefault();

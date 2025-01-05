@@ -1,12 +1,10 @@
 "use client";
-import useAuthStore from "@/hooks/use-auth";
-import { Archive, Settings } from "lucide-react";
-import { Button } from "../ui/button";
-import { useEffect, useState } from "react";
 import { User } from "@/data-access/types";
-import SettingsModal from "../modals/settings-modal";
 import useToggleStore from "@/hooks/use-toggle";
+import { Archive, Settings } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Button } from "../ui/button";
 
 interface ProfileInfoProps {
   user: User | null;

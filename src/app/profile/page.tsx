@@ -22,7 +22,7 @@ export default function ProfilePage() {
   return (
     <div className="bg-dark h-screen w-screen text-light">
       <div className="h-full w-full flex justify-between">
-        <Sidebar />
+        <Sidebar user={user!} />
         <div className="bg-muted/20 flex-1 flex flex-col items-center overflow-x-hidden remove-scrollbar transition-all duration-300 ease-in-out px-6 py-6">
           <ProfileInfo user={user!} isLoading={isUserLoading} />
           <hr className="mb-10 w-full" />

@@ -1,14 +1,16 @@
 "use client";
-import useAuthStore from "@/hooks/use-auth";
-import Grid from "../profile/grid";
-import CommentModal from "../posts/comments-modal";
+import {
+  useComments,
+  useDeleteComment,
+  useDeletePost,
+  usePosts,
+} from "@/hooks/use-post";
 import { useEffect, useState } from "react";
 import ImageModal from "./image-modal";
-import { useComments, useDeleteComment, useDeletePost, usePosts } from "@/hooks/use-post";
-import { Comment } from "@/data-access/types";
+import { useCurrentUser } from "@/hooks/use-auth";
 
 const ImageList = () => {
-  const { user } = useAuthStore();
+  const { data: userData } = useCurrentUser();
   const [isMounted, setMounted] = useState(true);
   const [index, setIndex] = useState(0);
   const [isCommentsModalOpen, setCommentsModalOpen] = useState(false);
@@ -16,9 +18,11 @@ const ImageList = () => {
 
   // React Query hooks
   const { data: postsData, isLoading } = usePosts();
-  const { data: commentsData, isLoading: isCommentsLoading } = useComments(selectedPostId);
+  const { data: commentsData, isLoading: isCommentsLoading } =
+    useComments(selectedPostId);
   const { mutate: deletePostMutation } = useDeletePost();
-  const { mutate: deleteCommentMutation, isPending: isCommentDeleting } = useDeleteComment();
+  const { mutate: deleteCommentMutation, isPending: isCommentDeleting } =
+    useDeleteComment();
 
   const posts = postsData?.posts || [];
   const comments = commentsData?.comments || [];
@@ -78,7 +82,7 @@ const ImageList = () => {
               showLeftIcon={index > 0}
               showRightIcon={index < posts.length - 1}
               post={posts[index]}
-              currentUser={user}
+              currentUser={userData?.user!}
             />
           </>
         ))}

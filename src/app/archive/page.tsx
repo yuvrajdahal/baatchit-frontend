@@ -1,19 +1,15 @@
 "use client";
 import Sidebar from "@/components/home/sidebar";
-import useAuthStore from "@/hooks/use-auth";
-import { useEffect } from "react";
+import { useCurrentUser } from "@/hooks/use-auth";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 export default function ArchivePage() {
-  const { refreshUser, user, isLoading } = useAuthStore();
+  const { data: userData } = useCurrentUser();
   const router = useRouter();
-  useEffect(() => {
-    refreshUser();
-  }, []);
   return (
     <div className="bg-dark h-screen w-screen text-light ">
       <div className="h-full w-full flex justify-between">
-        <Sidebar />
+        <Sidebar user={userData?.user!} />
         <div className="bg-muted/20 flex-1  flex flex-col   overflow-x-hidden  remove-scrollbar transition-all duration-300 ease-in-out px-6 py-6">
           <div className="flex items-center gap-4 text-lg">
             <span

@@ -1,40 +1,37 @@
 "use client";
-import useAuthStore from "@/hooks/use-auth";
+import { useFollowUser, useUnfollowUser } from "@/hooks/use-auth";
 import { Archive, Settings, Flag } from "lucide-react";
 import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
 import { User } from "@/data-access/types";
 import { useRouter } from "next/navigation";
+import { useCreateUserChat } from "@/hooks/use-chat";
 
 interface OthersProfileInfoProps {
   user: User | null;
-  isUnfollowingLoadin: boolean;
-  isFollowingLoading: boolean;
   isLoading: boolean;
-  folowUser: (userId: string) => Promise<boolean>;
-  unfollowUser: (userId: string) => Promise<boolean>;
-  createUserChat: (id: string) => Promise<boolean>;
-
-  createUserChatLoading: boolean;
 }
 const OthersProfileInfo: React.FC<OthersProfileInfoProps> = ({
   isLoading,
   user,
-  folowUser,
-  unfollowUser,
-  isFollowingLoading,
-  isUnfollowingLoadin,
-  createUserChat,
-  createUserChatLoading,
 }) => {
+  const { mutate: followUser, isPending: isFollowingLoading } = useFollowUser();
+  const { mutate: unfollowUser, isPending: isUnfollowingLoading } =
+    useUnfollowUser();
+  const {
+    mutate: createUserChat,
+    isPending: createUserChatLoading,
+    isSuccess: isCreateSuccess,
+  } = useCreateUserChat();
+
   const [isMounted, setMounted] = useState(true);
   useEffect(() => {
     setMounted(false);
   }, []);
   const router = useRouter();
   async function handleCreateChat() {
-    const success = await createUserChat(user?._id!);
-    if (success) {
+    createUserChat(user?._id!);
+    if (isCreateSuccess) {
       router.push("/inbox");
     }
   }
@@ -105,15 +102,15 @@ const OthersProfileInfo: React.FC<OthersProfileInfoProps> = ({
                     size={"lg"}
                     className="px-4"
                     onClick={() => unfollowUser(user?._id)}
-                    disabled={isUnfollowingLoadin}
+                    disabled={isUnfollowingLoading}
                   >
-                    {isUnfollowingLoadin ? "Unfollowing..." : "Unfollow"}
+                    {isUnfollowingLoading ? "Unfollowing..." : "Unfollow"}
                   </Button>
                 ) : (
                   <Button
                     size={"lg"}
                     className="px-4"
-                    onClick={() => folowUser(user?._id!)}
+                    onClick={() => followUser(user?._id!)}
                     disabled={isFollowingLoading}
                   >
                     {isFollowingLoading ? "Following..." : "Follow"}
