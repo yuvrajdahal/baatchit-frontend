@@ -60,9 +60,9 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ isLoading, user }) => {
     );
   }
   return (
-    <div className=" ">
+    <div className=" w-full">
       <div className="w-full">
-        <div className="flex  justify-center items-start gap-[3rem]  pt-10">
+        <div className="flex flex-col md:flex-row justify-center items-center md:items-start gap-[3rem]  pt-10">
           <div className="flex items-center space-x-4">
             <img
               src={user?.profilePicture ?? "https://placeholder.pics/svg/200"}
@@ -73,12 +73,12 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ isLoading, user }) => {
             />
           </div>
           <div className="flex flex-col gap-6 mt-4 ">
-            <div className="flex space-x-2 gap-6">
-              <div>
+            <div className="flex flex-col justify-center md:justify-start md:flex-row space-x-2 gap-6">
+              <div className="flex flex-col justify-center items-center md:items-start">
                 <h1 className="text-2xl font-bold">{user?.username}</h1>
                 <p className="text-muted-foreground">{user?.fullname}</p>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex justify-center items-center gap-2">
                 <Button size={"lg"}
                 onClick={
                   ()=>router.push("/accounts/edit")
@@ -100,7 +100,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ isLoading, user }) => {
                 </Button>
               </div>
             </div>
-            <div className="flex gap-10 ">
+            <div className="flex gap-10 justify-center md:justify-start">
               <div className="flex flex-col">
                 <p>
                   <span className="font-semibold">{user?.posts?.length}</span>{" "}
@@ -120,7 +120,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ isLoading, user }) => {
                 </p>
               </div>
             </div>
-            <div className="mb-8">
+            <div className="mb-8  text-center md:text-left ">
               <p>
                 Hi there, I'm <span className="font-semibold underline underline-offset-2">{user?.fullname}</span> and I'm a user on Baatchit.{" "}
                 <br /> I'm here to share my ideas and connect with like-minded
