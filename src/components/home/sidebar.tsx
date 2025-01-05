@@ -161,7 +161,7 @@ const Sidebar: React.FC<{
     >
       <div
         className={twMerge(
-          "h-screen  relative  z-50",
+          "h-[100dvh]  relative  z-50",
           "data-[show='true']:w-full data-[show='false']:w-14"
         )}
         data-show={isMinimized}
