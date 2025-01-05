@@ -62,8 +62,8 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ isLoading, user }) => {
   return (
     <div className=" w-full">
       <div className="w-full">
-        <div className="flex flex-col md:flex-row justify-center items-center md:items-start gap-[3rem]  pt-10">
-          <div className="flex items-center space-x-4">
+        <div className="flex flex-col md:flex-row justify-center items-center md:items-start gap-[1.5rem] md:gap-[3rem]  pt-10">
+          <div className="flex items-center space-x-4 bg-">
             <img
               src={user?.profilePicture ?? "https://placeholder.pics/svg/200"}
               alt="User Profile"
@@ -72,7 +72,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ isLoading, user }) => {
               className="rounded-full  border"
             />
           </div>
-          <div className="flex flex-col gap-6 mt-4 ">
+          <div className="flex flex-col gap-6  md:mt-4 ">
             <div className="flex flex-col justify-center md:justify-start md:flex-row space-x-2 gap-6">
               <div className="flex flex-col justify-center items-center md:items-start">
                 <h1 className="text-2xl font-bold">{user?.username}</h1>
