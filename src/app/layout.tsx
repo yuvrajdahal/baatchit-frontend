@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import "./(root)/globals.css";
 import SystemMessage from "@/components/system-message";
 import ModalProvider from "@/providers/modal-provider";
+import TanstackProvider from "@/providers/tanstack-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,10 +22,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <main>{children}</main>
-        <Toaster />
-        <SystemMessage />
-        <ModalProvider />
+        <TanstackProvider>
+          <main>{children}</main>
+          <Toaster />
+          <SystemMessage />
+          <ModalProvider />
+        </TanstackProvider>
       </body>
     </html>
   );

@@ -1,33 +1,28 @@
 "use client";
 import {
-  Home,
-  Search,
-  Compass,
-  MessageSquare,
-  Heart,
-  X,
-  PlusSquare,
-  User,
-  Menu,
-} from "lucide-react";
-import CreatePostModal from "./create-post-modal";
-import usePostStore from "@/hooks/use-post";
-import {
   Menubar,
   MenubarContent,
   MenubarItem,
   MenubarMenu,
   MenubarTrigger,
 } from "@/components/ui/menubar";
-import { twMerge } from "tailwind-merge";
-import useAuthStore from "@/hooks/use-auth";
-import { usePathname, useRouter } from "next/navigation";
-import Link from "next/link";
+import usePostStore, { usePosts } from "@/hooks/use-post";
+import {
+  Compass,
+  Home,
+  Menu,
+  MessageSquare,
+  PlusSquare,
+  Search,
+  User,
+} from "lucide-react";
 import { Grand_Hotel } from "next/font/google";
-import { useEffect, useRef, useState } from "react";
-import { Button } from "../ui/button";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { twMerge } from "tailwind-merge";
+import CreatePostModal from "./create-post-modal";
 import SearchModal from "./search-modal";
-import { setPriority } from "os";
+import { User as UserType } from "@/data-access/types";
 
 const grandHotel = Grand_Hotel({
   subsets: ["latin"],
@@ -116,9 +111,12 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   );
 };
 
-const Sidebar: React.FC = () => {
+const Sidebar: React.FC<{
+  user: UserType | null;
+}> = ({ user }) => {
   const [isMinimized, minimizeSidebar] = useState(true);
-  const { fetchPosts, setTogglePostModal, togglePostModal } = usePostStore();
+  const { setTogglePostModal, togglePostModal } = usePostStore();
+  const { refetch } = usePosts();
   const [showSearchModal, setSearchModal] = useState(true);
   const router = useRouter();
   const pathName = usePathname();
@@ -126,11 +124,11 @@ const Sidebar: React.FC = () => {
     if (pathName.includes("inbox")) {
       minimizeSidebar(false);
     }
-  }, [pathName,showSearchModal]);
+  }, [pathName, showSearchModal]);
   return (
     <div
       className={twMerge(
-        "z-50",
+        "hidden lg:block z-50",
         showSearchModal === true && isMinimized ? "w-64" : "w-14",
         pathName !== "/inbox" && showSearchModal === false && "w-64",
         pathName === "/inbox" && "w-14"
@@ -166,7 +164,7 @@ const Sidebar: React.FC = () => {
               text="Home"
               active={pathName === "/"}
               onClick={() => {
-                fetchPosts();
+                refetch();
                 router.push("/");
               }}
             />

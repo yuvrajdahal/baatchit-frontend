@@ -1,68 +1,83 @@
 "use client";
-import Image from "next/image";
 import Link from "next/link";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import InstagramPost from "@/components/posts/IPost";
 import { useToast } from "@/hooks/use-toast";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
-import useAuthStore from "@/hooks/use-auth";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Loading from "@/components/loading";
-import usePostStore from "@/hooks/use-post";
 import PostSkeleton from "@/components/posts/skeletal-iposts";
 import LogoLoading from "@/components/logo-loading";
+import { usePosts } from "@/hooks/use-post";
+import { useLogin } from "@/hooks/use-auth";
 
 function Login() {
   const { toast } = useToast();
-  const { login, logout, error, isLoginLoading } = useAuthStore();
   const [isMounted, setMounted] = useState(true);
-  const { posts, error: postError, fetchPosts, isLoading } = usePostStore();
-
+  const { data: postsData, isLoading } = usePosts();
+  const posts = postsData?.posts || [];
   const router = useRouter();
   const params = useSearchParams();
   const param = params.get("logout");
+
+  const loginMutation = useLogin();
+
   useEffect(() => {
     setMounted(false);
-    fetchPosts();
   }, []);
 
   useEffect(() => {
     if (param) {
-      logout();
+      localStorage.clear();
       router.replace("/login", undefined);
     }
-  }, [param]);
+  }, [param, router]);
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
-    const success = await login(email, password);
-    if (success && !isLoginLoading) {
-      toast({
-        title: "Success",
-        description: "You have successfully logged in",
-        variant: "default",
-      });
-      router.push("/");
-    }
-    if (error) {
-      toast({
-        title: "Error",
-        description: error,
-        variant: "destructive",
-      });
-    }
+
+    loginMutation.mutate(
+      { email, password },
+      {
+        onSuccess: (data) => {
+          if (data.success) {
+            toast({
+              title: "Success",
+              description: "You have successfully logged in",
+              variant: "default",
+            });
+            router.push("/");
+          } else {
+            toast({
+              title: "Error",
+              description: data.error || "Login failed",
+              variant: "destructive",
+            });
+          }
+        },
+        onError: (error) => {
+          toast({
+            title: "Error",
+            description: error.message || "An unexpected error occurred",
+            variant: "destructive",
+          });
+        },
+      }
+    );
   }
+
   if (isMounted)
     return (
       <div className="h-screen w-full flex items-center justify-center">
         <LogoLoading />
       </div>
     );
+
   return (
     <div className="w-full lg:grid h-screen lg:grid-cols-2">
       <div className="flex items-center justify-center py-12">
@@ -96,8 +111,12 @@ function Login() {
               </div>
               <Input id="password" type="password" name="password" required />
             </div>
-            <Button type="submit" className="w-full" disabled={isLoginLoading}>
-              {isLoginLoading ? <Loading /> : "Login"}
+            <Button 
+              type="submit" 
+              className="w-full" 
+              disabled={loginMutation.isPending}
+            >
+              {loginMutation.isPending ? <Loading /> : "Login"}
             </Button>
           </div>
           <div className="mt-2 text-center text-sm">
@@ -108,7 +127,7 @@ function Login() {
           </div>
         </form>
       </div>
-      <div className="hidden bg-muted  snap-y snap-mandatory lg:flex flex-col  items-center overflow-hidden overflow-y-scroll remove-scrollbar transition-all duration-300 ease-in-out">
+      <div className="hidden bg-muted snap-y snap-mandatory lg:flex flex-col items-center overflow-hidden overflow-y-scroll remove-scrollbar transition-all duration-300 ease-in-out">
         {(posts.length === 0 || isLoading || isMounted) &&
           [...Array(5)].map((_, i) => {
             return <PostSkeleton key={i} />;
@@ -127,4 +146,5 @@ function Login() {
     </div>
   );
 }
+
 export default Login;

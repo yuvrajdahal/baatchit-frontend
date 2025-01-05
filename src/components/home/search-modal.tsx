@@ -1,12 +1,13 @@
+"use client";
 import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import { Input } from "../ui/input";
-import useAuthStore from "@/hooks/use-auth";
 import { User } from "@/data-access/types";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { useUsersByUsername } from "@/hooks/use-auth";
+import { useQueryClient } from "@tanstack/react-query";
 
 const SearchModal: React.FC<{
   show: boolean;
@@ -14,33 +15,24 @@ const SearchModal: React.FC<{
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({ show, setShow, minimizeSidebar }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
-  const {
-    getUsersByUserName,
-    usersByUserName,
-    user,
-    isUsersByUserNameLoading,
-    clearUsersByUserName,
-  } = useAuthStore();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
+  const { data: usersData, isLoading } = useUsersByUsername(search);
+
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    if (show == false) {
-      const value = event.target.value;
-      setSearch(value);
-      if (value.length !== 0) {
-        getUsersByUserName(value);
-      } else {
-        clearUsersByUserName();
-      }
+    if (show === false) {
+      setSearch(event.target.value);
     }
   }
+
   useEffect(() => {
     if (show) {
       setSearch("");
-      clearUsersByUserName();
+      queryClient.removeQueries({ queryKey: ["usersByUsername"] });
     }
-  }, [show]);
+  }, [show, queryClient]);
+
   return (
     <div
       ref={ref}
@@ -67,20 +59,16 @@ const SearchModal: React.FC<{
         <Input placeholder="Search..." value={search} onChange={handleChange} />
       </div>
       <div className="flex flex-col gap-4 divider overflow-hidden py-4 overflow-y-scroll remove-scrollbar">
-        {search.length > 0 &&
-          !isUsersByUserNameLoading &&
-          usersByUserName.length > 0 &&
-          usersByUserName.map((u) => (
+        {search.length > 0 && !isLoading && usersData?.data?.length! > 0 &&
+          usersData?.data!.map((u) => (
             <UserTile user={u} key={u._id} router={router} />
           ))}
-        {search.length > 0 &&
-          !isUsersByUserNameLoading &&
-          usersByUserName.length === 0 && (
-            <div className="flex justify-center items-center">
-              <p className="text-gray-500 text-sm">No users found</p>
-            </div>
-          )}
-        {search.length === 0 && !isUsersByUserNameLoading && (
+        {search.length > 0 && !isLoading && !usersData?.data?.length && (
+          <div className="flex justify-center items-center">
+            <p className="text-gray-500 text-sm">No users found</p>
+          </div>
+        )}
+        {search.length === 0 && (
           <div className="flex justify-center items-center">
             <p className="text-gray-500 text-sm">
               Search users by{" "}
@@ -95,7 +83,6 @@ const SearchModal: React.FC<{
   );
 };
 
-export default SearchModal;
 const UserTile: React.FC<{
   user: User | null;
   router: AppRouterInstance;
@@ -142,3 +129,5 @@ const UserTile: React.FC<{
     </div>
   );
 };
+
+export default SearchModal;

@@ -9,22 +9,20 @@ import {
   likePost,
   uploadImage,
 } from "@/data-access/posts";
-import { Comment, User } from "@/data-access/types";
+import { Comment, Post, User } from "@/data-access/types";
 import { ApiError } from "@/lib/axios";
 
 export async function createPostUsecase(
   description: string,
-  image: FormData
+  image: FormData,
+  token: string
 ): Promise<{
   success?: boolean;
   error?: string;
   post?: any;
 }> {
   try {
-    const { data, success: uploadSuccess } = await uploadImage(
-      image,
-      localStorage.getItem("token")!
-    );
+    const { data, success: uploadSuccess } = await uploadImage(image, token!);
     console.log(data);
     if (uploadSuccess) {
       console.log(data);
@@ -32,7 +30,7 @@ export async function createPostUsecase(
         description,
         data.url,
         data.id,
-        localStorage.getItem("token")!
+        token!
       );
       return { success, post };
     }
@@ -47,13 +45,13 @@ export async function createPostUsecase(
   }
 }
 
-export async function getPostsUsecase(): Promise<{
+export async function getPostsUsecase(token: string): Promise<{
   success: boolean;
   error?: string;
-  posts?: any;
+  posts?: Post[];
 }> {
   try {
-    const { data, success } = await getPosts(localStorage.getItem("token")!);
+    const { data, success } = await getPosts(token!);
     return { success, posts: data };
   } catch (error) {
     if ((error as ApiError).status !== undefined) {
@@ -72,7 +70,10 @@ export async function getPostsUsecase(): Promise<{
     }
   }
 }
-export async function likePostUsecase(id: string): Promise<{
+export async function likePostUsecase(
+  id: string,
+  token: string
+): Promise<{
   success: boolean;
   error?: string;
   data?: {
@@ -82,10 +83,7 @@ export async function likePostUsecase(id: string): Promise<{
   };
 }> {
   try {
-    const { success, data, message } = await likePost(
-      id,
-      localStorage.getItem("token")!
-    );
+    const { success, data, message } = await likePost(id, token!);
     return {
       success,
       data: {
@@ -106,18 +104,15 @@ export async function likePostUsecase(id: string): Promise<{
 
 export async function createCommentUsecase(
   message: string,
-  postId: string
+  postId: string,
+  token: string
 ): Promise<{
   success?: boolean;
   error?: string;
   comment?: any;
 }> {
   try {
-    const { success, data } = await createComment(
-      message,
-      postId,
-      localStorage.getItem("token")!
-    );
+    const { success, data } = await createComment(message, postId, token!);
     return { success, comment: data };
   } catch (error) {
     if ((error as ApiError).status !== undefined) {
@@ -128,16 +123,16 @@ export async function createCommentUsecase(
     }
   }
 }
-export async function getCommentsUsecase(id: string): Promise<{
+export async function getCommentsUsecase(
+  id: string,
+  token: string
+): Promise<{
   success: boolean;
   error?: string;
   comments?: any;
 }> {
   try {
-    const { data, success } = await getComments(
-      id,
-      localStorage.getItem("token")!
-    );
+    const { data, success } = await getComments(id, token!);
     return { success, comments: data };
   } catch (error) {
     if ((error as ApiError).status !== undefined) {
@@ -156,12 +151,15 @@ export async function getCommentsUsecase(id: string): Promise<{
     }
   }
 }
-export async function deletePostUsecase(id: string): Promise<{
+export async function deletePostUsecase(
+  id: string,
+  token: string
+): Promise<{
   success: boolean;
   error?: string;
 }> {
   try {
-    const { success } = await deletePost(id, localStorage.getItem("token")!);
+    const { success } = await deletePost(id, token!);
     return { success };
   } catch (error) {
     if ((error as ApiError).status !== undefined) {
@@ -174,17 +172,14 @@ export async function deletePostUsecase(id: string): Promise<{
 }
 export async function deleteCommentUsecase(
   id: string,
-  commentId: string
+  commentId: string,
+  token: string
 ): Promise<{
   success: boolean;
   error?: string;
 }> {
   try {
-    const { success } = await deleteComment(
-      id,
-      commentId,
-      localStorage.getItem("token")!
-    );
+    const { success } = await deleteComment(id, commentId, token!);
     return { success };
   } catch (error) {
     if ((error as ApiError).status !== undefined) {

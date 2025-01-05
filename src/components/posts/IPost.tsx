@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/menubar";
 import { MenubarItem } from "../ui/menubar";
 import { format, formatDistanceToNowStrict } from "date-fns";
+import { useDeletePost } from "@/hooks/use-post";
 
 interface IPostProps {
   post: Post | null;
@@ -27,12 +28,10 @@ interface IPostProps {
   isCommentsModalOpen?: boolean;
   setCommentsModalOpen?: (open: boolean) => void;
   disbaleLikeAndComment?: boolean;
-  createComment?: (message: string, postId: string) => Promise<boolean>;
+  createComment?: (message: string, postId: string) => void;
   isCreatingComment?: boolean;
   handleComment?: (id: string) => void;
-  likePost?: (id: string) => Promise<boolean>;
-  isPostDeletingLoading?: boolean;
-  deletePost?: (id: string) => Promise<boolean>;
+  likePost?: (id: string) => void;
 }
 
 const InstagramPost: React.FC<IPostProps> = ({
@@ -45,16 +44,20 @@ const InstagramPost: React.FC<IPostProps> = ({
   createComment,
   post,
   user,
-  isPostDeletingLoading,
-  deletePost,
 }) => {
   const { toast } = useToast();
   const [comment, setComment] = useState("");
+
+  const {
+    mutate: deletePost,
+    isPending: deleteLoading,
+    isSuccess: isPostDeletingSuccess,
+  } = useDeletePost();
+
   async function submitComment(id: string) {
-    const success = await createComment!(comment, id);
-    setComment("");
+    createComment!(comment, id);
   }
-  const [deleteLoading, setDeleteLoading] = useState(false);
+
   return (
     <div className=" border border-neutral-400 border-1  min-w-[350px] 2xl:min-w-[400px] mx-auto p-4 rounded-lg">
       {/* Header */}
@@ -110,17 +113,13 @@ const InstagramPost: React.FC<IPostProps> = ({
               <MenubarItem
                 onClick={async (e) => {
                   e.preventDefault();
-                  setDeleteLoading(true);
-                  const success = await deletePost!(post?._id!);
-                  setDeleteLoading(false);
-
-                  if (success) {
+                  await deletePost!(post?._id!);
+                  if (isPostDeletingSuccess) {
                     toast({
                       title: "Post deleted",
                       description: "Post deleted successfully",
                     });
                   }
-                  // MenubarTrigger.call(this, {});
                 }}
                 className={twMerge(
                   `relative flex rounded-none items-center justify-between py-2  tranition duration-300 ease-in-out  space-x-4 `,
@@ -151,7 +150,7 @@ const InstagramPost: React.FC<IPostProps> = ({
 
       {/* Image */}
       <div className="w-full mb-3 2xl:mb-4">
-        <div className="relative pt-[125%]">
+        <div className="relative pt-[110%] lg:pt-[125%]">
           <img
             src={post?.image}
             alt={post?.description}
@@ -213,7 +212,7 @@ const InstagramPost: React.FC<IPostProps> = ({
 
       <div className="relative flex justify-center items-center mt-1">
         <input
-        value={comment}
+          value={comment}
           className="text-sm 2xl:text-lg text-muted-foreground bg-transparent border-none w-full p-0 outline-none"
           placeholder="Add a comment... "
           onChange={(e) => setComment(e.target.value)}

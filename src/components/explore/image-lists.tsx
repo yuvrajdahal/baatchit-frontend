@@ -1,62 +1,54 @@
 "use client";
-
 import useAuthStore from "@/hooks/use-auth";
 import Grid from "../profile/grid";
-import usePostStore from "@/hooks/use-post";
 import CommentModal from "../posts/comments-modal";
 import { useEffect, useState } from "react";
 import ImageModal from "./image-modal";
+import { useComments, useDeleteComment, useDeletePost, usePosts } from "@/hooks/use-post";
+import { Comment } from "@/data-access/types";
 
 const ImageList = () => {
-  const {
-    getUserById,
-    user,
-    followUser,
-    isFollowingLoading,
-    isUnfollowingLoading,
-    unfollowUser,
-    userByIdLoading,
-  } = useAuthStore();
-  const {
-    setCommentsModalOpen,
-    isCommentsModalOpen,
-    isLoading,
-    deletePost,
-    isCommentsLoading,
-    comments,
-    deleteComment,
-    isCommentDeleting,
-    getComments,
-    posts,
-    fetchPosts,
-    clearComments,
-  } = usePostStore();
+  const { user } = useAuthStore();
   const [isMounted, setMounted] = useState(true);
   const [index, setIndex] = useState(0);
+  const [isCommentsModalOpen, setCommentsModalOpen] = useState(false);
+  const [selectedPostId, setSelectedPostId] = useState<string>("");
+
+  // React Query hooks
+  const { data: postsData, isLoading } = usePosts();
+  const { data: commentsData, isLoading: isCommentsLoading } = useComments(selectedPostId);
+  const { mutate: deletePostMutation } = useDeletePost();
+  const { mutate: deleteCommentMutation, isPending: isCommentDeleting } = useDeleteComment();
+
+  const posts = postsData?.posts || [];
+  const comments = commentsData?.comments || [];
+
   useEffect(() => {
     setMounted(false);
-    fetchPosts();
   }, []);
+
   if (isLoading || isMounted) {
     return <SkeletalGrid />;
   }
 
-  async function handleGetComments(id: string) {
-    await getComments(id);
+  function handleGetComments(id: string) {
+    setSelectedPostId(id);
   }
-  function selectNext(id:string) {
-    setIndex((prev) => (prev + 1) % posts?.length);
-    clearComments();
-    handleGetComments(id);
+
+  function selectNext() {
+    const nextIndex = (index + 1) % posts.length;
+    setIndex(nextIndex);
+    handleGetComments(posts[nextIndex]._id);
   }
-  function selectPrev(id:string) {
-    setIndex((prev) => (prev - 1) % posts?.length);
-    clearComments();
-    handleGetComments(id);
+
+  function selectPrev() {
+    const prevIndex = index - 1 < 0 ? posts.length - 1 : index - 1;
+    setIndex(prevIndex);
+    handleGetComments(posts[prevIndex]._id);
   }
 
   return (
-    <div className=" w-full">
+    <div className="w-full">
       <div className="grid grid-cols-3 gap-1 w-full">
         {posts?.map((post, i) => (
           <>
@@ -66,7 +58,7 @@ const ImageList = () => {
               onClick={() => {
                 setCommentsModalOpen(true);
                 setIndex(i);
-                getComments(post._id);
+                handleGetComments(post._id);
               }}
             >
               <img
@@ -80,24 +72,11 @@ const ImageList = () => {
             <ImageModal
               modal={isCommentsModalOpen}
               open={isCommentsModalOpen}
-              onChange={() => {
-                setCommentsModalOpen(false);
-              }}
-              comments={comments}
-              isCommentsLoading={isCommentsLoading}
-              deleteComment={deleteComment}
-              isCommentDeleting={isCommentDeleting}
-              selectNext={() => {
-                const nextIndex = (index + 1) % posts?.length;
-                selectNext(posts[nextIndex]?._id);
-              }}
-              selectPrev={()=>{
-                const prevIndex = (index - 1) % posts?.length;
-                selectPrev(posts[prevIndex]?._id);
-              }}
+              onChange={() => setCommentsModalOpen(false)}
+              selectNext={selectNext}
+              selectPrev={selectPrev}
               showLeftIcon={index > 0}
-              showRightIcon={index < posts?.length - 1}
-              deletePost={deletePost}
+              showRightIcon={index < posts.length - 1}
               post={posts[index]}
               currentUser={user}
             />
@@ -109,6 +88,7 @@ const ImageList = () => {
 };
 
 export default ImageList;
+
 const SkeletalGrid: React.FC = () => {
   return (
     <div className="max-w-[1200px] w-full grid grid-cols-3 gap-1 pt-4">

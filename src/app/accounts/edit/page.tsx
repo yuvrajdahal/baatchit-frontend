@@ -1,6 +1,5 @@
 "use client";
 import Sidebar from "@/components/home/sidebar";
-import useAuthStore from "@/hooks/use-auth";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -14,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useCurrentUser } from "@/hooks/use-auth";
 
 interface ProfileFormData {
   username: string;
@@ -21,7 +21,8 @@ interface ProfileFormData {
   gender: string;
 }
 export default function ProfilePage() {
-  const { refreshUser, user, isLoading } = useAuthStore();
+  const { data: userData } = useCurrentUser();
+  const user = userData?.user;
   const [formData, setFormData] = useState<ProfileFormData>({
     username: user?.username || "",
     description: user?.description || "",
@@ -49,13 +50,10 @@ export default function ProfilePage() {
     }));
   };
 
-  useEffect(() => {
-    refreshUser();
-  }, []);
   return (
     <div className="bg-dark h-screen w-screen text-light ">
       <div className="h-full w-full flex justify-between">
-        <Sidebar />
+        <Sidebar user={userData?.user!} />
         <div className="bg-muted/20 flex-1  flex flex-col   overflow-x-hidden  remove-scrollbar transition-all duration-300 ease-in-out px-6 py-6">
           <div>
             <h2 className="text-2xl font-semibold">Edit Profile</h2>

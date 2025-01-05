@@ -4,7 +4,12 @@ import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { Post, User } from "@/data-access/types";
 import React, { useState, useEffect, SetStateAction, Dispatch } from "react";
 import { AspectRatio } from "../ui/aspect-ratio";
-import usePostStore from "@/hooks/use-post";
+import {
+  useComments,
+  useDeleteComment,
+  useDeletePost,
+  usePosts,
+} from "@/hooks/use-post";
 import { Flag, MoreHorizontal, Trash2 } from "lucide-react";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import Link from "next/link";
@@ -19,7 +24,7 @@ import { twMerge } from "tailwind-merge";
 import Loading from "../loading";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNowStrict } from "date-fns";
-import useAuthStore from "@/hooks/use-auth";
+import  { useCurrentUser } from "@/hooks/use-auth";
 
 interface CommentModalProps {
   modal?: boolean;
@@ -33,7 +38,7 @@ interface CommentModalProps {
   likesCount: number;
   avatarUrl: string;
   username: string;
-  deletePost?: (id: string) => Promise<boolean>;
+  deletePost?: (id: string) => void;
   user?: User | null;
 }
 
@@ -45,18 +50,24 @@ const CommentModal: React.FC<CommentModalProps> = ({
   setOpenCommentsModal,
   description,
   image,
-  deletePost,
   avatarUrl,
   user,
   post,
   username,
   likesCount,
 }) => {
-  const { isCommentsLoading, comments, deleteComment, isCommentDeleting } =
-    usePostStore();
+  const { data: commentData, isLoading: isCommentsLoading } = useComments(id);
+  const { mutate: deleteComment, isPending: isCommentDeleting,isSuccess: isCommentDeleteSuccess } =
+    useDeleteComment();
+  const {
+    mutate: deletePost,
+    isSuccess: isPostDeletingSuccess,
+  } = useDeletePost();
+
   const { toast } = useToast();
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const { user: existingUser } = useAuthStore();
+  const { data: userData } = useCurrentUser();
+  const existingUser = userData?.user;
   return (
     <>
       <Dialog modal={modal} open={open} onOpenChange={onChange}>
@@ -123,17 +134,16 @@ const CommentModal: React.FC<CommentModalProps> = ({
                         onClick={async (e) => {
                           e.preventDefault();
                           setDeleteLoading(true);
-                          const success = await deletePost!(id);
+                          await deletePost!(id);
                           setDeleteLoading(false);
                           setOpenCommentsModal!(false);
 
-                          if (success) {
+                          if (isPostDeletingSuccess) {
                             toast({
                               title: "Post deleted",
                               description: "Post deleted successfully",
                             });
                           }
-                          // MenubarTrigger.call(this, {});
                         }}
                         className={twMerge(
                           `relative flex rounded-none items-center justify-between py-2  tranition duration-300 ease-in-out  space-x-4 `,
@@ -165,7 +175,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
             <hr className="mt-2" />
             <div className="flex flex-col overflow-hidden  mt-4 gap-4 px-2 ">
               {!isCommentsLoading &&
-                comments.map((cmt, i) => {
+                commentData?.comments.map((cmt: any, i: number) => {
                   return (
                     <div key={i} className="flex items-start justify-between">
                       <div className="flex items center gap-2">
@@ -213,14 +223,14 @@ const CommentModal: React.FC<CommentModalProps> = ({
                               onClick={async (e) => {
                                 e.preventDefault();
                                 setDeleteLoading(true);
-                                const success = await deleteComment!(
-                                  id,
-                                  cmt._id
-                                );
+                                const success = await deleteComment!({
+                                  commentId: cmt._id,
+                                  postId: id,
+                                });
                                 setDeleteLoading(false);
                                 setOpenCommentsModal!(false);
 
-                                if (success) {
+                                if (isCommentDeleteSuccess) {
                                   toast({
                                     title: "Post deleted",
                                     description: "Post deleted successfully",
@@ -250,7 +260,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
                     </div>
                   );
                 })}
-              {!isCommentsLoading && comments.length === 0 && (
+              {!isCommentsLoading && commentData?.comments.length === 0 && (
                 <div className="flex items-center justify-center">
                   <p className="text-muted-foreground text-sm">
                     No comments yet

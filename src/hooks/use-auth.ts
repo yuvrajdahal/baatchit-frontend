@@ -1,6 +1,7 @@
 "use client";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { User } from "@/data-access/types";
 import {
   regiserUserUsecase,
@@ -48,385 +49,103 @@ interface AuthState {
   clearUsersByUserName: () => void;
 }
 
-const useAuthStore = create<AuthState>()((set, get) => ({
-  user: null,
-  token: null,
-  isAuthenticated: false,
-  isFollowingLoading: false,
-  isUnfollowingLoading: false,
-  userByIdLoading: false,
-  isLoading: false,
-  userById: null,
-  messagingUsers: [],
 
-  isLoginLoading: false,
-  isRegisterLoading: false,
-  error: null,
-  suggestedUsers: null,
-  isSuggestedUsersLoading: false,
-  usersByUserName: [],
-  isUsersByUserNameLoading: false,
-  register: async (
-    email: string,
-    fullname: string,
-    username: string,
-    password: string
-  ) => {
-    set({ isAuthenticated: false, isRegisterLoading: true, error: null });
-    try {
-      const result = await regiserUserUsecase(
-        email,
-        fullname,
-        username,
-        password
-      );
-      if (result.success) {
-        const token = localStorage.getItem("token");
-        if (token) {
-          const userResult = await getCurrentUserUsecase(token);
-          if (userResult.success && userResult.user) {
-            set({
-              user: userResult.user,
-              token,
-              isAuthenticated: true,
-              isRegisterLoading: false,
-            });
-            return true;
-          } else {
-            set({
-              error: userResult.error || "Failed to get user data",
-              isRegisterLoading: false,
-              isAuthenticated: false,
-            });
-          }
-        } else {
-          set({
-            error: "Token not found after registration",
-            isRegisterLoading: false,
-            isAuthenticated: false,
-          });
-        }
-      } else {
-        set({
-          error: result.error || "Registration failed",
-          isRegisterLoading: false,
-          isAuthenticated: false,
-        });
-      }
-      return false;
-    } catch (error) {
-      set({
-        error: "An unexpected error occurred during registration",
-        isRegisterLoading: false,
-        isAuthenticated: false,
-      });
-      return false;
-    }
-  },
-  login: async (email: string, password: string) => {
-    set({ isAuthenticated: false, isLoginLoading: true, error: null });
-    try {
-      const result = await loginUserUsecase(email, password);
-      if (result.success) {
-        const token = localStorage.getItem("token");
-        if (token) {
-          const userResult = await getCurrentUserUsecase(token);
-          if (userResult.success && userResult.user) {
-            set({
-              user: userResult.user,
-              token,
-              isAuthenticated: true,
-              isLoginLoading: false,
-            });
-            return true;
-          } else {
-            set({
-              error: userResult.error || "Failed to get user data",
-              isLoginLoading: false,
-              isAuthenticated: false,
-            });
-          }
-        } else {
-          set({
-            error: "Token not found after login",
-            isLoginLoading: false,
-            isAuthenticated: false,
-          });
-        }
-      } else {
-        set({
-          error: result.error || "Login failed",
-          isLoginLoading: false,
-          isAuthenticated: false,
-        });
-      }
-      return false;
-    } catch (error) {
-      set({
-        error: "An unexpected error occurred during login",
-        isLoginLoading: false,
-        isAuthenticated: false,
-      });
-      return false;
-    }
-  },
-  logout: () => {
-    localStorage.clear();
-    set({ user: null, token: null, isAuthenticated: false, error: null });
-  },
-  refreshUser: async () => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      set({ isLoading: true, error: null });
-      try {
-        const result = await getCurrentUserUsecase(token);
-        if (result.success && result.user) {
-          set({
-            user: result.user,
-            token,
-            isAuthenticated: true,
-            isLoading: false,
-          });
-        } else {
-          set({
-            error: result.error || "Failed to refresh user data",
-            isLoading: false,
-          });
-        }
-      } catch (error) {
-        set({
-          error: "An unexpected error occurred while refreshing user data",
-          isLoading: false,
-        });
-      }
-    }
-  },
-  getUserById: async (id: string) => {
-    set({ userByIdLoading: true, error: null });
-    try {
-      const result = await getUserByIdUsecase(id);
-      if (result.success && result.user) {
-        set({
-          userById: result.user,
-          userByIdLoading: false,
-        });
-      } else {
-        set({
-          error: result.error || "Failed to get user data",
-          userByIdLoading: false,
-        });
-      }
-    } catch (error) {
-      set({
-        error: "An unexpected error occurred while getting user data",
-        userByIdLoading: false,
-      });
-    }
-  },
-  followUser: async (userId: string) => {
-    set({ isFollowingLoading: true, error: null });
-    try {
+export const useCurrentUser = () => {
+  return useQuery({
+    queryKey: ["currentUser"],
+    queryFn: async () => {
       const token = localStorage.getItem("token");
-      if (token) {
-        const result = await followUserUsecase(userId, token);
-        if (result.success && result.data) {
-          set((state) => ({
-            isFollowingLoading: false,
-            userById: state.userById
-              ? {
-                  ...state.userById,
-                  isFollowing: !get().userById?.isFollowing,
-                  followersCount: get().userById?.followersCount! + 1,
-                }
-              : null,
-          }));
-          return true;
-        } else {
-          set((state) => ({
-            isFollowingLoading: false,
-            // userById: state.userById
-            //   ? {
-            //       ...state.userById,
-            //       isFollowing: !get().userById?.isFollowing,
-            //       followersCount: get().userById?.followersCount! - 1,
-            //     }
-            //   : null,
-            error: result.error || "Failed to follow user",
-          }));
-          return false;
-        }
-      } else {
-        set({
-          isFollowingLoading: false,
-          error: "Token not found after following user",
-        });
-        return false;
-      }
-    } catch (error) {
-      set((state) => ({
-        isFollowingLoading: false,
+      if (!token) throw new Error("No token found");
+      return getCurrentUserUsecase(token);
+    },
+  });
+};
 
-        // userById: state.userById
-        //   ? {
-        //       ...state.userById,
-        //       isFollowing: !get().userById?.isFollowing,
-        //       followersCount: get().userById?.followersCount! - 1,
-        //     }
-        //   : null,
-        error: "An unexpected error occurred while following user",
-      }));
-      return false;
-    }
-  },
-  unfollowUser: async (userId: string) => {
-    set({ isUnfollowingLoading: true, error: null });
-    try {
-      const token = localStorage.getItem("token");
-      if (token!) {
-        const result = await unfollowUserUsecase(userId, token);
-        if (result.success && result.data) {
-          set((state) => ({
-            isUnfollowingLoading: false,
-            userById: state.userById
-              ? {
-                  ...state.userById,
-                  isFollowing: !get().userById?.isFollowing,
-                  followersCount: get().userById?.followersCount! - 1,
-                }
-              : null,
-          }));
-          return true;
-        } else {
-          set({
-            isUnfollowingLoading: false,
-            error: result.error || "Failed to unfollow user",
-          });
-          return false;
-        }
-      } else {
-        set({
-          isUnfollowingLoading: false,
-          error: "Token not found after unfollowing user",
-        });
-        return false;
-      }
-    } catch (error) {
-      set((state) => ({
-        isUnfollowingLoading: false,
+export const useUserById = (id: string) => {
+  return useQuery({
+    queryKey: ["user", id],
+    queryFn: () => getUserByIdUsecase(id),
+    enabled: !id,
+  });
+};
 
-        // userById: state.userById
-        //   ? {
-        //       ...state.userById,
-        //       isFollowing: !get().userById?.isFollowing,
-        //       followersCount: get().userById?.followersCount! + 1,
-        //     }
-        //   : null,
-        error: "An unexpected error occurred while unfollowing user",
-      }));
-      return false;
-    }
-  },
-  getSuggestedUsers: async () => {
-    set({ isSuggestedUsersLoading: true, error: null });
-    try {
+export const useSuggestedUsers = () => {
+  return useQuery({
+    queryKey: ["suggestedUsers"],
+    queryFn: async () => {
       const token = localStorage.getItem("token");
-      if (token) {
-        const result = await getSuggestedUsersUsecase(token);
-        if (result.success && result.data) {
-          set({
-            suggestedUsers: [...result.data],
-            isSuggestedUsersLoading: false,
-          });
-          return true;
-        } else {
-          set({
-            error: result.error || "Failed to get suggested users",
-            isSuggestedUsersLoading: false,
-          });
-          return false;
-        }
-      } else {
-        set({
-          error: "Token not found after getting suggested users",
-          isSuggestedUsersLoading: false,
-        });
-        return false;
-      }
-    } catch (error) {
-      set({
-        error: "An unexpected error occurred while getting suggested users",
-        isSuggestedUsersLoading: false,
-      });
-      return false;
-    }
-  },
-  followSuggestedUser: async (userId: string) => {
-    set({ error: null });
-    try {
-      const token = localStorage.getItem("token");
-      if (token) {
-        const result = await followUserUsecase(userId, token);
-        if (result.success && result.data) {
-          set((state) => ({
-            suggestedUsers: state.suggestedUsers?.filter(
-              (user) => user._id !== userId
-            ),
-          }));
+      if (!token) throw new Error("No token found");
+      return getSuggestedUsersUsecase(token);
+    },
+  });
+};
 
-          return true;
-        } else {
-          set({
-            error: result.error || "Failed to follow user",
-          });
-          return false;
-        }
-      } else {
-        set({
-          error: "Token not found after following user",
-        });
-        return false;
-      }
-    } catch (error) {
-      return false;
-    }
-  },
-  getUsersByUserName: async (userName: string) => {
-    set({ isUsersByUserNameLoading: true, error: null });
-    try {
-      const token = localStorage.getItem("token");
-      if (token) {
-        const result = await getUsersByUserNameUsecase(userName);
-        if (result.success && result.data) {
-          set({
-            usersByUserName: result.data,
-            isUsersByUserNameLoading: false,
-          });
-          return true;
-        } else {
-          set({
-            error: result.error || "Failed to get users by username",
-            isUsersByUserNameLoading: false,
-          });
-          return false;
-        }
-      } else {
-        set({
-          error: "Token not found after getting users by username",
-          isUsersByUserNameLoading: false,
-        });
-        return false;
-      }
-    } catch (error) {
-      set({
-        error: "An unexpected error occurred while getting users by username",
-        isUsersByUserNameLoading: false,
-      });
-      return false;
-    }
-  },
-  clearUsersByUserName: () => {
-    set({ usersByUserName: [] });
-  },
-}));
+export const useUsersByUsername = (username: string) => {
+  return useQuery({
+    queryKey: ["usersByUsername", username],
+    queryFn: () => getUsersByUserNameUsecase(username),
+    enabled: !username,
+  });
+};
 
-export default useAuthStore;
+export const useLogin = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ email, password }: { email: string; password: string }) =>
+      loginUserUsecase(email, password),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
+  });
+};
+
+export const useRegister = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      email,
+      fullname,
+      username,
+      password,
+    }: {
+      email: string;
+      fullname: string;
+      username: string;
+      password: string;
+    }) => regiserUserUsecase(email, fullname, username, password),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
+  });
+};
+
+export const useFollowUser = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (userId: string) => {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("No token found");
+      return followUserUsecase(userId, token);
+    },
+    onSuccess: (_, userId) => {
+      queryClient.invalidateQueries({ queryKey: ["user", userId] });
+      queryClient.invalidateQueries({ queryKey: ["suggestedUsers"] });
+    },
+  });
+};
+
+export const useUnfollowUser = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (userId: string) => {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("No token found");
+      return unfollowUserUsecase(userId, token);
+    },
+    onSuccess: (_, userId) => {
+      queryClient.invalidateQueries({ queryKey: ["user", userId] });
+      queryClient.invalidateQueries({ queryKey: ["suggestedUsers"] });
+    },
+  });
+};
+

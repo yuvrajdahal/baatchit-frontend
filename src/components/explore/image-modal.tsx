@@ -23,30 +23,8 @@ import Loading from "../loading";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNowStrict } from "date-fns";
 import useAuthStore from "@/hooks/use-auth";
+import { useComments, useDeleteComment, useDeletePost } from "@/hooks/use-post";
 
-interface ImageModalProps {
-  modal?: boolean;
-  open?: boolean;
-  onChange?: () => void;
-  setOpenCommentsModal?: (open: boolean) => void;
-  id: string;
-  description: string;
-  image: string;
-  post?: Post | null;
-  likesCount: number;
-  avatarUrl: string;
-  username: string;
-  deletePost?: (id: string) => Promise<boolean>;
-  user?: User | null;
-  selectNext: (id: string) => void;
-  selectPrev: (id: string) => void;
-  showLeftIcon: boolean;
-  showRightIcon: boolean;
-  comments: Comment[];
-  isCommentsLoading: boolean;
-  deleteComment: (id: string, commentId: string) => Promise<boolean>;
-  isCommentDeleting: boolean;
-}
 interface NImageModalProps {
   modal?: boolean;
   open?: boolean;
@@ -54,36 +32,39 @@ interface NImageModalProps {
   setOpenCommentsModal?: (open: boolean) => void;
   post?: Post;
   currentUser?: User | null;
-  isCommentsLoading: boolean;
-  comments: Comment[];
-  deleteComment: (id: string, commentId: string) => Promise<boolean>;
-  isCommentDeleting: boolean;
   selectNext: () => void;
   selectPrev: () => void;
   showLeftIcon: boolean;
   showRightIcon: boolean;
-  deletePost?: (id: string) => Promise<boolean>;
 }
 const ImageModal: React.FC<NImageModalProps> = ({
   modal = true,
   open = false,
   onChange,
   setOpenCommentsModal,
-  deletePost,
   selectNext,
   selectPrev,
   showLeftIcon,
   showRightIcon,
-  comments,
-  isCommentsLoading,
-  deleteComment,
-  isCommentDeleting,
   currentUser,
   post,
 }) => {
   const { toast } = useToast();
-  const [deleteLoading, setDeleteLoading] = useState(false);
   const { user: existingUser } = useAuthStore();
+  const {
+    mutate: deletePost,
+    isPending: deleteLoading,
+    isSuccess: isPostDeletingSuccess,
+  } = useDeletePost();
+  const { data: commentsData, isLoading: isCommentsLoading } = useComments(
+    post?._id!
+  );
+  const comments = commentsData?.comments;
+  const {
+    mutate: deleteComment,
+    isPending: isCommentDeleting,
+    isSuccess: isCommentDeleteSuccess,
+  } = useDeleteComment();
   return (
     <>
       <Dialog modal={modal} open={open} onOpenChange={onChange}>
@@ -158,12 +139,10 @@ const ImageModal: React.FC<NImageModalProps> = ({
                       <MenubarItem
                         onClick={async (e) => {
                           e.preventDefault();
-                          setDeleteLoading(true);
-                          const success = await deletePost!(post?._id!);
-                          setDeleteLoading(false);
-                          setOpenCommentsModal!(false);
-
-                          if (success) {
+                          deletePost!(post?._id!);
+                          deleteLoading;
+                          if (isPostDeletingSuccess) {
+                            setOpenCommentsModal!(false);
                             toast({
                               title: "Post deleted",
                               description: "Post deleted successfully",
@@ -201,7 +180,7 @@ const ImageModal: React.FC<NImageModalProps> = ({
             <hr className="mt-2" />
             <div className="flex flex-col overflow-hidden  mt-4 gap-4 px-2 ">
               {!isCommentsLoading &&
-                comments.map((cmt, i) => {
+                comments.map((cmt: any, i: number) => {
                   return (
                     <div key={i} className="flex items-start justify-between">
                       <div className="flex items center gap-2">
@@ -248,15 +227,13 @@ const ImageModal: React.FC<NImageModalProps> = ({
                             <MenubarItem
                               onClick={async (e) => {
                                 e.preventDefault();
-                                setDeleteLoading(true);
-                                const success = await deleteComment!(
-                                  post?._id!,
-                                  cmt._id
-                                );
-                                setDeleteLoading(false);
-                                setOpenCommentsModal!(false);
+                                deleteComment!({
+                                  commentId: cmt._id,
+                                  postId: post?._id!,
+                                });
 
-                                if (success) {
+                                if (isCommentDeleteSuccess) {
+                                  setOpenCommentsModal!(false);
                                   toast({
                                     title: "Post deleted",
                                     description: "Post deleted successfully",
@@ -278,7 +255,6 @@ const ImageModal: React.FC<NImageModalProps> = ({
                               )}
                             </MenubarItem>
                           )}
-                    
                         </div>
                       </MoreButton>
                     </div>

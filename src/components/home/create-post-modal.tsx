@@ -2,19 +2,15 @@
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import useAuthStore from "@/hooks/use-auth";
-import usePostStore from "@/hooks/use-post";
+import { useCurrentUser } from "@/hooks/use-auth";
+import { useCreatePost } from "@/hooks/use-post";
 import { useToast } from "@/hooks/use-toast";
 import Loading from "@/components/loading";
-import React, { useState, useEffect, SetStateAction, Dispatch } from "react";
+import { useState, useEffect } from "react";
 
 interface CreatePostModalProps {
   modal?: boolean;
@@ -33,9 +29,15 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
   const [image, setImage] = useState<string | null>(null);
   const [toggleForm, setToggleForm] = useState(false);
   const [description, setDescription] = useState("");
-  const { user } = useAuthStore();
+  const { data: userData } = useCurrentUser();
   const { toast } = useToast();
-  const { createPost, error, isCreatingPost } = usePostStore();
+  const {
+    mutate: createPost,
+    isPending: isCreatingPost,
+    error,
+    isSuccess,
+  } = useCreatePost();
+
   function onfileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0] ?? null;
     setFile(file);
@@ -44,46 +46,56 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
     if (!url) return;
     setImage(url);
   }
+
   useEffect(() => {
     if (open === false) {
-      let interval = setTimeout(() => {
+      const interval = setTimeout(() => {
         setImage(null);
         setFile(null);
+        setDescription("");
+        setToggleForm(false);
       }, 1000);
       return () => clearTimeout(interval);
     }
   }, [open]);
+
   async function handleImageUpload() {
+    if (!file) return;
+    
     const image = new FormData();
-    image.append("image", file!);
-    const success = await createPost(description, image);
-    if (success) {
-      toast({
-        title: "Success",
-        description: "Post created successfully",
-      });
-    }
-    if (error) {
-      toast({
-        title: error,
-        description: error,
-        variant: "destructive",
-      });
-    }
-    setOpenPostModal(false);
-    setTimeout(() => {
-      setToggleForm(false);
-    }, 1000);
+    image.append("image", file);
+    
+    createPost(
+      { description, image },
+      {
+        onSuccess: () => {
+          toast({
+            title: "Success",
+            description: "Post created successfully",
+          });
+          setOpenPostModal(false);
+          setTimeout(() => setToggleForm(false), 1000);
+        },
+        onError: (error: any) => {
+          toast({
+            title: "Error",
+            description: error.message || "An unexpected error occurred",
+            variant: "destructive",
+          });
+        },
+      }
+    );
   }
+
   return (
     <Dialog modal={modal} open={open} onOpenChange={onChange}>
-      <DialogContent className="sm:max-w-md ">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <div className="text-center font-semibold">Create new post</div>
           <hr />
         </DialogHeader>
-        <div className="flex flex-col justify-center items-center ">
-          {image === null && (
+        <div className="flex flex-col justify-center items-center">
+          {!image && (
             <>
               <div className="flex flex-col">
                 <h2 className="text-xl">Drag and drop or select a file</h2>
@@ -98,7 +110,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
               </Button>
             </>
           )}
-          {image !== null && !toggleForm && (
+          {image && !toggleForm && (
             <div className="flex flex-col ">
               <DialogDescription className="text-center text-xs pb-2">
                 The image will be croped to 4:5 ratio
@@ -122,28 +134,26 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
               </Button>
             </div>
           )}
-          {image !== null && toggleForm && (
+          {image && toggleForm && (
             <form className="w-full flex flex-col items-start">
               <div className="flex space-x-3 items-center mb-2">
                 <img
-                  src={user?.profilePicture}
+                  src={userData?.user?.profilePicture}
                   alt="User Profile"
                   width={50}
                   height={50}
                   className="rounded-full"
                 />
                 <div>
-                  <p className="font-semibold text-sm">{user?.username}</p>
-                  <p className="text-gray-500 text-sm">{user?.fullname}</p>
+                  <p className="font-semibold text-sm">{userData?.user?.username}</p>
+                  <p className="text-gray-500 text-sm">{userData?.user?.fullname}</p>
                 </div>
               </div>
               <textarea
                 className="resize-none h-[150px] w-full outline-none"
                 placeholder="Write something..."
                 value={description}
-                onChange={(e) => {
-                  setDescription(e.target.value);
-                }}
+                onChange={(e) => setDescription(e.target.value)}
                 required
               />
               <Button
@@ -164,4 +174,5 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
     </Dialog>
   );
 };
+
 export default CreatePostModal;

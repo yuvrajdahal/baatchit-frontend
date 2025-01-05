@@ -1,48 +1,30 @@
 "use client";
-import useAuthStore from "@/hooks/use-auth";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import SkeletonSuggestion from "./skeletal-suggetions";
 import { User } from "@/data-access/types";
+import {
+  useCurrentUser,
+  useFollowUser,
+  useSuggestedUsers,
+} from "@/hooks/use-auth";
 import { MoreHorizontal } from "lucide-react";
-import usePostStore from "@/hooks/use-post";
+import Link from "next/link";
+import SkeletonSuggestion from "./skeletal-suggetions";
 
-interface SUser {
-  username: string;
-  fullName: string;
-  mutuals: string;
-  avatar: string;
-  suggested: boolean;
-}
+const Suggestion: React.FC<{
+  user: User | null;
+  userLoading: boolean;
+}> = ({ user, userLoading:isUserLoading }) => {
+  const { data: suggestedData, isLoading: isSuggestedLoading } =
+    useSuggestedUsers();
+  const { mutate: followUser, isPending: isFollowing } = useFollowUser();
 
-const Suggestion: React.FC = () => {
-  const {
-    user,
-    logout,
-    followSuggestedUser,
-    isLoading,
-    isSuggestedUsersLoading,
-    getSuggestedUsers,
-    suggestedUsers,
-  } = useAuthStore();
-  const [isMounted, setMounted] = useState(true);
-  useEffect(() => {
-    setMounted(false);
-    getSuggestedUsers();
-  }, []);
-  async function handleFollow(id: string) {
-    await followSuggestedUser(id);
-  }
   return (
-    <div className="bg-white p-4 min-w-[350px] border-l pr-6">
-      <SuggetionCurrentUser user={user} isLoading={isLoading} />
+    <div className="bg-white p-4 hidden md:block min-w-[350px] border-l pr-6">
+      <SuggetionCurrentUser user={user!} isLoading={isUserLoading} />
       <SuggetedUsers
-        suggestedUsers={suggestedUsers}
-        user={user}
-        handleFollow={handleFollow}
-        isLoading={isSuggestedUsersLoading}
+        suggestedUsers={suggestedData?.data!}
+        user={user!}
+        handleFollow={followUser}
+        isLoading={isSuggestedLoading}
       />
       {/* Footer */}
       <div className="text-gray-400 text-xs mt-10 space-y-2">
@@ -54,7 +36,6 @@ const Suggestion: React.FC = () => {
   );
 };
 
-export default Suggestion;
 const SuggetionCurrentUser: React.FC<{
   user: User | null;
   isLoading: boolean;
@@ -98,48 +79,42 @@ const SuggetionCurrentUser: React.FC<{
     </div>
   );
 };
-export const SuggetedUsers: React.FC<{
+
+const SuggetedUsers: React.FC<{
   suggestedUsers: User[] | null;
   user: User | null;
   handleFollow: (id: string) => void;
   isLoading: boolean;
 }> = ({ suggestedUsers, user, handleFollow, isLoading }) => {
   if (isLoading) return <SkeletonSuggestion />;
+
   return (
     <div className="mt-6">
       <div className="flex flex-col justify-between">
         <p className="text-gray-500 text-sm">Suggested for you</p>
-        {/* <a href="#" className="text-xs font-semibold">
-          See All
-        </a> */}
         <div className="h-[1px] mt-4 bg-gray-300 w-full" />
       </div>
       <div className="mt-4 space-y-3">
-        {suggestedUsers?.map((suser, i) => {
-          return (
-            <SuggestedUserTile
-              user={suser}
-              currentUserId={user?._id!}
-              key={i}
-              handleFollow={handleFollow}
-            />
-          );
-        })}
+        {suggestedUsers?.map((suser) => (
+          <SuggestedUserTile
+            user={suser}
+            currentUserId={user?._id!}
+            key={suser._id}
+            handleFollow={handleFollow}
+          />
+        ))}
       </div>
     </div>
   );
 };
+
 const SuggestedUserTile: React.FC<{
   user: User | null;
   currentUserId: string;
   handleFollow: (id: string) => void;
-}> = ({ user, handleFollow ,currentUserId}) => {
-  const [isLoading, setIsLoading] = useState(false);
-  async function followUserHandler(id: string) {
-    setIsLoading(true);
-    await handleFollow(id);
-    setIsLoading(false);
-  }
+}> = ({ user, currentUserId, handleFollow }) => {
+  const { isPending: isFollowing } = useFollowUser();
+
   return (
     <div className="flex items-center justify-between">
       <div className="flex space-x-3 items-center">
@@ -156,21 +131,20 @@ const SuggestedUserTile: React.FC<{
               currentUserId === user?._id ? `/profile` : `/profile/${user?._id}`
             }
           >
-            {" "}
             <p className="text-sm">{user?.username}</p>
           </Link>
-          <p className="text-gray-500 text-xs">
-            {/* {user?.suggested ? "Suggested for you" : user?.mutuals} */}
-            Suggested for you
-          </p>
+          <p className="text-gray-500 text-xs">Suggested for you</p>
         </div>
       </div>
-      <div
-        onClick={() => followUserHandler(user?._id!)}
+      <button
+        onClick={() => user?._id && handleFollow(user._id)}
+        disabled={isFollowing}
         className="text-blue-500 text-xs font-semibold cursor-pointer"
       >
-        {isLoading ? "..." : "Follow"}
-      </div>
+        {isFollowing ? "..." : "Follow"}
+      </button>
     </div>
   );
 };
+
+export default Suggestion;

@@ -9,25 +9,26 @@ import { Label } from "@/components/ui/label";
 import InstagramPost from "@/components/posts/IPost";
 
 import { useToast } from "@/hooks/use-toast";
-import useAuthStore from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import Loading from "@/components/loading";
 import { Post } from "@/data-access/types";
 import { useEffect, useState } from "react";
-import usePostStore from "@/hooks/use-post";
 import PostSkeleton from "@/components/posts/skeletal-iposts";
 import LogoLoading from "@/components/logo-loading";
+import { useRegister } from "@/hooks/use-auth";
+import { usePosts } from "@/hooks/use-post";
 
 function Signup() {
-  const { register, isRegisterLoading, error } = useAuthStore();
   const { toast } = useToast();
   const [isMounted, setMounted] = useState(true);
-  const { posts, error: postError, fetchPosts, isLoading } = usePostStore();
-
+  const { data: postsData, isLoading } = usePosts();
+  const posts = postsData?.posts || [];
   const router = useRouter();
+
+  const registerMutation = useRegister();
+
   useEffect(() => {
     setMounted(false);
-    fetchPosts();
   }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -37,23 +38,37 @@ function Signup() {
     const password = formData.get("password") as string;
     const fullname = formData.get("fullname") as string;
     const username = formData.get("username") as string;
-    const success = await register(email, fullname, username, password);
-    if (success && !isRegisterLoading) {
-      toast({
-        title: "Success",
-        description: "You have successfully registered",
-        variant: "default",
-      });
-      router.push("/");
-    }
-    if (error) {
-      toast({
-        title: "Error",
-        description: error,
-        variant: "destructive",
-      });
-    }
+
+    registerMutation.mutate(
+      { email, fullname, username, password },
+      {
+        onSuccess: (data) => {
+          if (data.success) {
+            toast({
+              title: "Success",
+              description: "You have successfully registered",
+              variant: "default",
+            });
+            router.push("/");
+          } else {
+            toast({
+              title: "Error",
+              description: data.error || "Registration failed",
+              variant: "destructive",
+            });
+          }
+        },
+        onError: (error) => {
+          toast({
+            title: "Error",
+            description: error.message || "An unexpected error occurred",
+            variant: "destructive",
+          });
+        },
+      }
+    );
   }
+
   if (isMounted)
     return (
       <div className="h-screen w-full flex items-center justify-center">
@@ -117,9 +132,9 @@ function Signup() {
             <Button
               type="submit"
               className="w-full"
-              disabled={isRegisterLoading}
+              disabled={registerMutation.isPending}
             >
-              {isRegisterLoading ? <Loading /> : "Signup"}
+              {registerMutation.isPending ? <Loading /> : "Signup"}
             </Button>
           </div>
 
