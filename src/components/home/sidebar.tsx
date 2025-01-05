@@ -211,16 +211,18 @@ const Sidebar: React.FC<{
                 router.push("/explore");
               }}
             />
-            <SidebarItem
-              Icon={MessageSquare}
-              text="Messages"
-              show={isMinimized}
-              onClick={() => {
-                router.push("/inbox");
-                // minimizeSidebar(false);
-              }}
-              // notification="3"
-            />
+            {isLaptop && (
+              <SidebarItem
+                Icon={MessageSquare}
+                text="Messages"
+                show={isMinimized}
+                onClick={() => {
+                  router.push("/inbox");
+                  // minimizeSidebar(false);
+                }}
+                // notification="3"
+              />
+            )}
             {/*
             <SidebarItem Icon={Heart} text="Notifications" show={isMinimized} /> */}
             <SidebarItem
