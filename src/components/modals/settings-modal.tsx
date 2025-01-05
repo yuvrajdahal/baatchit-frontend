@@ -21,7 +21,7 @@ const SettingsModal: React.FC<CreatePostModalProps> = ({
   const router = useRouter();
   return (
     <Dialog modal={modal} open={open} onOpenChange={onChange}>
-      <DialogContent className="sm:max-w-md py-1 px-1" showCancelIcon="hide">
+      <DialogContent className="md:max-w-md py-1 px-1" showCancelIcon="hide">
         <div className="flex flex-col divide-y divide-gray-300 justify-center items-center">
           <div
             className="hover:bg-muted/70 cursor-pointer py-3 text-normal flex justify-center items-center w-full"
