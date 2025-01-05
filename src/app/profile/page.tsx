@@ -18,11 +18,10 @@ export default function ProfilePage() {
 
   const user = userData?.user;
 
-
   return (
     <div className="bg-dark h-[100dvh] w-screen text-light">
       <div className="h-full w-full flex justify-between">
-        <Sidebar user={user!} />
+        <Sidebar />
         <div className="bg-muted/20 flex-1 flex flex-col items-center overflow-x-hidden remove-scrollbar transition-all duration-300 ease-in-out px-6 py-6">
           <ProfileInfo user={user!} isLoading={isUserLoading} />
           <hr className="mb-10 w-full" />
@@ -36,7 +35,6 @@ export default function ProfilePage() {
           />
         </div>
       </div>
-     
     </div>
   );
 }

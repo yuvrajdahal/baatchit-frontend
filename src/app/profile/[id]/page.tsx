@@ -3,7 +3,7 @@ import Sidebar from "@/components/home/sidebar";
 import Grid from "@/components/profile/grid";
 import OthersProfileInfo from "@/components/profile/others-profile";
 import { useUserById } from "@/hooks/use-auth";
-import { useComments, useDeletePost } from "@/hooks/use-post";
+import {useDeletePost } from "@/hooks/use-post";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 
@@ -11,7 +11,6 @@ export default function ProfilePage() {
   const params: { id: string } = useParams();
   const [commentsModalOpen, setCommentsModalOpen] = useState(false);
 
-  // React Query hooks
   const { data: user, isLoading: userByIdLoading } = useUserById(params.id);
   const { mutate: deletePost } = useDeletePost();
 
@@ -23,7 +22,7 @@ export default function ProfilePage() {
   return (
     <div className="bg-dark h-[100dvh] w-screen text-light ">
       <div className="h-full w-full flex justify-between">
-        <Sidebar user={user?.user!} />
+        <Sidebar  />
         <div className="bg-muted/20 flex-1 flex flex-col items-center overflow-x-hidden remove-scrollbar transition-all duration-300 ease-in-out px-6 py-6">
           <OthersProfileInfo
             user={user?.user || null}

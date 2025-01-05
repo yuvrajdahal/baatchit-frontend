@@ -9,11 +9,10 @@ import CommentModal from "../posts/comments-modal";
 import { useCreateComment, useLikePost, usePosts } from "@/hooks/use-post";
 import { useCurrentUser } from "@/hooks/use-auth";
 
-const ListPosts: React.FC<{
-  user: User | null;
-}> = ({ user }) => {
+const ListPosts: React.FC = () => {
   const [isMounted, setMounted] = useState(true);
   const [index, setIndex] = useState(0);
+  const { data: userData } = useCurrentUser();
   const [isCommentsModalOpen, setCommentsModalOpen] = useState(false);
   const { toast } = useToast();
   const { data: postsData, isLoading, error } = usePosts();
@@ -41,6 +40,7 @@ const ListPosts: React.FC<{
     return [...Array(5)].map((_, i) => {
       return <PostSkeleton key={i} />;
     });
+  const user = userData?.user;
   return (
     <>
       {posts.map((post, i) => (

@@ -53,7 +53,7 @@ export default function ProfilePage() {
   return (
     <div className="bg-dark h-[100dvh] w-screen text-light ">
       <div className="h-full w-full flex justify-between">
-        <Sidebar user={userData?.user!} />
+        <Sidebar  />
         <div className="bg-muted/20 flex-1  flex flex-col   overflow-x-hidden  remove-scrollbar transition-all duration-300 ease-in-out px-6 py-6">
           <div>
             <h2 className="text-2xl font-semibold">Edit Profile</h2>

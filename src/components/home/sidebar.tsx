@@ -23,6 +23,7 @@ import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import CreatePostModal from "./create-post-modal";
 import SearchModal from "./search-modal";
+import { useCurrentUser } from "@/hooks/use-auth";
 
 const grandHotel = Grand_Hotel({
   subsets: ["latin"],
@@ -111,9 +112,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   );
 };
 
-const Sidebar: React.FC<{
-  user: UserType | null;
-}> = ({ user }) => {
+const Sidebar: React.FC<{}> = () => {
   const [isMinimized, minimizeSidebar] = useState(true);
   const { setTogglePostModal, togglePostModal } = usePostStore();
   const [isLaptop, setIsLaptop] = useState(false);

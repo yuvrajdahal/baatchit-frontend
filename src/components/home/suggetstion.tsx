@@ -9,14 +9,12 @@ import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import SkeletonSuggestion from "./skeletal-suggetions";
 
-const Suggestion: React.FC<{
-  user: User | null;
-  userLoading: boolean;
-}> = ({ user, userLoading:isUserLoading }) => {
+const Suggestion: React.FC = () => {
   const { data: suggestedData, isLoading: isSuggestedLoading } =
     useSuggestedUsers();
+  const { data: userData, isLoading: isUserLoading } = useCurrentUser();
   const { mutate: followUser, isPending: isFollowing } = useFollowUser();
-
+  const user = userData?.user;
   return (
     <div className="bg-white p-4 hidden md:block min-w-[350px] border-l pr-6">
       <SuggetionCurrentUser user={user!} isLoading={isUserLoading} />

@@ -4,12 +4,11 @@ import { useCurrentUser } from "@/hooks/use-auth";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 export default function ArchivePage() {
-  const { data: userData } = useCurrentUser();
   const router = useRouter();
   return (
     <div className="bg-dark h-[100dvh] w-screen text-light ">
       <div className="h-full w-full flex justify-between">
-        <Sidebar user={userData?.user!} />
+        <Sidebar />
         <div className="bg-muted/20 flex-1  flex flex-col   overflow-x-hidden  remove-scrollbar transition-all duration-300 ease-in-out px-6 py-6">
           <div className="flex items-center gap-4 text-lg">
             <span
