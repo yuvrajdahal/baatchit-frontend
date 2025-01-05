@@ -45,7 +45,7 @@ const Page = () => {
   }
 
   return (
-    <div className="h-screen w-full flex flex-col justify-between">
+    <div className="h-[100dvh] w-full flex flex-col justify-between">
       <ChatHeader receiver={receiver} />
       <ChatBody messages={messages?.data || []} user={userData?.user!} />
       <ChatInput sendMessage={sendMessageHandler} />

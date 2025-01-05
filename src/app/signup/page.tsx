@@ -71,12 +71,12 @@ function Signup() {
 
   if (isMounted)
     return (
-      <div className="h-screen w-full flex items-center justify-center">
+      <div className="h-[100dvh] w-full flex items-center justify-center">
         <LogoLoading />
       </div>
     );
   return (
-    <div className="w-full lg:grid h-screen lg:grid-cols-2">
+    <div className="w-full lg:grid h-[100dvh] lg:grid-cols-2">
       <div className="flex items-center justify-center py-12">
         <form className="mx-auto grid  gap-6" onSubmit={handleSubmit}>
           <div className="grid gap-2 ">

@@ -23,7 +23,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
   if (!isMounted || isLoading) {
     return (
-      <div className="h-screen w-screen flex justify-center items-center">
+      <div className="h-[100dvh] w-screen flex justify-center items-center">
         <LogoLoading />
       </div>
     );

@@ -12,7 +12,7 @@ export default function ChatLayout({
   const { data: userData } = useCurrentUser();
   return (
     <AuthProvider>
-      <div className="bg-dark h-screen w-screen text-light ">
+      <div className="bg-dark h-[100dvh] w-screen text-light ">
         <div className="h-full w-full flex justify-between">
           <Sidebar user={userData?.user!} />
           <div className="w-[400px] border py-4 gap-y-4  h-full overflow-y-scroll overflow-hidden">
