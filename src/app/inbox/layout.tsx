@@ -1,5 +1,7 @@
+"use client";
 import Sidebar from "@/components/home/sidebar";
 import ChatList from "@/components/inbox/chat-list";
+import { useCurrentUser } from "@/hooks/use-auth";
 import AuthProvider from "@/providers/auth-provider";
 
 export default function ChatLayout({
@@ -7,11 +9,12 @@ export default function ChatLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { data: userData } = useCurrentUser();
   return (
     <AuthProvider>
       <div className="bg-dark h-screen w-screen text-light ">
         <div className="h-full w-full flex justify-between">
-          <Sidebar />
+          <Sidebar user={userData?.user!} />
           <div className="w-[400px] border py-4 gap-y-4  h-full overflow-y-scroll overflow-hidden">
             <ChatList />
           </div>
