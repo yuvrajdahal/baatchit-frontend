@@ -1,4 +1,4 @@
-import React, { useOptimistic, useState } from "react";
+import React, { useEffect, useOptimistic, useState } from "react";
 import {
   Flag,
   Heart,
@@ -57,6 +57,14 @@ const InstagramPost: React.FC<IPostProps> = ({
   async function submitComment(id: string) {
     createComment!(comment, id);
   }
+  useEffect(() => {
+    if (isPostDeletingSuccess) {
+      toast({
+        title: "Post deleted",
+        description: "Post deleted successfully",
+      });
+    }
+  }, [isPostDeletingSuccess, toast]);
 
   return (
     <div className=" border border-neutral-400 border-1  min-w-[290px] sm:min-w-[300px] md:min-w-[350px] 2xl:min-w-[400px] mx-auto p-4 rounded-lg">
@@ -113,13 +121,7 @@ const InstagramPost: React.FC<IPostProps> = ({
               <MenubarItem
                 onClick={async (e) => {
                   e.preventDefault();
-                  await deletePost!(post?._id!);
-                  if (isPostDeletingSuccess) {
-                    toast({
-                      title: "Post deleted",
-                      description: "Post deleted successfully",
-                    });
-                  }
+                  deletePost!(post?._id!);
                 }}
                 className={twMerge(
                   `relative flex rounded-none items-center justify-between py-2  tranition duration-300 ease-in-out  space-x-4 `,
