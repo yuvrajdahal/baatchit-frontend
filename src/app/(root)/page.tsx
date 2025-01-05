@@ -2,6 +2,7 @@ import ListPosts from "@/components/home/list-posts";
 import Sidebar from "@/components/home/sidebar";
 import Suggestion from "@/components/home/suggetstion";
 import AuthProvider from "@/providers/auth-provider";
+import { Suspense } from "react";
 
 export default async function Home() {
   return (
@@ -10,9 +11,13 @@ export default async function Home() {
         <div className="h-full w-full flex justify-between">
           <Sidebar />
           <div className="bg-muted/20 flex-1 snap-y snap-mandatory flex flex-col  items-center overflow-hidden overflow-y-scroll remove-scrollbar transition-all duration-300 ease-in-out">
-            <ListPosts  />
+            <Suspense>
+              <ListPosts />
+            </Suspense>
           </div>
-          <Suggestion/>
+          <Suspense>
+            <Suggestion />
+          </Suspense>
         </div>
       </div>
     </AuthProvider>
