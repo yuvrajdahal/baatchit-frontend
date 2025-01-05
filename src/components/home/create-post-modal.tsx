@@ -89,7 +89,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
 
   return (
     <Dialog modal={modal} open={open} onOpenChange={onChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-w-sm  md:max-w-md">
         <DialogHeader>
           <div className="text-center font-semibold">Create new post</div>
           <hr />
