@@ -69,13 +69,13 @@ const ImageModal: React.FC<NImageModalProps> = ({
     <>
       <Dialog modal={modal} open={open} onOpenChange={onChange}>
         <DialogContent
-          className=" sm:max-w-4xl flex z-[1000] gap-0 p-0 outline-none"
+          className="sm:max-w-3xl xl:max-w-4xl flex z-[1000] gap-0 p-0 outline-none" 
           showCancelIcon="hide"
         >
           {showLeftIcon && (
             <div
               onClick={selectPrev}
-              className="text-xl cursor-pointer fixed flex justify-center items-center text-white h-10 w-10 rounded-full bg-white -left-[20%] top-[40%]"
+              className="text-xl cursor-pointer fixed hidden lg:flex justify-center items-center text-white h-10 w-10 rounded-full bg-white -left-[15%] top-[40%]"
             >
               <ChevronLeft className="text-gray-500" />
             </div>
@@ -92,6 +92,7 @@ const ImageModal: React.FC<NImageModalProps> = ({
             </div>{" "}
           </div>
           <div className="w-1/2  aspect-square">
+
             <div className="flex justify-between items-center  px-2">
               <div className="flex space-x-3 items-center  pt-2">
                 <img
@@ -285,7 +286,7 @@ const ImageModal: React.FC<NImageModalProps> = ({
           {showRightIcon && (
             <div
               onClick={selectNext}
-              className="text-xl cursor-pointer flex justify-center items-center fixed text-white h-10 w-10 rounded-full bg-white -right-[20%] top-[40%]"
+              className="text-xl cursor-pointer hidden lg:flex justify-center items-center fixed text-white h-10 w-10 rounded-full bg-white -right-[15%] top-[40%]"
             >
               <ChevronRight className="text-gray-500" />
             </div>
