@@ -1,4 +1,5 @@
 "use client";
+import { useCurrentUser } from "@/hooks/use-auth";
 import {
   useComments,
   useDeleteComment,
@@ -7,7 +8,6 @@ import {
 } from "@/hooks/use-post";
 import { useEffect, useState } from "react";
 import ImageModal from "./image-modal";
-import { useCurrentUser } from "@/hooks/use-auth";
 
 const ImageList = () => {
   const { data: userData } = useCurrentUser();
@@ -53,12 +53,12 @@ const ImageList = () => {
 
   return (
     <div className="w-full">
-      <div className="grid grid-cols-3 gap-1 w-full">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-1 w-full">
         {posts?.map((post, i) => (
           <>
             <div
               key={i}
-              className="min-h-[400px] aspect-[4/5] relative overflow-hidden hover:opacity-80 transition-all duration-300 ease-in-out cursor-pointer"
+              className="md:min-h-[400px] aspect-[4/5] relative overflow-hidden hover:opacity-80 transition-all duration-300 ease-in-out cursor-pointer"
               onClick={() => {
                 setCommentsModalOpen(true);
                 setIndex(i);
