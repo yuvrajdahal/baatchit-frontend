@@ -6,6 +6,7 @@ import {
   MenubarMenu,
   MenubarTrigger,
 } from "@/components/ui/menubar";
+import { User as UserType } from "@/data-access/types";
 import usePostStore, { usePosts } from "@/hooks/use-post";
 import {
   Compass,
@@ -22,7 +23,6 @@ import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import CreatePostModal from "./create-post-modal";
 import SearchModal from "./search-modal";
-import { User as UserType } from "@/data-access/types";
 
 const grandHotel = Grand_Hotel({
   subsets: ["latin"],
@@ -116,6 +116,7 @@ const Sidebar: React.FC<{
 }> = ({ user }) => {
   const [isMinimized, minimizeSidebar] = useState(true);
   const { setTogglePostModal, togglePostModal } = usePostStore();
+  const [isLaptop, setIsLaptop] = useState(false);
   const { refetch } = usePosts();
   const [showSearchModal, setSearchModal] = useState(true);
   const router = useRouter();
@@ -125,10 +126,34 @@ const Sidebar: React.FC<{
       minimizeSidebar(false);
     }
   }, [pathName, showSearchModal]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 1024) {
+        setIsLaptop(false);
+        minimizeSidebar(false);
+      } else {
+        setIsLaptop(true);
+        minimizeSidebar(true);
+      }
+    };
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  });
+
+  useEffect(() => {
+    if (!showSearchModal) {
+      minimizeSidebar(false);
+    }
+  }, [showSearchModal]);
+
   return (
     <div
       className={twMerge(
-        "hidden lg:block z-50",
+        "z-50",
         showSearchModal === true && isMinimized ? "w-64" : "w-14",
         pathName !== "/inbox" && showSearchModal === false && "w-64",
         pathName === "/inbox" && "w-14"
@@ -239,6 +264,7 @@ const Sidebar: React.FC<{
         show={showSearchModal}
         setShow={setSearchModal}
         minimizeSidebar={minimizeSidebar}
+        isLaptop={isLaptop}
       />
       <CreatePostModal
         open={togglePostModal}

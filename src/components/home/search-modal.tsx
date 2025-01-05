@@ -13,7 +13,8 @@ const SearchModal: React.FC<{
   show: boolean;
   minimizeSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({ show, setShow, minimizeSidebar }) => {
+  isLaptop: boolean;
+}> = ({ show, setShow, isLaptop, minimizeSidebar }) => {
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -50,7 +51,9 @@ const SearchModal: React.FC<{
           className="w-6 h-6 cursor-pointer"
           onClick={() => {
             setShow(true);
-            minimizeSidebar(true);
+            if (isLaptop) {
+              minimizeSidebar(true);
+            }
           }}
         />
       </div>
@@ -59,7 +62,9 @@ const SearchModal: React.FC<{
         <Input placeholder="Search..." value={search} onChange={handleChange} />
       </div>
       <div className="flex flex-col gap-4 divider overflow-hidden py-4 overflow-y-scroll remove-scrollbar">
-        {search.length > 0 && !isLoading && usersData?.data?.length! > 0 &&
+        {search.length > 0 &&
+          !isLoading &&
+          usersData?.data?.length! > 0 &&
           usersData?.data!.map((u) => (
             <UserTile user={u} key={u._id} router={router} />
           ))}

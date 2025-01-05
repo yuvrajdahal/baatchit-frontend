@@ -59,7 +59,7 @@ const InstagramPost: React.FC<IPostProps> = ({
   }
 
   return (
-    <div className=" border border-neutral-400 border-1  min-w-[350px] 2xl:min-w-[400px] mx-auto p-4 rounded-lg">
+    <div className=" border border-neutral-400 border-1  min-w-[290px] sm:min-w-[300px] md:min-w-[350px] 2xl:min-w-[400px] mx-auto p-4 rounded-lg">
       {/* Header */}
       <div className="flex items-start justify-between mb-3 2xl:mb-4">
         <div className="flex items-center">
@@ -150,7 +150,7 @@ const InstagramPost: React.FC<IPostProps> = ({
 
       {/* Image */}
       <div className="w-full mb-3 2xl:mb-4">
-        <div className="relative pt-[110%] lg:pt-[125%]">
+        <div className="relative pt-[130%] sm:pt-[120%]">
           <img
             src={post?.image}
             alt={post?.description}
