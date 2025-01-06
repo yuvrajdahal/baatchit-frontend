@@ -24,6 +24,7 @@ import { twMerge } from "tailwind-merge";
 import CreatePostModal from "./create-post-modal";
 import SearchModal from "./search-modal";
 import { useCurrentUser } from "@/hooks/use-auth";
+import { useQueryClient } from "@tanstack/react-query";
 
 const grandHotel = Grand_Hotel({
   subsets: ["latin"],
@@ -148,7 +149,7 @@ const Sidebar: React.FC<{}> = () => {
       minimizeSidebar(false);
     }
   }, [showSearchModal]);
-
+  const queryClient = useQueryClient();
   return (
     <div
       className={twMerge(
@@ -252,6 +253,15 @@ const Sidebar: React.FC<{}> = () => {
                   `relative flex items-center cursor-pointer  duration-300 ease-in-out  py-2 px-5 space-x-4 `
                 )}
                 onClick={() => {
+                  queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+                  queryClient.invalidateQueries({
+                    queryKey: ["suggestedUsers"],
+                  });
+                  queryClient.invalidateQueries({
+                    queryKey: ["usersByUsername"],
+                  });
+                  queryClient.invalidateQueries({ queryKey: ["user"] });
+
                   router.push("/login?logout=true");
                 }}
               >

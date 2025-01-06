@@ -1,13 +1,13 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import { X } from "lucide-react";
-import { twMerge } from "tailwind-merge";
-import { Input } from "../ui/input";
 import { User } from "@/data-access/types";
-import { useRouter } from "next/navigation";
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useUsersByUsername } from "@/hooks/use-auth";
 import { useQueryClient } from "@tanstack/react-query";
+import { X } from "lucide-react";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { twMerge } from "tailwind-merge";
+import { Input } from "../ui/input";
 
 const SearchModal: React.FC<{
   show: boolean;
@@ -15,28 +15,27 @@ const SearchModal: React.FC<{
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   isLaptop: boolean;
 }> = ({ show, setShow, isLaptop, minimizeSidebar }) => {
-  const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
-  const { data: usersData, isLoading } = useUsersByUsername(search);
+  const { data: usersData, isLoading, refetch } = useUsersByUsername(search);
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     if (show === false) {
       setSearch(event.target.value);
+      refetch();
     }
   }
 
-  useEffect(() => {
-    if (show) {
-      setSearch("");
-      queryClient.removeQueries({ queryKey: ["usersByUsername"] });
-    }
-  }, [show, queryClient]);
+  // useEffect(() => {
+  //   if (show) {
+  //     setSearch("");
+  //     queryClient.removeQueries({ queryKey: ["usersByUsername"] });
+  //   }
+  // }, [show, queryClient]);
 
   return (
     <div
-      ref={ref}
       className={twMerge(
         "absolute top-0  flex transition h-full w-[360px] shadow-lg  border  border-r bg-white",
         "data-[show='false']:flex flex-col data-[show='true']:hidden",

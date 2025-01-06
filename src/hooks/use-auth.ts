@@ -88,8 +88,11 @@ export const useSuggestedUsers = () => {
 export const useUsersByUsername = (username: string) => {
   return useQuery({
     queryKey: ["usersByUsername", username],
-    queryFn: () => getUsersByUserNameUsecase(username),
-    enabled: !username,
+    queryFn: async () => {
+      if (!username) return null;
+      const data = getUsersByUserNameUsecase(username);
+      return data;
+    },
   });
 };
 
