@@ -1,10 +1,10 @@
 "use client";
-import { useFollowUser, useUnfollowUser } from "@/hooks/use-auth";
+import { useFollowUser, useUnfollowUser, useUserById } from "@/hooks/use-auth";
 import { Archive, Settings, Flag } from "lucide-react";
 import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
 import { User } from "@/data-access/types";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useCreateUserChat } from "@/hooks/use-chat";
 
 interface OthersProfileInfoProps {

@@ -12,6 +12,7 @@ import SkeletonSuggestion from "./skeletal-suggetions";
 const Suggestion: React.FC = () => {
   const { data: suggestedData, isLoading: isSuggestedLoading } =
     useSuggestedUsers();
+    console.log(suggestedData)
   const { data: userData, isLoading: isUserLoading } = useCurrentUser();
   const { mutate: followUser, isPending: isFollowing } = useFollowUser();
   const user = userData?.user;

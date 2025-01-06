@@ -49,7 +49,6 @@ interface AuthState {
   clearUsersByUserName: () => void;
 }
 
-
 export const useCurrentUser = () => {
   return useQuery({
     queryKey: ["currentUser"],
@@ -60,14 +59,21 @@ export const useCurrentUser = () => {
     },
   });
 };
-
 export const useUserById = (id: string) => {
   return useQuery({
     queryKey: ["user", id],
-    queryFn: () => getUserByIdUsecase(id),
+    queryFn: async () => {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("No token found");
+      return getUserByIdUsecase(id, token);
+    },
+    // staleTime: 0,
+    // refetchOnMount: true,
+    // gcTime: 0,
+    // enabled: !!id,
+    // refetchOnWindowFocus: true,
   });
 };
-
 export const useSuggestedUsers = () => {
   return useQuery({
     queryKey: ["suggestedUsers"],
@@ -90,8 +96,13 @@ export const useUsersByUsername = (username: string) => {
 export const useLogin = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ email, password }: { email: string; password: string }) =>
-      loginUserUsecase(email, password),
+    mutationFn: async ({
+      email,
+      password,
+    }: {
+      email: string;
+      password: string;
+    }) => loginUserUsecase(email, password),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     },
@@ -123,11 +134,13 @@ export const useFollowUser = () => {
   return useMutation({
     mutationFn: async (userId: string) => {
       const token = localStorage.getItem("token");
-      if (!token) throw new Error("No token found");
-      return followUserUsecase(userId, token);
+      const result = await followUserUsecase(userId, token!);
+      await queryClient.fetchQuery({
+        queryKey: ["user", userId],
+      });
+      return result;
     },
-    onSuccess: (_, userId) => {
-      queryClient.invalidateQueries({ queryKey: ["user", userId] });
+    onSuccess: (_) => {
       queryClient.invalidateQueries({ queryKey: ["suggestedUsers"] });
     },
   });
@@ -138,13 +151,14 @@ export const useUnfollowUser = () => {
   return useMutation({
     mutationFn: async (userId: string) => {
       const token = localStorage.getItem("token");
-      if (!token) throw new Error("No token found");
-      return unfollowUserUsecase(userId, token);
+      const result = await unfollowUserUsecase(userId, token!);
+      await queryClient.fetchQuery({
+        queryKey: ["user", userId],
+      });
+      return result;
     },
-    onSuccess: (_, userId) => {
-      queryClient.invalidateQueries({ queryKey: ["user", userId] });
+    onSuccess: (_) => {
       queryClient.invalidateQueries({ queryKey: ["suggestedUsers"] });
     },
   });
 };
-

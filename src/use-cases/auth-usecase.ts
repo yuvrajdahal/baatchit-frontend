@@ -77,7 +77,7 @@ export async function getCurrentUserUsecase(token: string): Promise<{
     }
   }
 }
-export async function getUserByIdUsecase(id: string): Promise<{
+export async function getUserByIdUsecase(id: string,token:string): Promise<{
   success: boolean;
   error?: string;
   user?: any;
@@ -85,7 +85,7 @@ export async function getUserByIdUsecase(id: string): Promise<{
   try {
     const { data, success } = await getUserById(
       id,
-      localStorage.getItem("token")!
+      token
     );
     return { success, user: data };
   } catch (error) {

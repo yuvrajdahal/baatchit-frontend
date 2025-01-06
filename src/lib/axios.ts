@@ -26,26 +26,11 @@ class Api {
       Pragma: "no-cache",
     };
 
-    this.axiosInstance = setupCache(
-      axios.create({
-        baseURL: baseURL,
-        headers: defaultHeaders,
-        withCredentials: true,
-      }),
-      {
-        storage: buildWebStorage(
-          //@ts-ignore
-          typeof window !== "undefined" ? window.localStorage : null,
-          "axios-cache:"
-        ),
-        ttl: 1000 * 60 * 5,
-        methods: ["get"],
-        cachePredicate: {
-          statusCheck: (status) => status === 200,
-        },
-      }
-    );
-
+    this.axiosInstance = axios.create({
+      baseURL: baseURL,
+      headers: defaultHeaders,
+      withCredentials: true,
+    });
     this.axiosInstance.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
         config.withCredentials = true;
@@ -55,7 +40,7 @@ class Api {
           config.headers = {
             ...config.headers,
             "Cache-Control": "no-cache",
-            "Pragma": "no-cache",
+            Pragma: "no-cache",
           };
         }
         return config;
