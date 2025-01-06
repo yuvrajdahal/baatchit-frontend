@@ -10,10 +10,8 @@ import { useState } from "react";
 export default function ProfilePage() {
   const params: { id: string } = useParams();
   const [commentsModalOpen, setCommentsModalOpen] = useState(false);
-
   const { data: user, isLoading: userByIdLoading } = useUserById(params.id);
   const { mutate: deletePost } = useDeletePost();
-
   // const handleCommentsModal = (postId: string) => {
   //   setSelectedPostId(postId);
   //   setCommentsModalOpen(true);

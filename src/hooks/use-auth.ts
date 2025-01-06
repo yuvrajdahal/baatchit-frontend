@@ -65,7 +65,6 @@ export const useUserById = (id: string) => {
   return useQuery({
     queryKey: ["user", id],
     queryFn: () => getUserByIdUsecase(id),
-    enabled: !id,
   });
 };
 
