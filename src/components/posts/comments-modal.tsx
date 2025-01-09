@@ -4,12 +4,7 @@ import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { Post, User } from "@/data-access/types";
 import React, { useState, useEffect, SetStateAction, Dispatch } from "react";
 import { AspectRatio } from "../ui/aspect-ratio";
-import {
-  useComments,
-  useDeleteComment,
-  useDeletePost,
-  usePosts,
-} from "@/hooks/use-post";
+import { useComments, useDeleteComment, useDeletePost } from "@/hooks/use-post";
 import { Flag, MoreHorizontal, Trash2 } from "lucide-react";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import Link from "next/link";
@@ -24,7 +19,7 @@ import { twMerge } from "tailwind-merge";
 import Loading from "../loading";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNowStrict } from "date-fns";
-import  { useCurrentUser } from "@/hooks/use-auth";
+import { useCurrentUser } from "@/hooks/use-auth";
 
 interface CommentModalProps {
   modal?: boolean;
@@ -57,12 +52,13 @@ const CommentModal: React.FC<CommentModalProps> = ({
   likesCount,
 }) => {
   const { data: commentData, isLoading: isCommentsLoading } = useComments(id);
-  const { mutate: deleteComment, isPending: isCommentDeleting,isSuccess: isCommentDeleteSuccess } =
-    useDeleteComment();
   const {
-    mutate: deletePost,
-    isSuccess: isPostDeletingSuccess,
-  } = useDeletePost();
+    mutate: deleteComment,
+    isPending: isCommentDeleting,
+    isSuccess: isCommentDeleteSuccess,
+  } = useDeleteComment();
+  const { mutate: deletePost, isSuccess: isPostDeletingSuccess } =
+    useDeletePost();
 
   const { toast } = useToast();
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -72,21 +68,22 @@ const CommentModal: React.FC<CommentModalProps> = ({
     <>
       <Dialog modal={modal} open={open} onOpenChange={onChange}>
         <DialogContent
-          className="sm:max-w-4xl flex z-[1000] gap-0 p-0 outline-none"
+          className="flex flex-col md:flex-row z-[1000] gap-0 p-0 outline-none max-w-sm md:max-w-3xl lg:max-w-4xl 2xl:max-w-6xl"
           showCancelIcon="hide"
         >
-          <div className="w-1/2  overflow-hiden aspect-square">
-            <div className="relative pt-[125%] overflow-hiden ">
+          <div className="w-full   bg-black/90 md:w-1/2 overflow-hidden">
+            <div className="relative pt-[100%] md:pt-[125%] overflow-hidden">
+              {/* <div className="relative pt-[100%] md:pt-[125%] overflow-hidden"> */}
               <img
                 src={image}
-                sizes="(max-width: 639px) 33vw, (max-width: 1079px) 300px, 357px"
-                className="absolute inset-0 w-full h-full object-cover"
+                sizes="(max-width: 639px) 100vw, (max-width: 1079px) 300px, 357px"
+                className="absolute inset-0 w-full h-full object-contain md:object-cover"
                 loading="lazy"
-              />{" "}
-            </div>{" "}
+              />
+            </div>
           </div>
-          <div className="w-1/2  aspect-square">
-            <div className="flex justify-between items-center  px-2">
+          <div className="w-full md:w-1/2 h-[30vh] md:h-auto overflow-y-auto">
+            <div className="flex justify-between items-center p-2 sm:px-2">
               <div className="flex space-x-3 items-center  pt-2">
                 <img
                   className="w-12 h-12 rounded-full object-cover border"
@@ -173,7 +170,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
               </div>
             </div>
             <hr className="mt-2" />
-            <div className="flex flex-col overflow-hidden  mt-4 gap-4 px-2 ">
+            <div className="flex flex-col overflow-y-auto mt-4 gap-4 p-2 sm:px-2">
               {!isCommentsLoading &&
                 commentData?.comments.map((cmt: any, i: number) => {
                   return (

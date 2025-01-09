@@ -69,7 +69,7 @@ const ImageModal: React.FC<NImageModalProps> = ({
     <>
       <Dialog modal={modal} open={open} onOpenChange={onChange}>
         <DialogContent
-          className="sm:max-w-3xl xl:max-w-4xl flex z-[1000] gap-0 p-0 outline-none" 
+          className="flex flex-col md:flex-row z-[1000] gap-0 p-0 outline-none max-w-sm md:max-w-2xl lg:max-w-3xl 2xl:max-w-6xl"
           showCancelIcon="hide"
         >
           {showLeftIcon && (
@@ -81,8 +81,8 @@ const ImageModal: React.FC<NImageModalProps> = ({
             </div>
           )}
 
-          <div className="w-1/2  overflow-hiden aspect-square">
-            <div className="relative pt-[125%] overflow-hiden ">
+          <div className="w-full   bg-black/90 md:w-1/2 overflow-hidden">
+            <div className="relative pt-[100%] md:pt-[125%] overflow-hidden">
               <img
                 src={post?.image}
                 sizes="(max-width: 639px) 33vw, (max-width: 1079px) 300px, 357px"
@@ -91,8 +91,7 @@ const ImageModal: React.FC<NImageModalProps> = ({
               />{" "}
             </div>{" "}
           </div>
-          <div className="w-1/2  aspect-square">
-
+          <div className="w-full md:w-1/2 h-[30vh] md:h-auto overflow-y-auto">
             <div className="flex justify-between items-center  px-2">
               <div className="flex space-x-3 items-center  pt-2">
                 <img

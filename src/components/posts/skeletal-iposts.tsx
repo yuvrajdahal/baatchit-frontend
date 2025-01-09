@@ -5,7 +5,7 @@ const PostSkeleton: React.FC = () => {
     <div
       className="snap-center flex-shrink-0 h-full flex flex-col justify-center items-center"
     >
-      <div className="border border-neutral-400 border-1 min-w-[350px] 2xl:min-w-[400px] mx-auto p-4 rounded-lg animate-pulse">
+      <div className="border border-neutral-400 border-1 min-w-[290px] sm:min-w-[300px] md:min-w-[350px] 2xl:min-w-[400px] mx-auto p-4 rounded-lg animate-pulse">
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center">
