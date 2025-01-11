@@ -134,7 +134,7 @@ const Sidebar: React.FC<{}> = () => {
         minimizeSidebar(false);
       } else {
         setIsLaptop(true);
-        minimizeSidebar(true);
+        if (!pathName.includes("inbox")) minimizeSidebar(true);
       }
     };
     handleResize();
