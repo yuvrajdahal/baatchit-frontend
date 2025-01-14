@@ -54,7 +54,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
         setFile(null);
         setDescription("");
         setToggleForm(false);
-      }, 1000);
+      }, 300);
       return () => clearTimeout(interval);
     }
   }, [open]);

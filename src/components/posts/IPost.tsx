@@ -250,7 +250,7 @@ const MoreButton: React.FC<MoreItemProps> = ({
   children,
 }) => {
   return (
-    <Menubar className="z-[1000]">
+    <Menubar className="">
       <MenubarMenu>
         <MenubarTrigger
           onClick={onClick}
@@ -259,7 +259,7 @@ const MoreButton: React.FC<MoreItemProps> = ({
           {trigger}
         </MenubarTrigger>
         <MenubarContent
-          className={twMerge(" bg-white border rounded min-w-32")}
+          className={twMerge(" bg-white border rounded min-w-32 mr-2 md:mr-auto")}
         >
           {children}
         </MenubarContent>

@@ -6,8 +6,9 @@ import {
   MenubarMenu,
   MenubarTrigger,
 } from "@/components/ui/menubar";
-import { User as UserType } from "@/data-access/types";
+import { useCurrentUser } from "@/hooks/use-auth";
 import usePostStore, { usePosts } from "@/hooks/use-post";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Compass,
   Home,
@@ -23,8 +24,6 @@ import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import CreatePostModal from "./create-post-modal";
 import SearchModal from "./search-modal";
-import { useCurrentUser } from "@/hooks/use-auth";
-import { useQueryClient } from "@tanstack/react-query";
 
 const grandHotel = Grand_Hotel({
   subsets: ["latin"],
@@ -54,7 +53,7 @@ const MenuSideBarItem: React.FC<SidebarItemProps> = ({
         <MenubarTrigger
           onClick={onClick}
           className={twMerge(
-            `relative group flex items-center cursor-pointer w-full  bg-white duration-300 ease-in-out hover:bg-muted py-3  gap-4`,
+            `relative group flex  items-center cursor-pointer w-full  bg-white duration-300 ease-in-out hover:bg-muted py-3  gap-4`,
             active ? "font-bold" : "",
             show ? "px-5" : "justify-center"
           )}
@@ -69,7 +68,10 @@ const MenuSideBarItem: React.FC<SidebarItemProps> = ({
             {text}
           </span>
         </MenubarTrigger>
-        <MenubarContent align="end" className={twMerge("w-full")}>
+        <MenubarContent
+          align="end"
+          className={twMerge("w-full ml-2 md:ml-auto")}
+        >
           {children}
         </MenubarContent>
       </MenubarMenu>
@@ -115,7 +117,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
 
 const Sidebar: React.FC<{}> = () => {
   const [isMinimized, minimizeSidebar] = useState(true);
-  const { data:userDate } = useCurrentUser();
+  const { data: userDate } = useCurrentUser();
   const { setTogglePostModal, togglePostModal } = usePostStore();
   const [isLaptop, setIsLaptop] = useState(false);
   const { refetch } = usePosts();
@@ -190,8 +192,11 @@ const Sidebar: React.FC<{}> = () => {
               text="Home"
               active={pathName === "/"}
               onClick={() => {
-                refetch();
-                router.push("/");
+                if (pathName === "/") {
+                  refetch();
+                } else {
+                  router.push("/");
+                }
               }}
             />
             <SidebarItem
@@ -251,7 +256,7 @@ const Sidebar: React.FC<{}> = () => {
             >
               <MenubarItem
                 className={twMerge(
-                  `relative flex items-center cursor-pointer  duration-300 ease-in-out  py-2 px-5 space-x-4 `
+                  `relative flex  items-center cursor-pointer  duration-300 ease-in-out py-2 px-5 space-x-4 `
                 )}
                 onClick={() => {
                   queryClient.invalidateQueries({ queryKey: ["currentUser"] });

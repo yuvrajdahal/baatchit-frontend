@@ -309,7 +309,7 @@ const MoreButton: React.FC<MoreItemProps> = ({
           {trigger}
         </MenubarTrigger>
         <MenubarContent
-          className={twMerge(" bg-white border rounded min-w-32 z-[3000]")}
+          className={twMerge(" bg-white border rounded min-w-32 z-[3000] mr-2 md:mr-auto")}
         >
           {children}
         </MenubarContent>

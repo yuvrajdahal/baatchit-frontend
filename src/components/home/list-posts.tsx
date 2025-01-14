@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import InstagramPost from "../posts/IPost";
 import { Post, User } from "@/data-access/types";
 import { useToast } from "@/hooks/use-toast";
@@ -12,8 +12,10 @@ import { useCurrentUser } from "@/hooks/use-auth";
 const ListPosts: React.FC = () => {
   const [isMounted, setMounted] = useState(true);
   const [index, setIndex] = useState(0);
-  const { data: userData } = useCurrentUser();
   const [isCommentsModalOpen, setCommentsModalOpen] = useState(false);
+  const containerRef = useRef(null);
+  
+  const { data: userData } = useCurrentUser();
   const { toast } = useToast();
   const { data: postsData, isLoading, error } = usePosts();
   const { mutate: likeMutation } = useLikePost();
@@ -42,7 +44,7 @@ const ListPosts: React.FC = () => {
     });
   const user = userData?.user;
   return (
-    <>
+    <div className="w-full h-full" ref={containerRef}>
       {posts.map((post, i) => (
         <div
           className="snap-center flex-shrink-0 h-full flex flex-col justify-center items-center"
@@ -81,7 +83,7 @@ const ListPosts: React.FC = () => {
           user={user}
         />
       )}
-    </>
+    </div>
   );
 };
 

@@ -28,17 +28,17 @@ const Grid: React.FC<GridProps> = ({
   const [selectedPostIndex, setSelectPost] = useState<number | null>(null);
   const [selectedPost, setPost] = useState<Post | null>(null);
 
-  if (isLoading || isPostsLoading) {
+  if (isLoading||isPostsLoading) {
     return <SkeletalGrid />;
   }
 
   return (
     <div className="w-full">
-      <div className="grid grid-cols-3 gap-1">
+      <div className="grid  md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-1">
         {posts.map((post, index) => (
           <div
             key={index}
-            className="min-h-[400px] aspect-[4/5] relative overflow-hidden hover:opacity-80 transition-all duration-300 ease-in-out cursor-pointer"
+            className=" min-h-[400px] aspect-[4/5] relative overflow-hidden hover:opacity-80 transition-all duration-300 ease-in-out cursor-pointer"
             onClick={() => {
               setSelectPost(index);
               setPost(post);
@@ -76,9 +76,11 @@ const Grid: React.FC<GridProps> = ({
 
 const SkeletalGrid = () => {
   return (
-    <div className="w-full grid grid-cols-3 gap-1">
+    <div className="grid  md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-1">
       {[...Array(6)].map((_, i) => (
-        <div key={i} className="aspect-square bg-gray-200 animate-pulse" />
+        <div key={i}
+         className="aspect-[4/5] bg-gray-200  min-h-[400px]  animate-pulse"
+          />
       ))}
     </div>
   );
