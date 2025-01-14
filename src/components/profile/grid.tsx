@@ -1,5 +1,5 @@
 "use client";
-import { User } from "@/data-access/types";
+import { Post, User } from "@/data-access/types";
 import { usePosts } from "@/hooks/use-post";
 import CommentModal from "../posts/comments-modal";
 import { useState } from "react";
@@ -25,7 +25,9 @@ const Grid: React.FC<GridProps> = ({
   const { data: postsData, isLoading: isPostsLoading } = usePosts();
   const posts =
     postsData?.posts.filter((post) => post.user._id === user?._id) || [];
-  const [selectPost, setSelectPost] = useState<number>(0);
+  const [selectedPostIndex, setSelectPost] = useState<number | null>(null);
+  const [selectedPost, setPost] = useState<Post | null>(null);
+
   if (isLoading || isPostsLoading) {
     return <SkeletalGrid />;
   }
@@ -38,8 +40,9 @@ const Grid: React.FC<GridProps> = ({
             key={index}
             className="min-h-[400px] aspect-[4/5] relative overflow-hidden hover:opacity-80 transition-all duration-300 ease-in-out cursor-pointer"
             onClick={() => {
-              setCommentsModalOpen?.(true);
               setSelectPost(index);
+              setPost(post);
+              setCommentsModalOpen?.(true);
             }}
           >
             <img
@@ -50,20 +53,22 @@ const Grid: React.FC<GridProps> = ({
             />
           </div>
         ))}
-        <CommentModal
-          post={user?.posts?.[selectPost]}
-          open={isCommentsModalOpen}
-          onChange={() => setCommentsModalOpen!(!isCommentsModalOpen)}
-          setOpenCommentsModal={setCommentsModalOpen}
-          id={user?.posts?.[selectPost]?._id!}
-          description={user?.posts?.[selectPost]?.description!}
-          image={user?.posts?.[selectPost]?.image!}
-          likesCount={user?.posts?.[selectPost]?.likesCount!}
-          avatarUrl={user?.profilePicture ?? ""}
-          username={user?.fullname ?? ""}
-          deletePost={deletePost}
-          user={user}
-        />
+        {selectedPostIndex !== null && (
+          <CommentModal
+            post={selectedPost}
+            open={isCommentsModalOpen}
+            onChange={() => setCommentsModalOpen!(!isCommentsModalOpen)}
+            setOpenCommentsModal={setCommentsModalOpen}
+            id={selectedPost?._id!}
+            description={selectedPost?.description!}
+            image={selectedPost?.image!}
+            likesCount={selectedPost?.likesCount!}
+            avatarUrl={user?.profilePicture ?? ""}
+            username={user?.fullname ?? ""}
+            deletePost={deletePost}
+            user={user}
+          />
+        )}
       </div>
     </div>
   );

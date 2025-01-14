@@ -151,7 +151,12 @@ const InstagramPost: React.FC<IPostProps> = ({
       </div>
 
       {/* Image */}
-      <div className="w-full mb-3 2xl:mb-4">
+      <div
+        className="w-full mb-3 2xl:mb-4 relative cursor-pointer"
+        onClick={() => {
+          setCommentsModalOpen!(true);
+        }}
+      >
         <div className="relative pt-[130%] sm:pt-[120%]">
           <img
             src={post?.image}

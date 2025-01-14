@@ -73,19 +73,20 @@ const ImageList = () => {
                 loading="lazy"
               />
             </div>
-            <ImageModal
-              modal={isCommentsModalOpen}
-              open={isCommentsModalOpen}
-              onChange={() => setCommentsModalOpen(false)}
-              selectNext={selectNext}
-              selectPrev={selectPrev}
-              showLeftIcon={index > 0}
-              showRightIcon={index < posts.length - 1}
-              post={posts[index]}
-              currentUser={userData?.user!}
-            />
           </>
         ))}
+        <ImageModal
+          modal={isCommentsModalOpen}
+          open={isCommentsModalOpen}
+          onChange={() => setCommentsModalOpen((prev) => !prev)}
+          selectNext={selectNext}
+          setOpenCommentsModal={setCommentsModalOpen}
+          selectPrev={selectPrev}
+          showLeftIcon={index > 0}
+          showRightIcon={index < posts.length - 1}
+          post={posts[index]}
+          currentUser={userData?.user!}
+        />
       </div>
     </div>
   );
@@ -95,7 +96,7 @@ export default ImageList;
 
 const SkeletalGrid: React.FC = () => {
   return (
-    <div className="max-w-[1200px] w-full grid grid-cols-3 gap-1 pt-4">
+    <div className="max-w-[1200px] grid md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-1 w-full">
       {[...Array(3)].map((_, i) => (
         <div
           key={i}

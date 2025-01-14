@@ -1,25 +1,22 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
-import { Post, User } from "@/data-access/types";
-import React, { useState, useEffect, SetStateAction, Dispatch } from "react";
-import { AspectRatio } from "../ui/aspect-ratio";
-import { useComments, useDeleteComment, useDeletePost } from "@/hooks/use-post";
-import { Flag, MoreHorizontal, Trash2 } from "lucide-react";
-import { Cross2Icon } from "@radix-ui/react-icons";
-import Link from "next/link";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
   Menubar,
-  MenubarItem,
   MenubarContent,
+  MenubarItem,
   MenubarMenu,
   MenubarTrigger,
 } from "@/components/ui/menubar";
-import { twMerge } from "tailwind-merge";
-import Loading from "../loading";
+import { Post, User } from "@/data-access/types";
+import { useCurrentUser } from "@/hooks/use-auth";
+import { useComments, useDeleteComment, useDeletePost } from "@/hooks/use-post";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNowStrict } from "date-fns";
-import { useCurrentUser } from "@/hooks/use-auth";
+import { Flag, MoreHorizontal, Trash2, X } from "lucide-react";
+import Link from "next/link";
+import React, { useState } from "react";
+import { twMerge } from "tailwind-merge";
+import Loading from "../loading";
 
 interface CommentModalProps {
   modal?: boolean;
@@ -74,6 +71,13 @@ const CommentModal: React.FC<CommentModalProps> = ({
           <div className="w-full   bg-black/90 md:w-1/2 overflow-hidden">
             <div className="relative pt-[100%] md:pt-[125%] overflow-hidden">
               {/* <div className="relative pt-[100%] md:pt-[125%] overflow-hidden"> */}
+              <div
+                className="absolute z-10 block cursor-pointer md:hidden top-2 right-2"
+                onClick={() => setOpenCommentsModal!(false)}
+              >
+                <X className="text-muted-foreground" />
+              </div>
+
               <img
                 src={image}
                 sizes="(max-width: 639px) 100vw, (max-width: 1079px) 300px, 357px"

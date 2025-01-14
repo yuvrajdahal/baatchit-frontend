@@ -1,11 +1,10 @@
 "use client";
 import { User } from "@/data-access/types";
 import { useUsersByUsername } from "@/hooks/use-auth";
-import { useQueryClient } from "@tanstack/react-query";
 import { X } from "lucide-react";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { Input } from "../ui/input";
 
@@ -13,11 +12,12 @@ const SearchModal: React.FC<{
   show: boolean;
   minimizeSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  currentUser: User | null;
   isLaptop: boolean;
-}> = ({ show, setShow, isLaptop, minimizeSidebar }) => {
+}> = ({ show, setShow, isLaptop, minimizeSidebar, currentUser }) => {
   const router = useRouter();
-  const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
+
   const { data: usersData, isLoading, refetch } = useUsersByUsername(search);
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -65,7 +65,12 @@ const SearchModal: React.FC<{
           !isLoading &&
           usersData?.data?.length! > 0 &&
           usersData?.data!.map((u) => (
-            <UserTile user={u} key={u._id} router={router} />
+            <UserTile
+              user={u}
+              key={u._id}
+              router={router}
+              currentUser={currentUser}
+            />
           ))}
         {search.length > 0 && !isLoading && !usersData?.data?.length && (
           <div className="flex justify-center items-center">
@@ -90,12 +95,17 @@ const SearchModal: React.FC<{
 const UserTile: React.FC<{
   user: User | null;
   router: AppRouterInstance;
-}> = ({ user, router }) => {
+  currentUser: User | null;
+}> = ({ user, router, currentUser }) => {
   return (
     <div
       className="flex items-center px-5 py-2  justify-between cursor-pointer hover:bg-muted"
       onClick={() => {
-        router.push(`/profile/${user?._id}`);
+        if (currentUser?._id === user?._id) {
+          router.push(`/profile`);
+        } else {
+          router.push(`/profile/${user?._id}`);
+        }
       }}
     >
       <div className="flex space-x-3 items-center">

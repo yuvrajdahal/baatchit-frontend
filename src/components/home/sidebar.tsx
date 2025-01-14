@@ -115,6 +115,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
 
 const Sidebar: React.FC<{}> = () => {
   const [isMinimized, minimizeSidebar] = useState(true);
+  const { data:userDate } = useCurrentUser();
   const { setTogglePostModal, togglePostModal } = usePostStore();
   const [isLaptop, setIsLaptop] = useState(false);
   const { refetch } = usePosts();
@@ -274,6 +275,7 @@ const Sidebar: React.FC<{}> = () => {
       <SearchModal
         show={showSearchModal}
         setShow={setSearchModal}
+        currentUser={userDate?.user!}
         minimizeSidebar={minimizeSidebar}
         isLaptop={isLaptop}
       />

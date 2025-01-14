@@ -9,6 +9,7 @@ import {
   Flag,
   MoreHorizontal,
   Trash2,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -69,7 +70,7 @@ const ImageModal: React.FC<NImageModalProps> = ({
     <>
       <Dialog modal={modal} open={open} onOpenChange={onChange}>
         <DialogContent
-          className="flex flex-col md:flex-row z-[1000] gap-0 p-0 outline-none max-w-sm md:max-w-2xl lg:max-w-3xl 2xl:max-w-6xl"
+          className="flex flex-col md:flex-row z-[1000] gap-0 p-0 outline-none  max-w-sm md:max-w-2xl lg:max-w-3xl 2xl:max-w-6xl"
           showCancelIcon="hide"
         >
           {showLeftIcon && (
@@ -83,14 +84,23 @@ const ImageModal: React.FC<NImageModalProps> = ({
 
           <div className="w-full   bg-black/90 md:w-1/2 overflow-hidden">
             <div className="relative pt-[100%] md:pt-[125%] overflow-hidden">
+              {/* <div className="relative pt-[100%] md:pt-[125%] overflow-hidden"> */}
+              <div
+                className="absolute z-10 block cursor-pointer md:hidden top-2 right-2"
+                onClick={() => setOpenCommentsModal!(false)}
+              >
+                <X className="text-muted-foreground" />
+              </div>
+
               <img
                 src={post?.image}
-                sizes="(max-width: 639px) 33vw, (max-width: 1079px) 300px, 357px"
-                className="absolute inset-0 w-full h-full object-cover"
+                sizes="(max-width: 639px) 100vw, (max-width: 1079px) 300px, 357px"
+                className="absolute inset-0 w-full h-full object-contain md:object-cover"
                 loading="lazy"
-              />{" "}
-            </div>{" "}
+              />
+            </div>
           </div>
+
           <div className="w-full md:w-1/2 h-[30vh] md:h-auto overflow-y-auto">
             <div className="flex justify-between items-center  px-2">
               <div className="flex space-x-3 items-center  pt-2">
