@@ -7,7 +7,7 @@ type ChatHeaderProps = {
 
 const ChatHeader: FC<ChatHeaderProps> = ({ receiver }) => {
   return (
-    <div className="py-2 border-y border-gray-300 px-5 bg-muted/20 flex items-center justify-between">
+    <div className="py-2 h-[60px] overflow-hidden border-y border-gray-300 px-5 bg-muted/20 flex items-center justify-between">
       <div className="flex space-x-2 items-center">
         <img
           src={receiver?.profilePicture}

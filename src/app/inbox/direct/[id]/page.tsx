@@ -12,6 +12,7 @@ import {
 } from "@/hooks/use-chat";
 import useSocketStore from "@/hooks/use-socket";
 import { useCurrentUser } from "@/hooks/use-auth";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Page = () => {
   const { id } = useParams();
@@ -21,7 +22,9 @@ const Page = () => {
     userData?.user?._id || "",
     id as string
   );
-  const { initializeSocket, cleanup, sendMessage } = useSocketStore();
+  const queryClient = useQueryClient();
+  const { initializeSocket, addUser, cleanup, sendMessage, socket } =
+    useSocketStore();
 
   const receiver = userChats?.data?.find(
     (chat: any) => chat.receiver._id === id || chat.sender._id === id
@@ -29,10 +32,14 @@ const Page = () => {
 
   useEffect(() => {
     if (userData) {
-      initializeSocket();
+      if (!socket) {
+        initializeSocket(userData.user?._id!);
+      }
+      console.log(socket);
+
+      addUser(userData.user?._id!);
     }
-    return cleanup;
-  }, [userData]);
+  }, [userData, socket]);
 
   function sendMessageHandler(message: string) {
     if (!userData?.user) return;
@@ -42,6 +49,7 @@ const Page = () => {
       to: id as string,
       message,
     });
+    queryClient.invalidateQueries({ queryKey: ["messages"] });
   }
 
   return (

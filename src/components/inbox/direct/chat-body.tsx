@@ -14,33 +14,39 @@ const ChatBody: FC<ChatBodyProps> = ({ user, messages }) => {
     return message.sender._id === user?._id;
   };
   const scrollRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      scrollRef.current.scrollTo({
+        top: scrollRef.current.scrollHeight,
+        behavior: "smooth",
+      });
     }
   }, [messages]);
 
   return (
     <div
-      className="px-3 flex pb-4 flex-col gap-2 justify-end py-1 w-full h-full overflow-y-scroll"
       ref={scrollRef}
+      className="h-[calc(100dvh_-_60px_-_50px)] overflow-y-auto flex flex-col"
     >
-      {messages.map((message) => (
-        <div
-          key={message._id}
-          className={twMerge(
-            "flex w-full",
-            isUserSender(message) && "justify-end",
-            !isUserSender(message) && "justify-start"
-          )}
-        >
-          <UserMessage
-            message={message.message}
-            user={message.sender}
-            isUserSender={isUserSender(message)}
-          />
-        </div>
-      ))}
+      <div className="px-3 pb-4 gap-2 flex-1 flex flex-col justify-end py-1">
+        {messages.map((message) => (
+          <div
+            key={message._id}
+            className={twMerge(
+              "flex w-full",
+              isUserSender(message) && "justify-end",
+              !isUserSender(message) && "justify-start"
+            )}
+          >
+            <UserMessage
+              message={message.message}
+              user={message.sender}
+              isUserSender={isUserSender(message)}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
@@ -67,9 +73,7 @@ const UserMessage: FC<{
         />
       </Link>
       <div className="bg-gray-200/90 p-2 rounded-md">
-        <p className="text-sm">
-          {message}
-        </p>
+        <p className="text-sm">{message}</p>
       </div>
     </div>
   );
