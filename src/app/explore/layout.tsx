@@ -1,7 +1,5 @@
-import Loading from "@/components/loading";
 import AuthProvider from "@/providers/auth-provider";
 import type { Metadata } from "next";
-import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Baatchit: Explore",

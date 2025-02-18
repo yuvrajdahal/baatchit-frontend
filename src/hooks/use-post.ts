@@ -7,6 +7,7 @@ import {
   getCommentsUsecase,
   deletePostUsecase,
   deleteCommentUsecase,
+  getExplorePostsUsecase,
 } from "@/use-cases/posts-usecase";
 import { Post } from "@/data-access/types";
 import { create } from "zustand";
@@ -23,6 +24,25 @@ export const usePosts = () => {
     queryKey: ["posts"],
     queryFn: async () => {
       const data = await getPostsUsecase(localStorage.getItem("token")!);
+      return {
+        ...data,
+        posts: data.posts ?? [],
+      };
+    },
+  });
+};
+export const useExplorePosts = () => {
+  return useQuery<
+    {
+      success: boolean;
+      error?: string;
+      posts: Post[];
+    },
+    Error
+  >({
+    queryKey: ["recommended"],
+    queryFn: async () => {
+      const data = await getExplorePostsUsecase(localStorage.getItem("token")!);
       return {
         ...data,
         posts: data.posts ?? [],

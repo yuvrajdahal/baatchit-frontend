@@ -4,7 +4,7 @@ import {
   useComments,
   useDeleteComment,
   useDeletePost,
-  usePosts,
+  useExplorePosts,
 } from "@/hooks/use-post";
 import { useEffect, useState } from "react";
 import ImageModal from "./image-modal";
@@ -14,18 +14,10 @@ const ImageList = () => {
   const [isMounted, setMounted] = useState(true);
   const [index, setIndex] = useState(0);
   const [isCommentsModalOpen, setCommentsModalOpen] = useState(false);
-  const [selectedPostId, setSelectedPostId] = useState<string>("");
 
-  // React Query hooks
-  const { data: postsData, isLoading } = usePosts();
-  const { data: commentsData, isLoading: isCommentsLoading } =
-    useComments(selectedPostId);
-  const { mutate: deletePostMutation } = useDeletePost();
-  const { mutate: deleteCommentMutation, isPending: isCommentDeleting } =
-    useDeleteComment();
+  const { data: postsData, isLoading } = useExplorePosts();
 
   const posts = postsData?.posts || [];
-  const comments = commentsData?.comments || [];
 
   useEffect(() => {
     setMounted(false);
@@ -35,20 +27,15 @@ const ImageList = () => {
     return <SkeletalGrid />;
   }
 
-  function handleGetComments(id: string) {
-    setSelectedPostId(id);
-  }
 
   function selectNext() {
     const nextIndex = (index + 1) % posts.length;
     setIndex(nextIndex);
-    handleGetComments(posts[nextIndex]._id);
   }
 
   function selectPrev() {
     const prevIndex = index - 1 < 0 ? posts.length - 1 : index - 1;
     setIndex(prevIndex);
-    handleGetComments(posts[prevIndex]._id);
   }
 
   return (
@@ -62,7 +49,6 @@ const ImageList = () => {
               onClick={() => {
                 setCommentsModalOpen(true);
                 setIndex(i);
-                handleGetComments(post._id);
               }}
             >
               <img
@@ -96,7 +82,7 @@ export default ImageList;
 
 const SkeletalGrid: React.FC = () => {
   return (
-    <div className="max-w-[1200px] grid md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-1 w-full">
+    <div className="w-full grid md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-1 w-full">
       {[...Array(3)].map((_, i) => (
         <div
           key={i}

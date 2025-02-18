@@ -6,6 +6,7 @@ import {
   deletePost,
   getComments,
   getPosts,
+  getRecommendedPosts,
   likePost,
   uploadImage,
 } from "@/data-access/posts";
@@ -71,6 +72,34 @@ export async function getPostsUsecase(token: string): Promise<{
     }
   }
 }
+
+export async function getExplorePostsUsecase(token: string): Promise<{
+  success: boolean;
+  error?: string;
+  posts?: Post[];
+}> {
+  try {
+    const { data, success } = await getRecommendedPosts(token!);
+    console.log(data)
+    return { success, posts: data };
+  } catch (error) {
+    if ((error as ApiError).status !== undefined) {
+      const apiError = error as ApiError;
+      return {
+        success: false,
+        error: apiError.data.error || "Failed to fetch posts",
+        posts: [],
+      };
+    } else {
+      return {
+        success: false,
+        error: "An unexpected error occurred",
+        posts: [],
+      };
+    }
+  }
+}
+
 export async function likePostUsecase(
   id: string,
   token: string
