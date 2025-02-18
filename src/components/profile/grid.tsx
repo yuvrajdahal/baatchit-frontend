@@ -34,7 +34,7 @@ const Grid: React.FC<GridProps> = ({
 
   return (
     <div className="w-full">
-      <div className="grid  md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-1">
+      <div className="grid  md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 gap-1">
         {posts.map((post, index) => (
           <div
             key={index}
@@ -76,7 +76,7 @@ const Grid: React.FC<GridProps> = ({
 
 const SkeletalGrid = () => {
   return (
-    <div className="grid  md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-1">
+    <div className="grid  md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 gap-1">
       {[...Array(6)].map((_, i) => (
         <div key={i}
          className="aspect-[4/5] bg-gray-200  min-h-[400px]  animate-pulse"

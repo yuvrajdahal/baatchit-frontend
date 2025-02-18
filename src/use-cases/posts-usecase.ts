@@ -52,6 +52,7 @@ export async function getPostsUsecase(token: string): Promise<{
 }> {
   try {
     const { data, success } = await getPosts(token!);
+    console.log(data)
     return { success, posts: data };
   } catch (error) {
     if ((error as ApiError).status !== undefined) {
