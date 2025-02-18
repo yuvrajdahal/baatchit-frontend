@@ -106,6 +106,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
                   className="absolute w-full h-full opacity-0 cursor-pointer"
                   type="file"
                   onChange={onfileChange}
+                  accept="image/*"
                 />
               </Button>
             </>
